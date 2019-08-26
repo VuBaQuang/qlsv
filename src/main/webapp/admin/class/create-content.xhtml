@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+<div align="center">
+    <br/>
+    <h:outputText value="Add new Student" styleClass="contentsTitle"/>
+    <f:event listener="#{studentsMB.rsStu()}" type="preRenderView"/>
+    <br/><br/>
+    <h:form acceptcharset="UTF-8">
+        <h:panelGrid columns="2">
+            Họ tên:
+            <h:inputText id="name" value="#{classesMB.classes.name}"
+                         required="true"
+                         requiredMessage="Tên lớp không được để trống"/>
+            Mã sinh viên:
+            <h:inputText id="code" value="#{classesMB.classes.code}"
+                         required="true"
+                         requiredMessage="Mã lớp không được để trống"
+                         validatorMessage="Mã lớp không đúng định dạng">
+                <f:validateRegex
+                        pattern="^[A][T]+[0-9]{4}$"/>
+            </h:inputText>
+        </h:panelGrid>
+        <div align="center">
+            <h:message for="name" style="color:red"/>
+            <br/>
+            <h:message for="code" style="color:red"/>
+        </div>
+
+        <div align="center">
+            <h:commandButton value="Cancel" immediate="true" action="class?faces-redirect=true"/>
+            <h:commandButton value="Save" action="#{classesMB.create()}"/>
+        </div>
+    </h:form>
+</div>
+
+
+</html>

@@ -1,5 +1,5 @@
 package model;
-// Generated Aug 26, 2019 9:59:05 AM by Hibernate Tools 5.1.10.Final
+// Generated Aug 26, 2019 5:19:17 PM by Hibernate Tools 5.1.10.Final
 
 import java.util.HashSet;
 import java.util.Set;
@@ -65,7 +65,7 @@ public class Students implements java.io.Serializable {
 		this.id = id;
 	}
 
-	@ManyToOne(fetch = FetchType.EAGER)
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "class_id")
 	public Classes getClasses() {
 		return this.classes;
@@ -155,6 +155,7 @@ public class Students implements java.io.Serializable {
 	public void setStudentsSubjectses(Set<StudentsSubjects> studentsSubjectses) {
 		this.studentsSubjectses = studentsSubjectses;
 	}
+
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "students")
 	public Set<User> getUsers() {
 		return this.users;

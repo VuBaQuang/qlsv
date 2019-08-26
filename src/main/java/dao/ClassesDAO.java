@@ -2,6 +2,7 @@ package dao;
 
 
 import model.Classes;
+import model.Students;
 import org.hibernate.Session;
 import org.hibernate.query.Query;
 import utils.HibernateUtils;
@@ -45,6 +46,23 @@ public class ClassesDAO {
             s.close();
         }
     }
+
+    public Classes findById(int id) {
+        Session s = HibernateUtils.getSessionFactory().openSession();
+        Classes classes = null;
+        try {
+            s.beginTransaction();
+            classes = s.get(Classes.class, id);
+            s.getTransaction().commit();
+        } catch (Exception e) {
+            e.printStackTrace();
+            s.getTransaction().rollback();
+        } finally {
+            s.close();
+        }
+        return classes;
+    }
+
 
     public void update(Classes classes) {
         Session s = HibernateUtils.getSessionFactory().openSession();

@@ -18,6 +18,7 @@ import java.util.*;
 public class StudentsMB implements Serializable {
     private Students student = new Students();
     private List<Students> listStudent = new ArrayList<>();
+    private List<Students> listStudentNone = new ArrayList<>();
     private Map<String, Map<String, String>> provinceDistric = new HashMap<String, Map<String, String>>();
     private Map<String, Map<String, String>> districWard = new HashMap<String, Map<String, String>>();
     private String studentClass;
@@ -30,11 +31,20 @@ public class StudentsMB implements Serializable {
     private Map<String, String> wards;
     private AddressDAO addressDAO = new AddressDAO();
     private ClassesDAO classesDAO = new ClassesDAO();
+    private StudentsDAO studentsDAO= new StudentsDAO();
     String redirect = "student";
 
     public void rsStu() {
         student = new Students();
         province=null;
+    }
+
+    public List<Students> getListStudentNone() {
+        return studentsDAO.getStudentNone();
+    }
+
+    public void setListStudentNone(List<Students> listStudentNone) {
+        this.listStudentNone = listStudentNone;
     }
 
     public String getRedirect() {
@@ -54,8 +64,19 @@ public class StudentsMB implements Serializable {
         return dao.findAll();
     }
 
-    public String addStudent(String url) {
 
+    public void add2Class(Students students,Classes classes){
+        students.setClasses(classes);
+        studentsDAO.update(students);
+    }
+
+    public void delStuClass(Students students){
+        students.setClasses(null);
+        studentsDAO.update(students);
+    }
+
+
+    public String addStudent(String url) {
         StudentsDAO dao = new StudentsDAO();
         StringBuilder address = new StringBuilder();
         address.append(ward);

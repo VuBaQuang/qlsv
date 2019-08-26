@@ -5,11 +5,13 @@
       xmlns:h="http://xmlns.jcp.org/jsf/html"
       xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
       xmlns:f="http://xmlns.jcp.org/jsf/core">
+
 <div align="center">
     <br/>
-    <h:outputText value="Students list of #{infoClassMB.classes.name}" styleClass="contentsTitle"/>
+    <h:outputText value="Students list" styleClass="contentsTitle"/>
+
     <h:form acceptcharset="UTF-8">
-        <h:dataTable value="#{infoClassMB.studentList}" var="student"
+        <h:dataTable value="#{studentsMB.getListStudentNone()}" var="student"
                      styleClass="table"
                      headerClass="table-header"
                      footerClass="table-footer"
@@ -28,17 +30,15 @@
                 #{student.name}
             </h:column>
             <h:column>
-                <f:facet name="header">Lớp</f:facet>
-                #{student.classes.name}
-            </h:column>
-            <h:column>
                 <f:facet name="header">Tuổi</f:facet>
                 #{student.age}
             </h:column>
+
             <h:column>
                 <f:facet name="header">Địa chỉ</f:facet>
                 #{student.address}
             </h:column>
+
             <h:column>
                 <f:facet name="header">Email</f:facet>
                 #{student.email}
@@ -49,14 +49,19 @@
             </h:column>
             <h:column>
                 <f:facet name="header" colspan="2">Thao tác</f:facet>
-                <h:commandButton value="Xóa" action="#{studentsMB.delStuClass(student)}"/>
+                <h:commandButton value="Thêm" action="#{studentsMB.add2Class(student,infoClassMB.classes)}"/>
             </h:column>
             <f:facet name="footer">
-                <h:outputText value="Total of student: #{infoClassMB.studentList.size()}"/>
+                <h:outputText value="Total of student: #{studentsMB.getListStudentNone().size()}"/>
             </f:facet>
+
         </h:dataTable>
+
         <br/>
-        <h:commandButton value="Add Student" action="add?faces-redirect=true?includeViewParams=true"/>
+
+        <h:commandButton value="Cancel" action="class?faces-redirect=true"/>
+
+
     </h:form>
 </div>
 </html>

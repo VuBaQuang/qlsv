@@ -31,6 +31,11 @@ public class ClassesMB implements Serializable {
         this.editStudentMB = editStudentMB;
     }
 
+    public String create() {
+        classesDAO.create(classes);
+        return "class?faces-redirect=true";
+    }
+
     public InfoClassMB getInfoClassMB() {
         return infoClassMB;
     }
@@ -68,7 +73,7 @@ public class ClassesMB implements Serializable {
     }
 
     public List<Classes> getListClasses() {
-        stt=0;
+        stt = 0;
         return classesDAO.findAll();
     }
 

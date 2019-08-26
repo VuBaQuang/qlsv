@@ -14,9 +14,14 @@ import java.util.*;
 @SessionScoped
 public class InfoClassMB {
     Classes classes = new Classes();
+    ClassesDAO classesDAO = new ClassesDAO();
 
     public InfoClassMB() {
 
+    }
+
+    public void findById() {
+        classes= classesDAO.findById(classes.getId());
     }
 
     public Classes getClasses() {
@@ -28,9 +33,9 @@ public class InfoClassMB {
     }
 
     public List<Students> getStudentList() {
-        Iterator<Students>  iterator =classes.getStudentses().iterator();
-        List<Students> studentList=new LinkedList<>();
-        while (iterator.hasNext()){
+        Iterator<Students> iterator = classes.getStudentses().iterator();
+        List<Students> studentList = new LinkedList<>();
+        while (iterator.hasNext()) {
             studentList.add(iterator.next());
         }
         return studentList;

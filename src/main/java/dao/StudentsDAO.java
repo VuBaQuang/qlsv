@@ -5,6 +5,9 @@ import org.hibernate.Session;
 import utils.HibernateUtils;
 
 import javax.persistence.Query;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Root;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -30,7 +33,7 @@ public class StudentsDAO {
 
 
 
-    public Students findById(int id) {
+    public  Students findById(int id) {
         Session s = HibernateUtils.getSessionFactory().openSession();
         Students student = new Students();
         try {
@@ -45,14 +48,28 @@ public class StudentsDAO {
         }
         return student;
     }
+    public  List<Students> getStudentNone() {
+        Session s = HibernateUtils.getSessionFactory().openSession();
+        List<Students> list =  null;
+        try {
+            s.beginTransaction();
+            CriteriaBuilder builder = s.getCriteriaBuilder();
+            CriteriaQuery<Students> query = builder.createQuery(Students.class);
+            Root<Students> root = query.from(Students.class);
+            query.select(root).where(builder.isNull(root.get("classes")));
+            org.hibernate.query.Query<Students> q = s.createQuery(query);
+            list = q.getResultList();
+            s.getTransaction().commit();
+        } catch (Exception e) {
+            e.printStackTrace();
+            s.getTransaction().rollback();
+        }finally {
+            s.close();
+        }
+        return list;
+    }
 
-//    public static void main(String[] args) {
-//        Iterator<ClassesStudents> iterator = findById(2).getClassesStudentses().iterator();
-//        while (iterator.hasNext()) {
-//            System.out.println(iterator.next().getClasses().getName());
-//        }
 
-    //    }
     public Students create(Students student) {
         Session s = HibernateUtils.getSessionFactory().openSession();
         try {
@@ -64,6 +81,8 @@ public class StudentsDAO {
             e.printStackTrace();
             s.getTransaction().rollback();
             return null;
+        }finally {
+            s.close();
         }
     }
 
