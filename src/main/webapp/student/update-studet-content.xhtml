@@ -1,0 +1,84 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:c="http://java.sun.com/jsp/jstl/core"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:fn="http://java.sun.com/jsp/jstl/functions"
+                xmlns:ui="http://java.sun.com/jsf/facelets">
+
+    <div align="center">
+        <br/>
+        <h:outputText value="Update student" styleClass="contentsTitle"/>
+        <f:event listener="#{editStudentMB.setDistricts}" type="preRenderView" />
+        <f:event listener="#{editStudentMB.setWards}" type="preRenderView" />
+        <br/><br/>
+        <h:form>
+            <h:panelGrid columns="2">
+                Họ tên:
+                <h:inputText id="name" value="#{editStudentMB.getStudent().name}"
+                             required="true"
+                             requiredMessage="Họ tên không được để trống"/>
+                Tuổi:
+                <p:spinner id="basic" value="#{editStudentMB.getStudent().age}" style="width:160px;  " min="0" />
+                Mã sinh viên:
+                <h:inputText id="code" value="#{editStudentMB.getStudent().code}"
+                             required="true"
+                             requiredMessage="Mã sinh viên không được để trống"
+                             validatorMessage="Mã sinh viên không đúng định dạng: ATxxxxxx (x là số)">
+                    <f:validateRegex
+                            pattern="^[A][T]+[0-9]{6}$"/>
+                </h:inputText>
+                Email:
+                <h:inputText id="email" value="#{editStudentMB.getStudent().email}"
+                             required="true"
+                             requiredMessage="Email không được để trống"
+                             validatorMessage="Email không đúng định dạng">
+                    <f:validateRegex
+                            pattern="^(\w+)(\.\w+)?@\w+(\.\w+)?(\.(\w+))(\.\w{2})?$"/>
+                </h:inputText>
+                Số điện thoại:
+                <h:inputText id="phone" value="#{editStudentMB.getStudent().phone}"/>
+                Tỉnh:
+                <h:selectOneMenu id="province" value="#{editStudentMB.province}" style="width:160px">
+                    <p:ajax listener="#{editStudentMB.setDistricts}" update="district,ward"/>
+                    <f:selectItem itemLabel="Chọn" itemValue="" noSelectionOption="true"/>
+                    <f:selectItems value="#{editStudentMB.provinces}"/>
+                </h:selectOneMenu>
+                Quận/Huyện:
+                <h:selectOneMenu id="district" value="#{editStudentMB.district}" style="width:160px">
+                    <p:ajax listener="#{editStudentMB.setWards}" update="ward"/>
+                    <f:selectItem itemLabel="Chọn" itemValue="" noSelectionOption="true"/>
+                    <f:selectItems value="#{editStudentMB.districts}"/>
+                </h:selectOneMenu>
+                Xã/Phường:
+                <h:selectOneMenu id="ward" value="#{editStudentMB.ward}" style="width:160px">
+                    <f:selectItem itemLabel="Chọn" itemValue="" noSelectionOption="true"/>
+                    <f:selectItems value="#{editStudentMB.wards}"/>
+                </h:selectOneMenu>
+
+                Lớp:
+                <h:selectOneRadio id="classs" value="#{editStudentMB.studentClass}" style="width:160px">
+                    <f:selectItems value="#{editStudentMB.classes}"/>
+                </h:selectOneRadio>
+
+                Ghi chú:
+                <h:inputText id="note" value="#{editStudentMB.getStudent().note}"/>
+
+
+            </h:panelGrid>
+            <div align="center">
+                <h:message for="name" style="color:red"/>
+                <br/>
+                <h:message for="code" style="color:red"/>
+                <br/>
+                <h:message for="email" style="color:red"/>
+            </div>
+
+            <div align="center">
+                <h:commandButton value="Cancel" immediate="true" action="student"/>
+                <h:commandButton value="Save" action="#{editStudentMB.edit()}"/>
+            </div>
+        </h:form>
+    </div>
+    <br/>
+</ui:composition>

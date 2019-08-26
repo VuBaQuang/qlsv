@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets">
+
+<h:head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <title>Login Page</title>
+</h:head>
+
+<h:body>
+    <h:form id="loginForm">
+        <p:growl id="msg" showDetail="true" life="4000"/>
+        <p:panel styleClass="panelGridCenter" id="loginPnl" header="Login" style="width: 350px; margin: 0 auto;">
+            <h:panelGrid id="loginPanel" columns="2" cellpadding="5">
+                <h:outputText value="Username"/>
+                <p:inputText id="username" value="#{userMB.user}"/>
+                <h:outputText value="Password"/>
+                <p:password id="password" value="#{userMB.password}"/>
+            </h:panelGrid>
+            <p:commandButton id="loginButton" action="#{userMB.login}"
+                             value="Login" update="loginForm">
+            </p:commandButton>
+        </p:panel>
+
+    </h:form>
+</h:body>
+</html>

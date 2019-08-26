@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:c="http://java.sun.com/jsp/jstl/core"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+<h:head>
+    <title>
+        <ui:insert name="windowTitle">
+            JSF QLSV
+        </ui:insert>
+    </title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <ui:insert name="css"/>
+</h:head>
+
+<h:body>
+
+    <h:outputLink value="javascript:void(0)" onclick="PF('dlg').show();" title="login">
+        <h:commandButton type="button" value="Click"/>
+    </h:outputLink>
+    <h:form>
+        <p:dialog appendToBody="true" header="Add new student" widgetVar="dlg">
+            <div align="center">
+                <br/>
+                <h:outputText value="Add new Student" styleClass="contentsTitle"/>
+                <!--                <f:event listener="#{studentsMB.init()}" type="preRenderView"/>-->
+                <br/><br/>
+
+                <h:panelGrid columns="2">
+                    Họ tên:
+                    <h:inputText id="name" value="#{studentsMB.student.name}"
+                                 required="true"
+                                 requiredMessage="Họ tên không được để trống"/>
+                    Tuổi:
+                    <p:spinner id="basic" value="#{studentsMB.student.age}" style="width:160px;  " min="0"/>
+                    Mã sinh viên:
+                    <h:inputText id="code" value="#{studentsMB.student.code}"
+                                 required="true"
+                                 requiredMessage="Mã sinh viên không được để trống"
+                                 validatorMessage="Mã sinh viên không đúng định dạng: ATxxxxxx (x là số)">
+                        <f:validateRegex
+                                pattern="^[A][T]+[0-9]{6}$"/>
+                    </h:inputText>
+                    Email:
+                    <h:inputText id="email" value="#{studentsMB.student.email}"
+                                 required="true"
+                                 requiredMessage="Email không được để trống"
+                                 validatorMessage="Email không đúng định dạng">
+                        <f:validateRegex
+                                pattern="^(\w+)(\.\w+)?@\w+(\.\w+)?(\.(\w+))(\.\w{2})?$"/>
+                    </h:inputText>
+                    Số điện thoại:
+                    <h:inputText id="phone" value="#{studentsMB.student.phone}"/>
+
+                    Tỉnh:
+                    <h:selectOneMenu id="province" value="#{studentsMB.province}" style="width:160px">
+                        <p:ajax listener="#{studentsMB.setDistricts}" update="district,ward"/>
+                        <f:selectItem itemLabel="Chọn" itemValue="" noSelectionOption="true"/>
+                        <f:selectItems value="#{studentsMB.provinces}"/>
+                    </h:selectOneMenu>
+                    Quận/Huyện:
+                    <h:selectOneMenu id="district" value="#{studentsMB.district}" style="width:160px">
+                        <p:ajax listener="#{studentsMB.setWards}" update="ward"/>
+                        <f:selectItem itemLabel="Chọn" itemValue="" noSelectionOption="true"/>
+                        <f:selectItems value="#{studentsMB.districts}"/>
+                    </h:selectOneMenu>
+                    Xã/Phường:
+                    <h:selectOneMenu id="ward" value="#{studentsMB.ward}" style="width:160px">
+                        <f:selectItem itemLabel="Chọn" itemValue="" noSelectionOption="true"/>
+                        <f:selectItems value="#{studentsMB.wards}"/>
+                    </h:selectOneMenu>
+                    <!--                Lớp:-->
+                    <!--                <h:selectOneMenu id="class" value="#{studentsMB.student.classe}" style="width:160px">-->
+                    <!--                    <f:selectItem itemLabel="Chọn" itemValue="" noSelectionOption="true"/>-->
+                    <!--                    <f:selectItems value="#{studentsMB.classes}"/>-->
+                    <!--                </h:selectOneMenu>-->
+                    Lớp:
+                    <h:selectManyCheckbox id="classs" value="#{studentsMB.studentClass}" style="width:160px">
+                        <f:selectItems value="#{studentsMB.classes}"/>
+                    </h:selectManyCheckbox>
+                    Ghi chú:
+                    <h:inputText id="note" value="#{studentsMB.student.note}"/>
+                </h:panelGrid>
+                <div align="center">
+                    <h:message for="name" style="color:red"/>
+                    <br/>
+                    <h:message for="code" style="color:red"/>
+                    <br/>
+                    <h:message for="email" style="color:red"/>
+                </div>
+
+                <div align="center">
+                    <h:commandButton value="Cancel" immediate="true" action="student"/>
+                    <h:commandButton value="Save" action="#{studentsMB.addStudent()}"/>
+                </div>
+
+            </div>
+        </p:dialog>
+    </h:form>
+</h:body>
+</html>
