@@ -1,9 +1,10 @@
 package bean.student;
 
 import dao.AddressDAO;
-import dao.ClassesDAO;
-import dao.StudentsDAO;
+import dao.ClassDAO;
+import dao.StudentDAO;
 import model.*;
+import model.ClassPayroll;
 
 import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
@@ -15,7 +16,7 @@ import java.util.Map;
 @ManagedBean
 @SessionScoped
 public class EditStudentMB {
-    private Students student = new Students();
+    private Student student = new Student();
     private String studentClass;
     private String province;
     private String district;
@@ -27,7 +28,7 @@ public class EditStudentMB {
     private Map<String, String> districts;
     private Map<String, String> wards;
     private AddressDAO addressDAO = new AddressDAO();
-    private ClassesDAO classesDAO = new ClassesDAO();
+    private ClassDAO classesDAO = new ClassDAO();
 
 
     public String getStudentClass() {
@@ -62,11 +63,11 @@ public class EditStudentMB {
         this.ward = ward;
     }
 
-    public Students getStudent() {
+    public Student getStudent() {
         return student;
     }
 
-    public void setStudent(Students students) {
+    public void setStudent(Student students) {
         this.student = students;
     }
 
@@ -94,9 +95,9 @@ public class EditStudentMB {
         builder.append(", ");
         builder.append(province);
         student.setAddress(builder.toString());
-        Classes classes = classesDAO.getClassByName(studentClass);
-        student.setClasses(classes);
-        StudentsDAO dao = new StudentsDAO();
+        ClassPayroll classes = classesDAO.getClassByName(studentClass);
+        student.setClassPayroll(classes);
+        StudentDAO dao = new StudentDAO();
         dao.update(student);
 
         return "student";
@@ -105,7 +106,7 @@ public class EditStudentMB {
     @PostConstruct
     public void init() {
         classes = new LinkedHashMap<>();
-        for (Classes classes : classesDAO.findAll()) {
+        for (ClassPayroll classes : classesDAO.findAll()) {
             this.classes.put(classes.getName(), classes.getName());
         }
         provinces = new LinkedHashMap<>();

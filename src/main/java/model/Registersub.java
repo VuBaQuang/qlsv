@@ -1,5 +1,5 @@
 package model;
-// Generated Aug 26, 2019 5:19:17 PM by Hibernate Tools 5.1.10.Final
+// Generated Aug 27, 2019 8:54:45 AM by Hibernate Tools 5.1.10.Final
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -20,16 +20,14 @@ public class Registersub implements java.io.Serializable {
 
 	private Integer id;
 	private ClassSubject classSubject;
-	private Students students;
-	private Timedayonweek timedayonweek;
+	private Student student;
 
 	public Registersub() {
 	}
 
-	public Registersub(ClassSubject classSubject, Students students, Timedayonweek timedayonweek) {
+	public Registersub(ClassSubject classSubject, Student student) {
 		this.classSubject = classSubject;
-		this.students = students;
-		this.timedayonweek = timedayonweek;
+		this.student = student;
 	}
 
 	@Id
@@ -56,22 +54,12 @@ public class Registersub implements java.io.Serializable {
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "student_id")
-	public Students getStudents() {
-		return this.students;
+	public Student getStudent() {
+		return this.student;
 	}
 
-	public void setStudents(Students students) {
-		this.students = students;
-	}
-
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "tdow_id")
-	public Timedayonweek getTimedayonweek() {
-		return this.timedayonweek;
-	}
-
-	public void setTimedayonweek(Timedayonweek timedayonweek) {
-		this.timedayonweek = timedayonweek;
+	public void setStudent(Student student) {
+		this.student = student;
 	}
 
 }

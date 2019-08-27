@@ -1,25 +1,25 @@
 package dao;
 
-import model.Students;
+
+import model.ClassPayroll;
 import org.hibernate.Session;
+import org.hibernate.query.Query;
 import utils.HibernateUtils;
 
-import javax.persistence.Query;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
 import java.util.ArrayList;
 import java.util.List;
 
-public class StudentsDAO {
+public class ClassDAO {
 
-
-    public  List<Students> findAll() {
+    public  static List<ClassPayroll> findAll() {
         Session s = HibernateUtils.getSessionFactory().openSession();
-        List<Students> list = new ArrayList<>();
+        List<ClassPayroll> list = new ArrayList<>();
         try {
             s.beginTransaction();
-            Query query = s.createQuery("from Students ");
+            javax.persistence.Query query = s.createQuery("from ClassPayroll");
             list =  query.getResultList();
             s.getTransaction().commit();
         } catch (Exception e) {
@@ -31,14 +31,15 @@ public class StudentsDAO {
         return list;
     }
 
+    public static void main(String[] args) {
+        System.out.println(findAll().get(0).getName());
+    }
 
-
-    public  Students findById(int id) {
+    public void create(ClassPayroll aClass) {
         Session s = HibernateUtils.getSessionFactory().openSession();
-        Students student = new Students();
         try {
             s.beginTransaction();
-            student = s.get(Students.class, id);
+            s.save(aClass);
             s.getTransaction().commit();
         } catch (Exception e) {
             e.printStackTrace();
@@ -46,73 +47,69 @@ public class StudentsDAO {
         } finally {
             s.close();
         }
-        return student;
     }
-    public  List<Students> getStudentNone() {
+
+    public ClassPayroll findById(int id) {
         Session s = HibernateUtils.getSessionFactory().openSession();
-        List<Students> list =  null;
+        ClassPayroll aClass = null;
+        try {
+            s.beginTransaction();
+            aClass = s.get(ClassPayroll.class, id);
+            s.getTransaction().commit();
+        } catch (Exception e) {
+            e.printStackTrace();
+            s.getTransaction().rollback();
+        } finally {
+            s.close();
+        }
+        return aClass;
+    }
+
+
+    public void update(ClassPayroll aClass) {
+        Session s = HibernateUtils.getSessionFactory().openSession();
+        try {
+            s.beginTransaction();
+            s.update(aClass);
+            s.getTransaction().commit();
+        } catch (Exception e) {
+            e.printStackTrace();
+            s.getTransaction().rollback();
+        } finally {
+            s.close();
+        }
+    }
+    public void delete(ClassPayroll aClass) {
+        Session s = HibernateUtils.getSessionFactory().openSession();
+        try {
+            s.beginTransaction();
+            s.delete(aClass);
+            s.getTransaction().commit();
+        } catch (Exception e) {
+            e.printStackTrace();
+            s.getTransaction().rollback();
+        } finally {
+            s.close();
+        }
+    }
+    public ClassPayroll getClassByName(String name) {
+        Session s = HibernateUtils.getSessionFactory().openSession();
+        ClassPayroll result = null;
         try {
             s.beginTransaction();
             CriteriaBuilder builder = s.getCriteriaBuilder();
-            CriteriaQuery<Students> query = builder.createQuery(Students.class);
-            Root<Students> root = query.from(Students.class);
-            query.select(root).where(builder.isNull(root.get("classes")));
-            org.hibernate.query.Query<Students> q = s.createQuery(query);
-            list = q.getResultList();
+            CriteriaQuery<ClassPayroll> query = builder.createQuery(ClassPayroll.class);
+            Root<ClassPayroll> root = query.from(ClassPayroll.class);
+            query.select(root).where(builder.equal(root.get("name"), name));
+            Query<ClassPayroll> q = s.createQuery(query);
+             result = q.getSingleResult();
+
             s.getTransaction().commit();
         } catch (Exception e) {
             e.printStackTrace();
             s.getTransaction().rollback();
-        }finally {
-            s.close();
         }
-        return list;
-    }
-
-
-    public Students create(Students student) {
-        Session s = HibernateUtils.getSessionFactory().openSession();
-        try {
-            s.beginTransaction();
-            s.save(student);
-            s.getTransaction().commit();
-            return student;
-        } catch (Exception e) {
-            e.printStackTrace();
-            s.getTransaction().rollback();
-            return null;
-        }finally {
-            s.close();
-        }
-    }
-
-    public void update(Students student) {
-        Session s = HibernateUtils.getSessionFactory().openSession();
-        try {
-            s.beginTransaction();
-            s.update(student);
-            s.getTransaction().commit();
-        } catch (Exception e) {
-            e.printStackTrace();
-            s.getTransaction().rollback();
-        } finally {
-            s.close();
-        }
-    }
-
-    public void delete(Students student) {
-        Session s = HibernateUtils.getSessionFactory().openSession();
-        try {
-            s.beginTransaction();
-            s.remove(student);
-            s.getTransaction().commit();
-
-        } catch (Exception e) {
-            e.printStackTrace();
-            s.getTransaction().rollback();
-        } finally {
-            s.close();
-        }
+        return result;
     }
 
 

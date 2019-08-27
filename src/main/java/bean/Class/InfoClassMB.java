@@ -1,11 +1,9 @@
 package bean.Class;
 
-import dao.AddressDAO;
-import dao.ClassesDAO;
-import dao.StudentsDAO;
+import dao.ClassDAO;
 import model.*;
+import model.ClassPayroll;
 
-import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
 import java.util.*;
@@ -13,28 +11,28 @@ import java.util.*;
 @ManagedBean
 @SessionScoped
 public class InfoClassMB {
-    Classes classes = new Classes();
-    ClassesDAO classesDAO = new ClassesDAO();
+    ClassPayroll class_ = new ClassPayroll();
+    ClassDAO classesDAO = new ClassDAO();
 
     public InfoClassMB() {
 
     }
 
     public void findById() {
-        classes= classesDAO.findById(classes.getId());
+        class_= classesDAO.findById(class_.getId());
     }
 
-    public Classes getClasses() {
-        return classes;
+    public ClassPayroll getClass_() {
+        return class_;
     }
 
-    public void setClasses(Classes classes) {
-        this.classes = classes;
+    public void setClass_(ClassPayroll class_) {
+        this.class_ = class_;
     }
 
-    public List<Students> getStudentList() {
-        Iterator<Students> iterator = classes.getStudentses().iterator();
-        List<Students> studentList = new LinkedList<>();
+    public List<Student> getStudentList() {
+        Iterator<Student> iterator = class_.getStudents().iterator();
+        List<Student> studentList = new LinkedList<>();
         while (iterator.hasNext()) {
             studentList.add(iterator.next());
         }

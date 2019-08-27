@@ -1,5 +1,5 @@
 package model;
-// Generated Aug 26, 2019 5:19:17 PM by Hibernate Tools 5.1.10.Final
+// Generated Aug 27, 2019 8:54:45 AM by Hibernate Tools 5.1.10.Final
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -19,7 +19,7 @@ import javax.persistence.Table;
 public class User implements java.io.Serializable {
 
 	private Integer id;
-	private Students students;
+	private Student student;
 	private String user;
 	private String password;
 	private String rule;
@@ -27,8 +27,8 @@ public class User implements java.io.Serializable {
 	public User() {
 	}
 
-	public User(Students students, String user, String password, String rule) {
-		this.students = students;
+	public User(Student student, String user, String password, String rule) {
+		this.student = student;
 		this.user = user;
 		this.password = password;
 		this.rule = rule;
@@ -48,12 +48,12 @@ public class User implements java.io.Serializable {
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "student_id")
-	public Students getStudents() {
-		return this.students;
+	public Student getStudent() {
+		return this.student;
 	}
 
-	public void setStudents(Students students) {
-		this.students = students;
+	public void setStudent(Student student) {
+		this.student = student;
 	}
 
 	@Column(name = "user")

@@ -1,7 +1,6 @@
 package dao;
 
-import model.Classes;
-import model.Subjects;
+import model.Subject;
 import org.hibernate.Session;
 import utils.HibernateUtils;
 
@@ -10,12 +9,12 @@ import java.util.List;
 
 public class SubjectDAO {
 
-    public  List<Subjects> findAll() {
+    public  List<Subject> findAll() {
         Session s = HibernateUtils.getSessionFactory().openSession();
-        List<Subjects> list = new ArrayList<>();
+        List<Subject> list = new ArrayList<>();
         try {
             s.beginTransaction();
-            list = s.createCriteria(Subjects.class).list();
+            list = s.createCriteria(Subject.class).list();
             s.getTransaction().commit();
         } catch (Exception e) {
             e.printStackTrace();
@@ -24,11 +23,11 @@ public class SubjectDAO {
         return list;
     }
 
-    public void create(Subjects subjects) {
+    public void create(Subject subject) {
         Session s = HibernateUtils.getSessionFactory().openSession();
         try {
             s.beginTransaction();
-            s.save(subjects);
+            s.save(subject);
             s.getTransaction().commit();
         } catch (Exception e) {
             e.printStackTrace();
@@ -36,22 +35,22 @@ public class SubjectDAO {
         }
     }
 
-    public void update(Subjects subjects) {
+    public void update(Subject subject) {
         Session s = HibernateUtils.getSessionFactory().openSession();
         try {
             s.beginTransaction();
-            s.update(subjects);
+            s.update(subject);
             s.getTransaction().commit();
         } catch (Exception e) {
             e.printStackTrace();
             s.getTransaction().rollback();
         }
     }
-    public void delete(Subjects subjects) {
+    public void delete(Subject subject) {
         Session s = HibernateUtils.getSessionFactory().openSession();
         try {
             s.beginTransaction();
-            s.delete(subjects);
+            s.delete(subject);
             s.getTransaction().commit();
         } catch (Exception e) {
             e.printStackTrace();

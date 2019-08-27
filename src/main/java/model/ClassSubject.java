@@ -1,5 +1,5 @@
 package model;
-// Generated Aug 26, 2019 5:19:17 PM by Hibernate Tools 5.1.10.Final
+// Generated Aug 27, 2019 8:54:45 AM by Hibernate Tools 5.1.10.Final
 
 import java.util.Date;
 import java.util.HashSet;
@@ -26,25 +26,31 @@ public class ClassSubject implements java.io.Serializable {
 
 	private Integer id;
 	private ClassCredit classCredit;
-	private Subjects subjects;
+	private Subject subject;
 	private Date startTime;
 	private Date endTime;
+	private String day;
+	private Date todStart;
+	private Date todEnd;
 	private String note;
 	private Set<Registersub> registersubs = new HashSet<Registersub>(0);
-	private Set<StudentsSubjects> studentsSubjectses = new HashSet<StudentsSubjects>(0);
+	private Set<Score> scores = new HashSet<Score>(0);
 
 	public ClassSubject() {
 	}
 
-	public ClassSubject(ClassCredit classCredit, Subjects subjects, Date startTime, Date endTime, String note,
-			Set<Registersub> registersubs, Set<StudentsSubjects> studentsSubjectses) {
+	public ClassSubject(ClassCredit classCredit, Subject subject, Date startTime, Date endTime, String day,
+			Date todStart, Date todEnd, String note, Set<Registersub> registersubs, Set<Score> scores) {
 		this.classCredit = classCredit;
-		this.subjects = subjects;
+		this.subject = subject;
 		this.startTime = startTime;
 		this.endTime = endTime;
+		this.day = day;
+		this.todStart = todStart;
+		this.todEnd = todEnd;
 		this.note = note;
 		this.registersubs = registersubs;
-		this.studentsSubjectses = studentsSubjectses;
+		this.scores = scores;
 	}
 
 	@Id
@@ -71,12 +77,12 @@ public class ClassSubject implements java.io.Serializable {
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "subject_id")
-	public Subjects getSubjects() {
-		return this.subjects;
+	public Subject getSubject() {
+		return this.subject;
 	}
 
-	public void setSubjects(Subjects subjects) {
-		this.subjects = subjects;
+	public void setSubject(Subject subject) {
+		this.subject = subject;
 	}
 
 	@Temporal(TemporalType.DATE)
@@ -99,6 +105,35 @@ public class ClassSubject implements java.io.Serializable {
 		this.endTime = endTime;
 	}
 
+	@Column(name = "day", length = 65535)
+	public String getDay() {
+		return this.day;
+	}
+
+	public void setDay(String day) {
+		this.day = day;
+	}
+
+	@Temporal(TemporalType.TIME)
+	@Column(name = "tod_start", length = 16)
+	public Date getTodStart() {
+		return this.todStart;
+	}
+
+	public void setTodStart(Date todStart) {
+		this.todStart = todStart;
+	}
+
+	@Temporal(TemporalType.TIME)
+	@Column(name = "tod_end", length = 16)
+	public Date getTodEnd() {
+		return this.todEnd;
+	}
+
+	public void setTodEnd(Date todEnd) {
+		this.todEnd = todEnd;
+	}
+
 	@Column(name = "note", length = 65535)
 	public String getNote() {
 		return this.note;
@@ -118,12 +153,12 @@ public class ClassSubject implements java.io.Serializable {
 	}
 
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "classSubject")
-	public Set<StudentsSubjects> getStudentsSubjectses() {
-		return this.studentsSubjectses;
+	public Set<Score> getScores() {
+		return this.scores;
 	}
 
-	public void setStudentsSubjectses(Set<StudentsSubjects> studentsSubjectses) {
-		this.studentsSubjectses = studentsSubjectses;
+	public void setScores(Set<Score> scores) {
+		this.scores = scores;
 	}
 
 }

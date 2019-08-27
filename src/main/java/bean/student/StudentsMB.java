@@ -1,10 +1,10 @@
 package bean.student;
 
-import bean.Class.InfoClassMB;
 import dao.AddressDAO;
-import dao.ClassesDAO;
-import dao.StudentsDAO;
+import dao.ClassDAO;
+import dao.StudentDAO;
 import model.*;
+import model.ClassPayroll;
 
 import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
@@ -16,9 +16,9 @@ import java.util.*;
 @ManagedBean
 @SessionScoped
 public class StudentsMB implements Serializable {
-    private Students student = new Students();
-    private List<Students> listStudent = new ArrayList<>();
-    private List<Students> listStudentNone = new ArrayList<>();
+    private Student student = new Student();
+    private List<Student> listStudent = new ArrayList<>();
+    private List<Student> listStudentNone = new ArrayList<>();
     private Map<String, Map<String, String>> provinceDistric = new HashMap<String, Map<String, String>>();
     private Map<String, Map<String, String>> districWard = new HashMap<String, Map<String, String>>();
     private String studentClass;
@@ -30,20 +30,20 @@ public class StudentsMB implements Serializable {
     private Map<String, String> districts;
     private Map<String, String> wards;
     private AddressDAO addressDAO = new AddressDAO();
-    private ClassesDAO classesDAO = new ClassesDAO();
-    private StudentsDAO studentsDAO= new StudentsDAO();
+    private ClassDAO classesDAO = new ClassDAO();
+    private StudentDAO studentsDAO= new StudentDAO();
     String redirect = "student";
 
     public void rsStu() {
-        student = new Students();
+        student = new Student();
         province=null;
     }
 
-    public List<Students> getListStudentNone() {
+    public List<Student> getListStudentNone() {
         return studentsDAO.getStudentNone();
     }
 
-    public void setListStudentNone(List<Students> listStudentNone) {
+    public void setListStudentNone(List<Student> listStudentNone) {
         this.listStudentNone = listStudentNone;
     }
 
@@ -59,25 +59,25 @@ public class StudentsMB implements Serializable {
     private EditStudentMB editStudentMB;
 
 
-    public List<Students> getListStudent() {
-        StudentsDAO dao = new StudentsDAO();
+    public List<Student> getListStudent() {
+        StudentDAO dao = new StudentDAO();
         return dao.findAll();
     }
 
 
-    public void add2Class(Students students,Classes classes){
-        students.setClasses(classes);
+    public void add2Class(Student students, ClassPayroll classes){
+        students.setClassPayroll(classes);
         studentsDAO.update(students);
     }
 
-    public void delStuClass(Students students){
-        students.setClasses(null);
+    public void delStuClass(Student students){
+        students.setClassPayroll(null);
         studentsDAO.update(students);
     }
 
 
     public String addStudent(String url) {
-        StudentsDAO dao = new StudentsDAO();
+        StudentDAO dao = new StudentDAO();
         StringBuilder address = new StringBuilder();
         address.append(ward);
         address.append(", ");
@@ -85,23 +85,23 @@ public class StudentsMB implements Serializable {
         address.append(", ");
         address.append(province);
         student.setAddress(address.toString());
-        Classes classes = classesDAO.getClassByName(studentClass);
-        student.setClasses(classes);
+        ClassPayroll classes = classesDAO.getClassByName(studentClass);
+        student.setClassPayroll(classes);
         student = dao.create(student);
         return url + "?faces-redirect=true";
     }
 
-    public void delete(Students student) {
-        StudentsDAO dao = new StudentsDAO();
+    public void delete(Student student) {
+        StudentDAO dao = new StudentDAO();
         dao.delete(student);
     }
 
-    public String edit(Students student) {
+    public String edit(Student student) {
         String[] address = student.getAddress().split("[,][ ]");
         province = address[2];
         district = address[1];
         ward = address[0];
-        editStudentMB.setStudentClass(student.getClasses() != null ? student.getClasses().getName() : "");
+        editStudentMB.setStudentClass(student.getClass() != null ? student.getClass().getName() : "");
         editStudentMB.setStudent(student);
         editStudentMB.setProvince(province);
         editStudentMB.setDistrict(district);
@@ -127,7 +127,7 @@ public class StudentsMB implements Serializable {
             }
             provinceDistric.put(province.getName(), mapDistrict);
         }
-        for (Classes classes : classesDAO.findAll()) {
+        for (ClassPayroll classes : classesDAO.findAll()) {
             this.classes.put(classes.getName(), classes.getName());
         }
     }
@@ -178,16 +178,16 @@ public class StudentsMB implements Serializable {
         this.editStudentMB = editStudentMB;
     }
 
-    public Students getStudent() {
+    public Student getStudent() {
         return student;
     }
 
-    public void setStudent(Students student) {
+    public void setStudent(Student student) {
 
         this.student = student;
     }
 
-    public void setListStudent(List<Students> listStudent) {
+    public void setListStudent(List<Student> listStudent) {
         this.listStudent = listStudent;
     }
 
@@ -207,11 +207,11 @@ public class StudentsMB implements Serializable {
         this.wards = wards;
     }
 
-    public ClassesDAO getClassesDAO() {
+    public ClassDAO getClassesDAO() {
         return classesDAO;
     }
 
-    public void setClassesDAO(ClassesDAO classesDAO) {
+    public void setClassesDAO(ClassDAO classesDAO) {
         this.classesDAO = classesDAO;
     }
 

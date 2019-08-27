@@ -1,8 +1,8 @@
 package bean.Class;
 
 import bean.student.EditStudentMB;
-import dao.ClassesDAO;
-import model.Classes;
+import dao.ClassDAO;
+import model.ClassPayroll;
 
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ManagedProperty;
@@ -13,10 +13,10 @@ import java.util.List;
 @ManagedBean
 @SessionScoped
 public class ClassesMB implements Serializable {
-    private Classes classes;
-    private List<Classes> listClasses;
+    private ClassPayroll class_;
+    private List<ClassPayroll> listClasses;
     private int stt = 0;
-    private ClassesDAO classesDAO = new ClassesDAO();
+    private ClassDAO classesDAO = new ClassDAO();
 
     @ManagedProperty(value = "#{infoClassMB}")
     private InfoClassMB infoClassMB;
@@ -32,7 +32,7 @@ public class ClassesMB implements Serializable {
     }
 
     public String create() {
-        classesDAO.create(classes);
+        classesDAO.create(class_);
         return "class?faces-redirect=true";
     }
 
@@ -44,12 +44,12 @@ public class ClassesMB implements Serializable {
         this.infoClassMB = infoClassMB;
     }
 
-    public String info(Classes classes) {
-        infoClassMB.setClasses(classes);
+    public String info(ClassPayroll classes) {
+        infoClassMB.setClass_(classes);
         return "info?faces-redirect=true&includeViewParams=true";
     }
 
-    public void delete(Classes classes) {
+    public void delete(ClassPayroll classes) {
 
     }
 
@@ -63,26 +63,26 @@ public class ClassesMB implements Serializable {
         this.stt = stt;
     }
 
-    public Classes getClasses() {
+    public ClassPayroll getClasses() {
 
-        return classes;
+        return class_;
     }
 
-    public void setClasses(Classes classes) {
-        this.classes = classes;
+    public void setClasses(ClassPayroll class_) {
+        this.class_ = class_;
     }
 
-    public List<Classes> getListClasses() {
+    public List<ClassPayroll> getListClasses() {
         stt = 0;
         return classesDAO.findAll();
     }
 
-    public void setListClasses(List<Classes> listClasses) {
+    public void setListClasses(List<ClassPayroll> listClasses) {
         this.listClasses = listClasses;
     }
 
-    public void deleteClass(Classes classes) {
-        ClassesDAO dao = new ClassesDAO();
-        dao.delete(classes);
+    public void deleteClass(ClassPayroll class_) {
+        ClassDAO dao = new ClassDAO();
+        dao.delete(class_);
     }
 }
