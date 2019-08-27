@@ -10,15 +10,15 @@ import javax.persistence.criteria.Root;
 import java.util.ArrayList;
 import java.util.List;
 
-public class StudentDAO {
+public class ClaSubDAO {
 
 
-    public static List<Student> findAll() {
+    public  List<ClassSubject> findAll() {
         Session s = HibernateUtils.getSessionFactory().openSession();
-        List<Student> list = new ArrayList<>();
+        List<ClassSubject> list = new ArrayList<>();
         try {
             s.beginTransaction();
-            Query query = s.createQuery("from Student ");
+            Query query = s.createQuery("from ClassSubject ");
             list =  query.getResultList();
             s.getTransaction().commit();
         } catch (Exception e) {
@@ -29,36 +29,18 @@ public class StudentDAO {
         }
         return list;
     }
-
-    public static void main(String[] args) {
-        System.out.println(findAll().get(0).getName());
-    }
-
-    public  Student findById(int id) {
+    public  List<ClassSubject> findBySub(Subject subject) {
         Session s = HibernateUtils.getSessionFactory().openSession();
-        Student student = new Student();
-        try {
-            s.beginTransaction();
-            student = s.get(Student.class, id);
-            s.getTransaction().commit();
-        } catch (Exception e) {
-            e.printStackTrace();
-            s.getTransaction().rollback();
-        } finally {
-            s.close();
-        }
-        return student;
-    }
-    public  List<Student> getStudentNone() {
-        Session s = HibernateUtils.getSessionFactory().openSession();
-        List<Student> list =  null;
+        List<ClassSubject> list =  null;
         try {
             s.beginTransaction();
             CriteriaBuilder builder = s.getCriteriaBuilder();
-            CriteriaQuery<Student> query = builder.createQuery(Student.class);
-            Root<Student> root = query.from(Student.class);
-            query.select(root).where(builder.isNull(root.get("classPayroll")));
-            org.hibernate.query.Query<Student> q = s.createQuery(query);
+            CriteriaQuery<ClassSubject> query = builder.createQuery(ClassSubject.class);
+            Root<ClassSubject> root = query.from(ClassSubject.class);
+            query.select(root).where(builder.equal(root.get("subject"), subject));
+            //query.select(root).where(builder.isNull(root.get("classPayroll")));
+
+            org.hibernate.query.Query<ClassSubject> q = s.createQuery(query);
             list = q.getResultList();
             s.getTransaction().commit();
         } catch (Exception e) {
@@ -71,13 +53,52 @@ public class StudentDAO {
     }
 
 
-    public Student create(Student student) {
+    public  ClassSubject findById(int id) {
+        Session s = HibernateUtils.getSessionFactory().openSession();
+        ClassSubject classSubject = new ClassSubject();
+        try {
+            s.beginTransaction();
+            classSubject = s.get(ClassSubject.class, id);
+            s.getTransaction().commit();
+        } catch (Exception e) {
+            e.printStackTrace();
+            s.getTransaction().rollback();
+        } finally {
+            s.close();
+        }
+        return classSubject;
+    }
+    public  List<ClassSubject> getSubjectByClass(ClassCredit classCredit) {
+        Session s = HibernateUtils.getSessionFactory().openSession();
+        List<ClassSubject> list =  null;
+        try {
+            s.beginTransaction();
+            CriteriaBuilder builder = s.getCriteriaBuilder();
+            CriteriaQuery<ClassSubject> query = builder.createQuery(ClassSubject.class);
+            Root<ClassSubject> root = query.from(ClassSubject.class);
+            query.select(root).where(builder.equal(root.get("classCredit"), classCredit));
+            //query.select(root).where(builder.isNull(root.get("classPayroll")));
+
+            org.hibernate.query.Query<ClassSubject> q = s.createQuery(query);
+            list = q.getResultList();
+            s.getTransaction().commit();
+        } catch (Exception e) {
+            e.printStackTrace();
+            s.getTransaction().rollback();
+        }finally {
+            s.close();
+        }
+        return list;
+    }
+
+
+    public ClassSubject create(ClassSubject classSubject) {
         Session s = HibernateUtils.getSessionFactory().openSession();
         try {
             s.beginTransaction();
-            s.save(student);
+            s.save(classSubject);
             s.getTransaction().commit();
-            return student;
+            return classSubject;
         } catch (Exception e) {
             e.printStackTrace();
             s.getTransaction().rollback();
@@ -87,11 +108,11 @@ public class StudentDAO {
         }
     }
 
-    public void update(Student student) {
+    public void update(ClassSubject classSubject) {
         Session s = HibernateUtils.getSessionFactory().openSession();
         try {
             s.beginTransaction();
-            s.update(student);
+            s.update(classSubject);
             s.getTransaction().commit();
         } catch (Exception e) {
             e.printStackTrace();
@@ -101,11 +122,11 @@ public class StudentDAO {
         }
     }
 
-    public void delete(Student student) {
+    public void delete(ClassSubject classSubject) {
         Session s = HibernateUtils.getSessionFactory().openSession();
         try {
             s.beginTransaction();
-            s.remove(student);
+            s.remove(classSubject);
             s.getTransaction().commit();
 
         } catch (Exception e) {

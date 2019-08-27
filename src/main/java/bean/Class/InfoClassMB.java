@@ -1,8 +1,6 @@
 package bean.Class;
 
 import dao.ClassDAO;
-import model.*;
-import model.ClassPayroll;
 
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
@@ -11,7 +9,7 @@ import java.util.*;
 @ManagedBean
 @SessionScoped
 public class InfoClassMB {
-    ClassPayroll class_ = new ClassPayroll();
+    ClassPayroll classPayroll = new ClassPayroll();
     ClassDAO classesDAO = new ClassDAO();
 
     public InfoClassMB() {
@@ -19,19 +17,19 @@ public class InfoClassMB {
     }
 
     public void findById() {
-        class_= classesDAO.findById(class_.getId());
+        classPayroll = classesDAO.findById(classPayroll.getId());
     }
 
-    public ClassPayroll getClass_() {
-        return class_;
+    public ClassPayroll getClassPayroll() {
+        return classPayroll;
     }
 
-    public void setClass_(ClassPayroll class_) {
-        this.class_ = class_;
+    public void setClassPayroll(ClassPayroll classPayroll) {
+        this.classPayroll = classPayroll;
     }
 
     public List<Student> getStudentList() {
-        Iterator<Student> iterator = class_.getStudents().iterator();
+        Iterator<Student> iterator = classPayroll.getStudents().iterator();
         List<Student> studentList = new LinkedList<>();
         while (iterator.hasNext()) {
             studentList.add(iterator.next());

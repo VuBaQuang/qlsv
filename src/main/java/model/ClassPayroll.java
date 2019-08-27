@@ -1,5 +1,5 @@
 package model;
-// Generated Aug 27, 2019 8:54:45 AM by Hibernate Tools 5.1.10.Final
+// Generated Aug 27, 2019 2:14:58 PM by Hibernate Tools 5.1.10.Final
 
 import java.util.HashSet;
 import java.util.Set;
@@ -69,7 +69,7 @@ public class ClassPayroll implements java.io.Serializable {
 		this.code = code;
 	}
 
-	@OneToMany(fetch = FetchType.LAZY, mappedBy = "classPayroll")
+	@OneToMany(fetch = FetchType.EAGER, mappedBy = "classPayroll")
 	public Set<Student> getStudents() {
 		return this.students;
 	}

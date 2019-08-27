@@ -12,94 +12,10 @@
 </ui:insert>
 <!--	Start body	-->
 
+<ui:insert name="contents">
+    <ui:include src="view-content.xhtml"/>
+</ui:insert>
 
-<div align="center">
-    <br/>
-    <h:outputText value="Chi tiết lớp học - môn học"/>
-    <!--                <f:event listener="#{studentsMB.init()}" type="preRenderView"/>-->
-    <br/><br/>
-    <h:form acceptcharset="UTF-8">
-        <h:panelGrid columns="2">
-            <h:selectOneMenu id="subject" value="#{studentsMB.province}" style="width:160px">
-                <p:ajax listener="#{studentsMB.setDistricts}" update="classe,classsubject"/>
-                <f:selectItem itemLabel="Chọn" itemValue="" noSelectionOption="true"/>
-                <f:selectItems value="#{studentsMB.provinces}"/>
-            </h:selectOneMenu>
-
-            <h:selectOneMenu id="classe" value="#{studentsMB.province}" style="width:160px">
-                <p:ajax listener="#{studentsMB.setDistricts}" update="classsubject"/>
-                <f:selectItem itemLabel="Chọn" itemValue="" noSelectionOption="true"/>
-                <f:selectItems value="#{studentsMB.provinces}"/>
-            </h:selectOneMenu>
-
-
-        </h:panelGrid>
-        <br/><br/>
-        <div align="center">
-            <br/>
-            <h:outputText value="Students list" styleClass="contentsTitle"/>
-            <h:form acceptcharset="UTF-8">
-                <h:dataTable value="#{studentsMB.getListStudent()}" var="student"
-                             styleClass="table"
-                             headerClass="table-header"
-                             footerClass="table-footer"
-                             rowClasses="table-odd-row,table-even-row">
-                    <h:column>
-                        <f:facet name="header">Id</f:facet>
-                        #{student.id}
-                    </h:column>
-
-                    <h:column>
-                        <f:facet name="header">Mã sinh viên</f:facet>
-                        #{student.code}
-                    </h:column>
-                    <h:column>
-                        <f:facet name="header">Họ tên</f:facet>
-                        #{student.name}
-                    </h:column>
-                    <h:column>
-                        <f:facet name="header">Lớp</f:facet>
-                        #{student.classes.name}
-                    </h:column>
-                    <h:column>
-                        <f:facet name="header">Tuổi</f:facet>
-                        #{student.age}
-                    </h:column>
-
-                    <h:column>
-                        <f:facet name="header">Địa chỉ</f:facet>
-                        #{student.address}
-                    </h:column>
-
-                    <h:column>
-                        <f:facet name="header">Email</f:facet>
-                        #{student.email}
-                    </h:column>
-                    <h:column>
-                        <f:facet name="header">Ghi chú</f:facet>
-                        #{student.note}
-                    </h:column>
-                    <h:column>
-                        <f:facet name="header" colspan="2">Thao tác</f:facet>
-                        <h:commandButton value="Sửa" action="#{studentsMB.edit(student)}"/>
-                        <h:commandButton value="Xóa" action="#{studentsMB.delete(student)}"/>
-                    </h:column>
-                    <f:facet name="footer">
-                        <h:outputText value="Total of student: #{studentsMB.getListStudent().size()}"/>
-                    </f:facet>
-
-                </h:dataTable>
-
-                <br/>
-
-                <h:commandButton value="Add Student" action="add-student"/>
-
-
-            </h:form>
-        </div>
-
-    </h:form>
-</div>
 
 
 <!--	End body	-->

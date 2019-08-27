@@ -3,8 +3,6 @@ package bean.student;
 import dao.AddressDAO;
 import dao.ClassDAO;
 import dao.StudentDAO;
-import model.*;
-import model.ClassPayroll;
 
 import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;

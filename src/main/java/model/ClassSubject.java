@@ -1,5 +1,5 @@
 package model;
-// Generated Aug 27, 2019 8:54:45 AM by Hibernate Tools 5.1.10.Final
+// Generated Aug 27, 2019 2:14:58 PM by Hibernate Tools 5.1.10.Final
 
 import java.util.Date;
 import java.util.HashSet;
@@ -33,14 +33,15 @@ public class ClassSubject implements java.io.Serializable {
 	private Date todStart;
 	private Date todEnd;
 	private String note;
+	private Integer size;
+	private Integer registered;
 	private Set<Registersub> registersubs = new HashSet<Registersub>(0);
-	private Set<Score> scores = new HashSet<Score>(0);
 
 	public ClassSubject() {
 	}
 
 	public ClassSubject(ClassCredit classCredit, Subject subject, Date startTime, Date endTime, String day,
-			Date todStart, Date todEnd, String note, Set<Registersub> registersubs, Set<Score> scores) {
+			Date todStart, Date todEnd, String note, Integer size, Integer registered, Set<Registersub> registersubs) {
 		this.classCredit = classCredit;
 		this.subject = subject;
 		this.startTime = startTime;
@@ -49,8 +50,9 @@ public class ClassSubject implements java.io.Serializable {
 		this.todStart = todStart;
 		this.todEnd = todEnd;
 		this.note = note;
+		this.size = size;
+		this.registered = registered;
 		this.registersubs = registersubs;
-		this.scores = scores;
 	}
 
 	@Id
@@ -65,7 +67,7 @@ public class ClassSubject implements java.io.Serializable {
 		this.id = id;
 	}
 
-	@ManyToOne(fetch = FetchType.LAZY)
+	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "class_id")
 	public ClassCredit getClassCredit() {
 		return this.classCredit;
@@ -75,7 +77,7 @@ public class ClassSubject implements java.io.Serializable {
 		this.classCredit = classCredit;
 	}
 
-	@ManyToOne(fetch = FetchType.LAZY)
+	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "subject_id")
 	public Subject getSubject() {
 		return this.subject;
@@ -143,6 +145,24 @@ public class ClassSubject implements java.io.Serializable {
 		this.note = note;
 	}
 
+	@Column(name = "size")
+	public Integer getSize() {
+		return this.size;
+	}
+
+	public void setSize(Integer size) {
+		this.size = size;
+	}
+
+	@Column(name = "registered")
+	public Integer getRegistered() {
+		return this.registered;
+	}
+
+	public void setRegistered(Integer registered) {
+		this.registered = registered;
+	}
+
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "classSubject")
 	public Set<Registersub> getRegistersubs() {
 		return this.registersubs;
@@ -150,15 +170,6 @@ public class ClassSubject implements java.io.Serializable {
 
 	public void setRegistersubs(Set<Registersub> registersubs) {
 		this.registersubs = registersubs;
-	}
-
-	@OneToMany(fetch = FetchType.LAZY, mappedBy = "classSubject")
-	public Set<Score> getScores() {
-		return this.scores;
-	}
-
-	public void setScores(Set<Score> scores) {
-		this.scores = scores;
 	}
 
 }

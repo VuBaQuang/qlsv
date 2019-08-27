@@ -1,5 +1,5 @@
 package model;
-// Generated Aug 27, 2019 8:54:45 AM by Hibernate Tools 5.1.10.Final
+// Generated Aug 27, 2019 2:14:58 PM by Hibernate Tools 5.1.10.Final
 
 import java.util.HashSet;
 import java.util.Set;
@@ -31,7 +31,6 @@ public class Student implements java.io.Serializable {
 	private String phone;
 	private String email;
 	private String note;
-	private Set<Score> scores = new HashSet<Score>(0);
 	private Set<Registersub> registersubs = new HashSet<Registersub>(0);
 	private Set<User> users = new HashSet<User>(0);
 
@@ -39,7 +38,7 @@ public class Student implements java.io.Serializable {
 	}
 
 	public Student(ClassPayroll classPayroll, String name, String code, Integer age, String address, String phone,
-			String email, String note, Set<Score> scores, Set<Registersub> registersubs, Set<User> users) {
+			String email, String note, Set<Registersub> registersubs, Set<User> users) {
 		this.classPayroll = classPayroll;
 		this.name = name;
 		this.code = code;
@@ -48,7 +47,6 @@ public class Student implements java.io.Serializable {
 		this.phone = phone;
 		this.email = email;
 		this.note = note;
-		this.scores = scores;
 		this.registersubs = registersubs;
 		this.users = users;
 	}
@@ -65,7 +63,7 @@ public class Student implements java.io.Serializable {
 		this.id = id;
 	}
 
-	@ManyToOne(fetch = FetchType.LAZY)
+	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "class_id")
 	public ClassPayroll getClassPayroll() {
 		return this.classPayroll;
@@ -139,15 +137,6 @@ public class Student implements java.io.Serializable {
 	}
 
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "student")
-	public Set<Score> getScores() {
-		return this.scores;
-	}
-
-	public void setScores(Set<Score> scores) {
-		this.scores = scores;
-	}
-
-	@OneToMany(fetch = FetchType.LAZY, mappedBy = "student")
 	public Set<Registersub> getRegistersubs() {
 		return this.registersubs;
 	}
@@ -156,7 +145,7 @@ public class Student implements java.io.Serializable {
 		this.registersubs = registersubs;
 	}
 
-	@OneToMany(fetch = FetchType.LAZY, mappedBy = "student")
+	@OneToMany(fetch = FetchType.EAGER, mappedBy = "student")
 	public Set<User> getUsers() {
 		return this.users;
 	}

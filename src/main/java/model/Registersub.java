@@ -1,5 +1,5 @@
 package model;
-// Generated Aug 27, 2019 8:54:45 AM by Hibernate Tools 5.1.10.Final
+// Generated Aug 27, 2019 2:14:58 PM by Hibernate Tools 5.1.10.Final
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -21,13 +21,15 @@ public class Registersub implements java.io.Serializable {
 	private Integer id;
 	private ClassSubject classSubject;
 	private Student student;
+	private Integer score;
 
 	public Registersub() {
 	}
 
-	public Registersub(ClassSubject classSubject, Student student) {
+	public Registersub(ClassSubject classSubject, Student student, Integer score) {
 		this.classSubject = classSubject;
 		this.student = student;
+		this.score = score;
 	}
 
 	@Id
@@ -60,6 +62,15 @@ public class Registersub implements java.io.Serializable {
 
 	public void setStudent(Student student) {
 		this.student = student;
+	}
+
+	@Column(name = "score")
+	public Integer getScore() {
+		return this.score;
+	}
+
+	public void setScore(Integer score) {
+		this.score = score;
 	}
 
 }

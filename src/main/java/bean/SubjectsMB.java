@@ -1,7 +1,5 @@
 package bean;
 
-import model.Subject;
-
 import javax.faces.bean.ManagedBean;
 import java.util.ArrayList;
 

@@ -1,8 +1,5 @@
 package dao;
 
-import model.District;
-import model.Province;
-import model.Ward;
 import org.hibernate.Session;
 import org.hibernate.query.Query;
 import utils.HibernateUtils;

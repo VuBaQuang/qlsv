@@ -33,7 +33,7 @@
  </servlet-mapping>
  <!-- Welcome page -->
  <welcome-file-list>
-  <welcome-file>faces/admin/class/class.xhtml</welcome-file>
+  <welcome-file>faces/admin/classsubject/view.xhtml</welcome-file>
  </welcome-file-list>
 
 </web-app>

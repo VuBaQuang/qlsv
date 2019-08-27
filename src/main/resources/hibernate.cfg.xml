@@ -16,7 +16,6 @@
         <mapping class="model.Province"/>
         <mapping class="model.ClassCredit"/>
         <mapping class="model.Registersub"/>
-        <mapping class="model.Score"/>
         <mapping class="model.ClassSubject"/>
         <mapping class="model.User"/>
         <mapping class="model.Ward"/>
