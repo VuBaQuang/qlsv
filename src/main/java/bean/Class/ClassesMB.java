@@ -2,6 +2,7 @@ package bean.Class;
 
 import bean.student.EditStudentMB;
 import dao.ClassDAO;
+import model.ClassPayroll;
 
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ManagedProperty;

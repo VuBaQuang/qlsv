@@ -1,6 +1,7 @@
 package dao;
 
 
+import model.ClassPayroll;
 import org.hibernate.Session;
 import org.hibernate.query.Query;
 import utils.HibernateUtils;

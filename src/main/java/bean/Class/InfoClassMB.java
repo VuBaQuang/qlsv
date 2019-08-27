@@ -1,6 +1,8 @@
 package bean.Class;
 
 import dao.ClassDAO;
+import model.ClassPayroll;
+import model.Student;
 
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
