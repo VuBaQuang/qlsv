@@ -1,5 +1,6 @@
 package dao;
 
+import model.Subject;
 import org.hibernate.Session;
 import utils.HibernateUtils;
 
@@ -12,13 +13,13 @@ import java.util.List;
 
 public class SubjectDAO {
 
-    public  List<Subject> findAll() {
+    public List<Subject> findAll() {
         Session s = HibernateUtils.getSessionFactory().openSession();
         List<Subject> list = new ArrayList<>();
         try {
             s.beginTransaction();
             Query query = s.createQuery("from Subject");
-            list =  query.getResultList();
+            list = query.getResultList();
             s.getTransaction().commit();
         } catch (Exception e) {
             e.printStackTrace();
@@ -26,9 +27,10 @@ public class SubjectDAO {
         }
         return list;
     }
-    public  Subject getByName(String name) {
+
+    public Subject getByName(String name) {
         Session s = HibernateUtils.getSessionFactory().openSession();
-        Subject result =  null;
+        Subject result = null;
         try {
             s.beginTransaction();
             CriteriaBuilder builder = s.getCriteriaBuilder();
@@ -42,12 +44,11 @@ public class SubjectDAO {
         } catch (Exception e) {
             e.printStackTrace();
             s.getTransaction().rollback();
-        }finally {
+        } finally {
             s.close();
         }
         return result;
     }
-
 
     public void create(Subject subject) {
         Session s = HibernateUtils.getSessionFactory().openSession();
@@ -72,6 +73,7 @@ public class SubjectDAO {
             s.getTransaction().rollback();
         }
     }
+
     public void delete(Subject subject) {
         Session s = HibernateUtils.getSessionFactory().openSession();
         try {

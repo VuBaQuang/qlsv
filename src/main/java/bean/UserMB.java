@@ -1,6 +1,7 @@
 package bean;
 
 import dao.UserDAO;
+import model.User;
 import org.primefaces.PrimeFaces;
 
 import javax.faces.application.FacesMessage;

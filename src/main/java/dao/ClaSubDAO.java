@@ -1,5 +1,8 @@
 package dao;
 
+import model.ClassCredit;
+import model.ClassSubject;
+import model.Subject;
 import org.hibernate.Session;
 import utils.HibernateUtils;
 
@@ -13,13 +16,13 @@ import java.util.List;
 public class ClaSubDAO {
 
 
-    public  List<ClassSubject> findAll() {
+    public List<ClassSubject> findAll() {
         Session s = HibernateUtils.getSessionFactory().openSession();
         List<ClassSubject> list = new ArrayList<>();
         try {
             s.beginTransaction();
             Query query = s.createQuery("from ClassSubject ");
-            list =  query.getResultList();
+            list = query.getResultList();
             s.getTransaction().commit();
         } catch (Exception e) {
             e.printStackTrace();
@@ -29,9 +32,10 @@ public class ClaSubDAO {
         }
         return list;
     }
-    public  List<ClassSubject> findBySub(Subject subject) {
+
+    public List<ClassSubject> findBySub(Subject subject) {
         Session s = HibernateUtils.getSessionFactory().openSession();
-        List<ClassSubject> list =  null;
+        List<ClassSubject> list = null;
         try {
             s.beginTransaction();
             CriteriaBuilder builder = s.getCriteriaBuilder();
@@ -46,14 +50,14 @@ public class ClaSubDAO {
         } catch (Exception e) {
             e.printStackTrace();
             s.getTransaction().rollback();
-        }finally {
+        } finally {
             s.close();
         }
         return list;
     }
 
 
-    public  ClassSubject findById(int id) {
+    public ClassSubject findById(int id) {
         Session s = HibernateUtils.getSessionFactory().openSession();
         ClassSubject classSubject = new ClassSubject();
         try {
@@ -68,9 +72,10 @@ public class ClaSubDAO {
         }
         return classSubject;
     }
-    public  List<ClassSubject> getSubjectByClass(ClassCredit classCredit) {
+
+    public List<ClassSubject> getSubjectByClass(ClassCredit classCredit) {
         Session s = HibernateUtils.getSessionFactory().openSession();
-        List<ClassSubject> list =  null;
+        List<ClassSubject> list = null;
         try {
             s.beginTransaction();
             CriteriaBuilder builder = s.getCriteriaBuilder();
@@ -85,7 +90,7 @@ public class ClaSubDAO {
         } catch (Exception e) {
             e.printStackTrace();
             s.getTransaction().rollback();
-        }finally {
+        } finally {
             s.close();
         }
         return list;
@@ -103,7 +108,7 @@ public class ClaSubDAO {
             e.printStackTrace();
             s.getTransaction().rollback();
             return null;
-        }finally {
+        } finally {
             s.close();
         }
     }

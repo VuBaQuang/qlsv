@@ -14,13 +14,13 @@ import java.util.List;
 
 public class ClassDAO {
 
-    public  static List<ClassPayroll> findAll() {
+    public static List<ClassPayroll> findAll() {
         Session s = HibernateUtils.getSessionFactory().openSession();
         List<ClassPayroll> list = new ArrayList<>();
         try {
             s.beginTransaction();
             javax.persistence.Query query = s.createQuery("from ClassPayroll");
-            list =  query.getResultList();
+            list = query.getResultList();
             s.getTransaction().commit();
         } catch (Exception e) {
             e.printStackTrace();
@@ -79,6 +79,7 @@ public class ClassDAO {
             s.close();
         }
     }
+
     public void delete(ClassPayroll aClass) {
         Session s = HibernateUtils.getSessionFactory().openSession();
         try {
@@ -92,6 +93,7 @@ public class ClassDAO {
             s.close();
         }
     }
+
     public ClassPayroll getClassByName(String name) {
         Session s = HibernateUtils.getSessionFactory().openSession();
         ClassPayroll result = null;
@@ -102,7 +104,7 @@ public class ClassDAO {
             Root<ClassPayroll> root = query.from(ClassPayroll.class);
             query.select(root).where(builder.equal(root.get("name"), name));
             Query<ClassPayroll> q = s.createQuery(query);
-             result = q.getSingleResult();
+            result = q.getSingleResult();
 
             s.getTransaction().commit();
         } catch (Exception e) {

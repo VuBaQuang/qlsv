@@ -3,7 +3,10 @@
  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd">
 
  <display-name>QLSV</display-name>
-
+ <context-param>
+  <param-name>primefaces.THEME</param-name>
+  <param-value>none</param-value>
+ </context-param>
  <context-param>
   <param-name>javax.faces.PROJECT_STAGE</param-name>
   <param-value>Development</param-value>
@@ -33,7 +36,7 @@
  </servlet-mapping>
  <!-- Welcome page -->
  <welcome-file-list>
-  <welcome-file>faces/admin/classsubject/view.xhtml</welcome-file>
+  <welcome-file>faces/admin/classsubject/add.xhtml</welcome-file>
  </welcome-file-list>
 
 </web-app>

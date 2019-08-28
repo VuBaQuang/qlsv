@@ -1,0 +1,68 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:pe="http://primefaces.org/ui/extensions"
+                xmlns:ui="http://java.sun.com/jsf/facelets">
+
+    <div align="center">
+        <br/>
+        <h:outputText value="New class subject" styleClass="contentsTitle"/>
+        <f:event listener="#{studentsMB.rsStu()}" type="preRenderView"/>
+        <br/><br/>
+        <h:form acceptcharset="UTF-8">
+            <h:panelGrid columns="2">
+                Lớp:
+                <h:selectOneMenu id="classe" value="#{claSubMB.classe}" style="width:160px">
+                    <f:selectItem itemLabel="Chọn" itemValue="" noSelectionOption="true"/>
+                    <f:selectItems value="#{claSubMB.listClass}"/>
+                </h:selectOneMenu>
+
+                Môn học:
+                <h:selectOneMenu id="subject" value="#{claSubMB.sub}" style="width:160px">
+                    <f:selectItem itemLabel="Chọn" itemValue="" noSelectionOption="true"/>
+                    <f:selectItems value="#{claSubMB.listSubject}"/>
+                </h:selectOneMenu>
+
+                Khoảng thời gian:
+                <p:datePicker id="range" selectionMode="range" value="#{claSubMB.range}" readonlyInput="true"
+                              numberOfMonths="3"/>
+                Ngày:
+                <h:selectManyCheckbox id="day" value="#{claSubMB.day}">
+                    <f:selectItem itemValue="2" itemLabel="Thứ 2"/>
+                    <f:selectItem itemValue="3" itemLabel="Thứ 3"/>
+                    <f:selectItem itemValue="4" itemLabel="Thứ 4"/>
+                    <f:selectItem itemValue="5" itemLabel="Thứ 5"/>
+                    <f:selectItem itemValue="6" itemLabel="Thứ 6"/>
+                </h:selectManyCheckbox>
+                Thời gian:
+                <h:panelGrid>
+                    <h:outputText value="Start"/>
+                    <pe:timePicker value="#{claSubMB.classSubject.todStart}" widgetVar="spinnerTimeWidget"
+                                           label="Start"/>
+                    <h:outputText value="End"/>
+                    <pe:timePicker value="#{claSubMB.classSubject.todEnd}" widgetVar="spinnerTimeWidget"
+                                           label="End"/>
+                </h:panelGrid>
+                Sĩ số:
+                <p:spinner id="basic" value="#{claSubMB.classSubject.size}" style="width:160px;  " min="0"/>
+
+                Ghi chú:
+                <h:inputText id="note" value="#{claSubMB.classSubject.note}"/>
+            </h:panelGrid>
+            <div align="center">
+                <h:message for="name" style="color:red"/>
+                <br/>
+                <h:message for="code" style="color:red"/>
+                <br/>
+                <h:message for="email" style="color:red"/>
+            </div>
+
+            <div align="center">
+                <h:commandButton value="Cancel" immediate="true" action="student"/>
+                <h:commandButton value="Save" action="#{studentsMB.addStudent(studentsMB.redirect)}"/>
+            </div>
+        </h:form>
+    </div>
+
+</ui:composition>

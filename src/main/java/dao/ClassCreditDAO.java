@@ -1,5 +1,6 @@
 package dao;
 
+import model.ClassCredit;
 import org.hibernate.Session;
 import utils.HibernateUtils;
 
@@ -17,7 +18,7 @@ public class ClassCreditDAO {
         try {
             s.beginTransaction();
             Query query = s.createQuery("from ClassCredit ");
-            list =  query.getResultList();
+            list = query.getResultList();
             s.getTransaction().commit();
         } catch (Exception e) {
             e.printStackTrace();
@@ -29,7 +30,7 @@ public class ClassCreditDAO {
     }
 
 
-    public  ClassCredit findById(int id) {
+    public ClassCredit findById(int id) {
         Session s = HibernateUtils.getSessionFactory().openSession();
         ClassCredit classCredit = new ClassCredit();
         try {
@@ -44,9 +45,10 @@ public class ClassCreditDAO {
         }
         return classCredit;
     }
-    public  ClassCredit getIdByName(String name) {
+
+    public ClassCredit getIdByName(String name) {
         Session s = HibernateUtils.getSessionFactory().openSession();
-        ClassCredit result =  null;
+        ClassCredit result = null;
         try {
             s.beginTransaction();
             CriteriaBuilder builder = s.getCriteriaBuilder();
@@ -60,7 +62,7 @@ public class ClassCreditDAO {
         } catch (Exception e) {
             e.printStackTrace();
             s.getTransaction().rollback();
-        }finally {
+        } finally {
             s.close();
         }
         return result;
@@ -78,7 +80,7 @@ public class ClassCreditDAO {
             e.printStackTrace();
             s.getTransaction().rollback();
             return null;
-        }finally {
+        } finally {
             s.close();
         }
     }

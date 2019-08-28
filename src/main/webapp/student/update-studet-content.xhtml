@@ -9,8 +9,8 @@
     <div align="center">
         <br/>
         <h:outputText value="Update student" styleClass="contentsTitle"/>
-        <f:event listener="#{editStudentMB.setDistricts}" type="preRenderView" />
-        <f:event listener="#{editStudentMB.setWards}" type="preRenderView" />
+        <f:event listener="#{editStudentMB.setDistricts}" type="preRenderView"/>
+        <f:event listener="#{editStudentMB.setWards}" type="preRenderView"/>
         <br/><br/>
         <h:form>
             <h:panelGrid columns="2">
@@ -19,7 +19,7 @@
                              required="true"
                              requiredMessage="Họ tên không được để trống"/>
                 Tuổi:
-                <p:spinner id="basic" value="#{editStudentMB.getStudent().age}" style="width:160px;  " min="0" />
+                <p:spinner id="basic" value="#{editStudentMB.getStudent().age}" style="width:160px;  " min="0"/>
                 Mã sinh viên:
                 <h:inputText id="code" value="#{editStudentMB.getStudent().code}"
                              required="true"

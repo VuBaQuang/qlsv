@@ -1,5 +1,6 @@
 package dao;
 
+import model.Student;
 import org.hibernate.Session;
 import utils.HibernateUtils;
 
@@ -19,7 +20,7 @@ public class StudentDAO {
         try {
             s.beginTransaction();
             Query query = s.createQuery("from Student ");
-            list =  query.getResultList();
+            list = query.getResultList();
             s.getTransaction().commit();
         } catch (Exception e) {
             e.printStackTrace();
@@ -34,7 +35,7 @@ public class StudentDAO {
         System.out.println(findAll().get(0).getName());
     }
 
-    public  Student findById(int id) {
+    public Student findById(int id) {
         Session s = HibernateUtils.getSessionFactory().openSession();
         Student student = new Student();
         try {
@@ -49,9 +50,10 @@ public class StudentDAO {
         }
         return student;
     }
-    public  List<Student> getStudentNone() {
+
+    public List<Student> getStudentNone() {
         Session s = HibernateUtils.getSessionFactory().openSession();
-        List<Student> list =  null;
+        List<Student> list = null;
         try {
             s.beginTransaction();
             CriteriaBuilder builder = s.getCriteriaBuilder();
@@ -64,7 +66,7 @@ public class StudentDAO {
         } catch (Exception e) {
             e.printStackTrace();
             s.getTransaction().rollback();
-        }finally {
+        } finally {
             s.close();
         }
         return list;
@@ -82,7 +84,7 @@ public class StudentDAO {
             e.printStackTrace();
             s.getTransaction().rollback();
             return null;
-        }finally {
+        } finally {
             s.close();
         }
     }

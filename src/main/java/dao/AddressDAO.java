@@ -1,5 +1,8 @@
 package dao;
 
+import model.District;
+import model.Province;
+import model.Ward;
 import org.hibernate.Session;
 import org.hibernate.query.Query;
 import utils.HibernateUtils;
@@ -46,6 +49,7 @@ public class AddressDAO {
         }
         return list;
     }
+
     public List<Ward> getWardByDistrict(District district) {
         Session s = HibernateUtils.getSessionFactory().openSession();
         List<Ward> list = new ArrayList<>();

@@ -22,9 +22,13 @@ public class ClaSubMB {
     private ClassCreditDAO classCreditDAO = new ClassCreditDAO();
     private SubjectDAO subjectDAO = new SubjectDAO();
 
+    private Date[] range;
     private String sub;
+    private String classe;
+    private String[] day;
 
     private Map<String, String> listSubject;
+    private Map<String, String> listClass;
     private List<ClassSubject> classSubjects;
 
     @PostConstruct
@@ -33,12 +37,49 @@ public class ClaSubMB {
         for (Subject subject : subjectDAO.findAll()) {
             listSubject.put(subject.getName(), subject.getName());
         }
+        listClass = new LinkedHashMap<>();
+        for (ClassCredit classCredit : classCreditDAO.findAll()) {
+            listClass.put(classCredit.getName(), classCredit.getName());
+        }
 
     }
 
     public void updateClassSubjects() {
         Subject subject = subjectDAO.getByName(sub);
         classSubjects = claSubDAO.findBySub(subject);
+    }
+
+
+    public String[] getDay() {
+        return day;
+    }
+
+    public void setDay(String[] day) {
+        this.day = day;
+    }
+
+    public Map<String, String> getListClass() {
+        return listClass;
+    }
+
+    public void setListClass(Map<String, String> listClass) {
+        this.listClass = listClass;
+    }
+
+    public String getClasse() {
+        return classe;
+    }
+
+    public void setClasse(String classe) {
+        this.classe = classe;
+    }
+
+    public Date[] getRange() {
+        return range;
+    }
+
+    public void setRange(Date[] range) {
+        this.range = range;
     }
 
     public List<ClassSubject> getClassSubjects() {
@@ -66,7 +107,6 @@ public class ClaSubMB {
     }
 
     public Map<String, String> getListSubject() {
-
         return listSubject;
     }
 
@@ -94,23 +134,7 @@ public class ClaSubMB {
         this.registersub = registersub;
     }
 
-
     public void setListSubject(Map<String, String> listSubject) {
         this.listSubject = listSubject;
     }
-
-    public Map<String, String> getListSub(String nameClass) {
-        List<ClassSubject> classSubjects = claSubDAO.getSubjectByClass(classCreditDAO.getIdByName(nameClass));
-        Set<String> set = new LinkedHashSet<>();
-        for (ClassSubject classSubject : classSubjects) {
-            set.add(classSubject.getSubject().getName());
-        }
-        Map<String, String> map = new LinkedHashMap<>();
-        for (String s : set) {
-            map.put(s, s);
-        }
-        return map;
-    }
-
-
 }
