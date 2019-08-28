@@ -9,40 +9,44 @@
     <br/>
     <h:outputText value="Class list" styleClass="contentsTitle"/>
     <h:form acceptcharset="UTF-8">
-        <h:dataTable value="#{classesMB.listClasses}" var="classe"
+        <h:dataTable value="#{subjectsMB.subjects}" var="subject"
                      styleClass="table"
                      headerClass="table-header"
                      footerClass="table-footer"
                      rowClasses="table-odd-row,table-even-row">
             <h:column>
-                <f:facet name="header">STT</f:facet>
-                #{classesMB.stt}
+                <f:facet name="header">ID</f:facet>
+                #{subject.id}
             </h:column>
-
             <h:column>
-                <f:facet name="header">Lớp</f:facet>
-                #{classe.name}
+                <f:facet name="header">Mã</f:facet>
+                #{subject.code}
             </h:column>
-
             <h:column>
-                <f:facet name="header">Số sinh viên</f:facet>
-                #{classe.students.size()}
+                <f:facet name="header">Môn học</f:facet>
+                #{subject.name}
             </h:column>
-
+            <h:column>
+                <f:facet name="header">Số tín chỉ</f:facet>
+                #{subject.coefficient}
+            </h:column>
+            <h:column>
+                <f:facet name="header">Ghi chú</f:facet>
+                #{subject.note}
+            </h:column>
             <h:column>
                 <f:facet name="header" colspan="2">Thao tác</f:facet>
-                <h:commandButton value="Info" action="#{classesMB.info(classe)}"/>
-                <h:commandButton value="Delete" action="#{classesMB.delete(classe)}"/>
+                <h:commandButton value="Delete" action="#{subjectsMB.delete(subject)}"/>
             </h:column>
             <f:facet name="footer">
-                <h:outputText value="Total of class: #{classesMB.listClasses.size()}"/>
+                <h:outputText value="Total of subject: #{subjectsMB.subjects.size()}"/>
             </f:facet>
 
         </h:dataTable>
 
         <br/>
 
-        <h:commandButton value="Create class" action="create"/>
+        <h:commandButton value="Create subject" action="add"/>
 
 
     </h:form>

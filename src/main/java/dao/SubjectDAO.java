@@ -4,7 +4,9 @@ import model.Subject;
 import org.hibernate.Session;
 import utils.HibernateUtils;
 
-import javax.persistence.Query;
+import org.hibernate.query.Query;
+
+import javax.persistence.NoResultException;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
@@ -24,6 +26,8 @@ public class SubjectDAO {
         } catch (Exception e) {
             e.printStackTrace();
             s.getTransaction().rollback();
+        } finally {
+            s.close();
         }
         return list;
     }
@@ -38,10 +42,13 @@ public class SubjectDAO {
             Root<Subject> root = query.from(Subject.class);
             query.select(root).where(builder.equal(root.get("name"), name));
             //query.select(root).where(builder.isNull(root.get("classPayroll")));
-            org.hibernate.query.Query<Subject> q = s.createQuery(query);
+            Query<Subject> q = s.createQuery(query);
             result = q.getSingleResult();
             s.getTransaction().commit();
-        } catch (Exception e) {
+        }catch (NoResultException e){
+            System.out.println("No result !");
+        }
+        catch (Exception e) {
             e.printStackTrace();
             s.getTransaction().rollback();
         } finally {
@@ -59,6 +66,8 @@ public class SubjectDAO {
         } catch (Exception e) {
             e.printStackTrace();
             s.getTransaction().rollback();
+        } finally {
+            s.close();
         }
     }
 
@@ -71,6 +80,8 @@ public class SubjectDAO {
         } catch (Exception e) {
             e.printStackTrace();
             s.getTransaction().rollback();
+        } finally {
+            s.close();
         }
     }
 
@@ -83,6 +94,8 @@ public class SubjectDAO {
         } catch (Exception e) {
             e.printStackTrace();
             s.getTransaction().rollback();
+        } finally {
+            s.close();
         }
     }
 }

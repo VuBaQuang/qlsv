@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+<div align="center">
+    <br/>
+
+    <h:outputText id="title" value="Students list of #{claSubMB.classe} - #{claSubMB.sub}" styleClass="contentsTitle"/>
+    <h:form acceptcharset="UTF-8">
+
+        Môn học:
+        <h:selectOneMenu id="subject" value="#{claSubMB.sub}" style="width:160px">
+            <p:ajax update="students,title" listener="#{claSubMB.updateListStudent()}"/>
+            <f:selectItem itemLabel="Chọn" itemValue="" noSelectionOption="true"/>
+            <f:selectItems value="#{claSubMB.listSubject}"/>
+        </h:selectOneMenu>
+        Lớp:
+        <h:selectOneMenu id="classe" value="#{claSubMB.classe}" style="width:160px">
+            <p:ajax update="students,title" listener="#{claSubMB.updateListStudent()}"/>
+            <f:selectItem itemLabel="Chọn" itemValue="" noSelectionOption="true"/>
+            <f:selectItems value="#{claSubMB.listClass}"/>
+        </h:selectOneMenu>
+        <br/>
+        <br/>
+
+        <h:dataTable id="students" value="#{claSubMB.listStudent}" var="student"
+                     styleClass="table"
+                     headerClass="table-header"
+                     footerClass="table-footer"
+                     rowClasses="table-odd-row,table-even-row">
+            <h:column>
+                <f:facet name="header">Id</f:facet>
+                #{student.id}
+            </h:column>
+
+            <h:column>
+                <f:facet name="header">Mã sinh viên</f:facet>
+                #{student.code}
+            </h:column>
+            <h:column>
+                <f:facet name="header">Họ tên</f:facet>
+                #{student.name}
+            </h:column>
+            <h:column>
+                <f:facet name="header">Lớp</f:facet>
+                #{student.classPayroll.name}
+            </h:column>
+            <h:column>
+                <f:facet name="header">Tuổi</f:facet>
+                #{student.age}
+            </h:column>
+            <h:column>
+                <f:facet name="header">Địa chỉ</f:facet>
+                #{student.address}
+            </h:column>
+            <h:column>
+                <f:facet name="header">Email</f:facet>
+                #{student.email}
+            </h:column>
+            <h:column>
+                <f:facet name="header">Ghi chú</f:facet>
+                #{student.note}
+            </h:column>
+            <h:column>
+                <f:facet name="header" colspan="2">Thao tác</f:facet>
+                <h:commandButton value="Xóa" action="#{claSubMB.deleteStuClaSub(student)}"/>
+            </h:column>
+            <f:facet name="footer">
+                <h:outputText value="Total of student: #{claSubMB.listStudent.size()}"/>
+            </f:facet>
+        </h:dataTable>
+        <br/>
+        <h:commandButton value="Add Student" action="add?faces-redirect=true?includeViewParams=true"/>
+    </h:form>
+</div>
+</html>

@@ -47,6 +47,10 @@
                     #{student.email}
                 </h:column>
                 <h:column>
+                    <f:facet name="header">Điểm trung bình</f:facet>
+                    #{studentsMB.score(student)}
+                </h:column>
+                <h:column>
                     <f:facet name="header">Ghi chú</f:facet>
                     #{student.note}
                 </h:column>

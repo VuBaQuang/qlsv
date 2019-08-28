@@ -163,7 +163,7 @@ public class ClassSubject implements java.io.Serializable {
 		this.registered = registered;
 	}
 
-	@OneToMany(fetch = FetchType.LAZY, mappedBy = "classSubject")
+	@OneToMany(fetch = FetchType.EAGER, mappedBy = "classSubject")
 	public Set<Registersub> getRegistersubs() {
 		return this.registersubs;
 	}

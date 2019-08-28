@@ -13,7 +13,7 @@ import java.util.List;
 @ManagedBean
 @SessionScoped
 public class ClassesMB implements Serializable {
-    private ClassPayroll class_;
+    private ClassPayroll class_ = new ClassPayroll();
     private List<ClassPayroll> listClasses;
     private int stt = 0;
     private ClassDAO classesDAO = new ClassDAO();
@@ -50,7 +50,7 @@ public class ClassesMB implements Serializable {
     }
 
     public void delete(ClassPayroll classes) {
-
+        classesDAO.delete(classes);
     }
 
 

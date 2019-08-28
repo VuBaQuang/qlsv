@@ -14,7 +14,7 @@ import java.util.List;
 
 public class ClassDAO {
 
-    public static List<ClassPayroll> findAll() {
+    public  List<ClassPayroll> findAll() {
         Session s = HibernateUtils.getSessionFactory().openSession();
         List<ClassPayroll> list = new ArrayList<>();
         try {
@@ -31,9 +31,6 @@ public class ClassDAO {
         return list;
     }
 
-    public static void main(String[] args) {
-        System.out.println(findAll().get(0).getName());
-    }
 
     public void create(ClassPayroll aClass) {
         Session s = HibernateUtils.getSessionFactory().openSession();
@@ -54,6 +51,7 @@ public class ClassDAO {
         ClassPayroll aClass = null;
         try {
             s.beginTransaction();
+
             aClass = s.get(ClassPayroll.class, id);
             s.getTransaction().commit();
         } catch (Exception e) {

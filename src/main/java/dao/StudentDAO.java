@@ -14,7 +14,7 @@ import java.util.List;
 public class StudentDAO {
 
 
-    public static List<Student> findAll() {
+    public  List<Student> findAll() {
         Session s = HibernateUtils.getSessionFactory().openSession();
         List<Student> list = new ArrayList<>();
         try {
@@ -31,9 +31,6 @@ public class StudentDAO {
         return list;
     }
 
-    public static void main(String[] args) {
-        System.out.println(findAll().get(0).getName());
-    }
 
     public Student findById(int id) {
         Session s = HibernateUtils.getSessionFactory().openSession();

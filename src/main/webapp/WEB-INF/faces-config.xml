@@ -11,7 +11,7 @@
         <from-view-id>/admin/class/info.xhtml</from-view-id>
         <navigation-case>
             <from-outcome>update-student</from-outcome>
-            <to-view-id>/student/update-student.xhtml</to-view-id>
+            <to-view-id>/admin/student/update-student.xhtml/update-student.xhtml</to-view-id>
         </navigation-case>
     </navigation-rule>
 
@@ -19,7 +19,7 @@
         <from-view-id>/admin/class/info.xhtml</from-view-id>
         <navigation-case>
             <from-outcome>add-student</from-outcome>
-            <to-view-id>/student/add-student.xhtml</to-view-id>
+            <to-view-id>/admin/student/add-student.xhtml/add-student.xhtml</to-view-id>
         </navigation-case>
     </navigation-rule>
 

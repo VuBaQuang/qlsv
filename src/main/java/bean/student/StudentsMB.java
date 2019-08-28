@@ -2,6 +2,7 @@ package bean.student;
 
 import dao.AddressDAO;
 import dao.ClassDAO;
+import dao.RegistersubDAO;
 import dao.StudentDAO;
 import model.*;
 
@@ -15,6 +16,7 @@ import java.util.*;
 @ManagedBean
 @SessionScoped
 public class StudentsMB implements Serializable {
+    private Registersub registersub = new Registersub();
     private Student student = new Student();
     private List<Student> listStudent = new ArrayList<>();
     private List<Student> listStudentNone = new ArrayList<>();
@@ -30,12 +32,29 @@ public class StudentsMB implements Serializable {
     private Map<String, String> wards;
     private AddressDAO addressDAO = new AddressDAO();
     private ClassDAO classesDAO = new ClassDAO();
-    private StudentDAO studentsDAO= new StudentDAO();
+    private StudentDAO studentsDAO = new StudentDAO();
+    private RegistersubDAO registersubDAO = new RegistersubDAO();
     String redirect = "student";
 
     public void rsStu() {
         student = new Student();
-        province=null;
+        province = null;
+    }
+
+
+    public double score(Student student) {
+        double sum = 0;
+        int t = 0;
+        double avg = 0;
+        for (Registersub registersub : registersubDAO.findByStudent(student)) {
+            sum += registersub.getScore() != null ? registersub.getScore()*registersub.getClassSubject().getSubject().getCoefficient() : 0;
+            t+=1*registersub.getClassSubject().getSubject().getCoefficient();
+        }
+        if (t == 0) {
+            return 0;
+        } else {
+            return sum / t;
+        }
     }
 
     public List<Student> getListStudentNone() {
@@ -64,12 +83,12 @@ public class StudentsMB implements Serializable {
     }
 
 
-    public void add2Class(Student students, ClassPayroll classes){
+    public void add2Class(Student students, ClassPayroll classes) {
         students.setClassPayroll(classes);
         studentsDAO.update(students);
     }
 
-    public void delStuClass(Student students){
+    public void delStuClass(Student students) {
         students.setClassPayroll(null);
         studentsDAO.update(students);
     }
@@ -105,6 +124,7 @@ public class StudentsMB implements Serializable {
         editStudentMB.setProvince(province);
         editStudentMB.setDistrict(district);
         editStudentMB.setWard(ward);
+        editStudentMB.setStudentClass(student.getClassPayroll().getName());
         return "update-student";
     }
 
@@ -246,9 +266,8 @@ public class StudentsMB implements Serializable {
         return wards;
     }
 
-
+@PostConstruct
     public void setWards() {
-        System.out.println("hiih");
         wards = districWard.get(district);
     }
 

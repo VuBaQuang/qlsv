@@ -5,7 +5,9 @@ import org.hibernate.Session;
 import utils.HibernateUtils;
 
 import javax.persistence.NoResultException;
-import javax.persistence.Query;
+
+import org.hibernate.query.Query;
+
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
@@ -40,7 +42,7 @@ public class UserDAO {
             CriteriaQuery<User> query = builder.createQuery(User.class);
             Root<User> root = query.from(User.class);
             query.select(root).where(builder.equal(root.get("user"), user));
-            org.hibernate.query.Query<User> q = s.createQuery(query);
+            Query<User> q = s.createQuery(query);
             result = q.getSingleResult();
             s.getTransaction().commit();
         } catch (NoResultException e) {

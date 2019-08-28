@@ -12,15 +12,15 @@
         <h:outputText value="Chi tiết lớp học - môn học"/>
         <br/><br/>
         <h:form>
+            Môn học:
+            <h:selectOneMenu id="classe" value="#{claSubMB.sub}" style="width:160px">
+                <p:ajax update="subject" listener="#{claSubMB.updateClassSubjects()}"/>
+                <f:selectItem itemLabel="Chọn" itemValue="" noSelectionOption="true"/>
+                <f:selectItems value="#{claSubMB.listSubject}"/>
+            </h:selectOneMenu>
+            <br/>
+            <br/>
             <h:panelGrid columns="2">
-                Môn học
-                <h:selectOneMenu id="classe" value="#{claSubMB.sub}" style="width:160px">
-                    <p:ajax update="subject" listener="#{claSubMB.updateClassSubjects()}"/>
-                    <f:selectItem itemLabel="Chọn" itemValue="" noSelectionOption="true"/>
-                    <f:selectItems value="#{claSubMB.listSubject}"/>
-                </h:selectOneMenu>
-                <br/>
-                <br/>
                 <h:dataTable id="subject" value="#{claSubMB.classSubjects}" var="value"
                              styleClass="table"
                              headerClass="table-header"
@@ -61,14 +61,15 @@
                     </h:column>
                     <h:column>
                         <f:facet name="header" colspan="2">Thao tác</f:facet>
-                        <h:commandButton value="Sửa" />
-                        <h:commandButton value="Xóa" />
+                        <h:commandButton value="Xóa" action="#{claSubMB.delete(value)}"/>
                     </h:column>
                     <f:facet name="footer">
                         <h:outputText value="Total of class: #{claSubMB.classSubjects.size()}"/>
                     </f:facet>
                 </h:dataTable>
             </h:panelGrid>
+            <br/>
+            <h:commandButton value="Create" action="add?faces-redirect=true"/>
         </h:form>
     </div>
 </ui:composition>

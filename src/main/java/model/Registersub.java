@@ -44,7 +44,7 @@ public class Registersub implements java.io.Serializable {
 		this.id = id;
 	}
 
-	@ManyToOne(fetch = FetchType.LAZY)
+	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "class_sub_id")
 	public ClassSubject getClassSubject() {
 		return this.classSubject;
@@ -54,7 +54,7 @@ public class Registersub implements java.io.Serializable {
 		this.classSubject = classSubject;
 	}
 
-	@ManyToOne(fetch = FetchType.LAZY)
+	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "student_id")
 	public Student getStudent() {
 		return this.student;

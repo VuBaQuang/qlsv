@@ -4,7 +4,9 @@ import model.ClassCredit;
 import org.hibernate.Session;
 import utils.HibernateUtils;
 
-import javax.persistence.Query;
+import org.hibernate.query.Query;
+
+import javax.persistence.NoResultException;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
@@ -56,9 +58,12 @@ public class ClassCreditDAO {
             Root<ClassCredit> root = query.from(ClassCredit.class);
             query.select(root).where(builder.equal(root.get("name"), name));
             //query.select(root).where(builder.isNull(root.get("classPayroll")));
-            org.hibernate.query.Query<ClassCredit> q = s.createQuery(query);
+            Query<ClassCredit> q = s.createQuery(query);
             result = q.getSingleResult();
             s.getTransaction().commit();
+        } catch (NoResultException e) {
+            System.out.println("No result ! ");
+            s.getTransaction().rollback();
         } catch (Exception e) {
             e.printStackTrace();
             s.getTransaction().rollback();
