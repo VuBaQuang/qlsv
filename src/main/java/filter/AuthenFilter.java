@@ -8,20 +8,18 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
 
-//@WebFilter(urlPatterns ={"/faces/student/*","/faces/admin/*"})
+@WebFilter(urlPatterns ={"/faces/user/*","/faces/admin/*"})
 public class AuthenFilter implements Filter {
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
         System.out.println("LogFilter init!");
     }
-
     @Override
     public void doFilter(ServletRequest servletRequest, ServletResponse resp, FilterChain chain) throws IOException, ServletException {
         HttpServletRequest request = (HttpServletRequest) servletRequest;
         HttpServletResponse response = (HttpServletResponse) resp;
         HttpSession session = request.getSession(false);
         String loginURI = request.getContextPath()+ "/";
-        System.out.println(session.getAttribute("user"));
         boolean loggedIn = session != null && session.getAttribute("user") != null;
         boolean loginRequest = request.getRequestURI().equals(loginURI);
         boolean resourceRequest = request.getRequestURI().startsWith(request.getContextPath() + ResourceHandler.RESOURCE_IDENTIFIER);
@@ -30,9 +28,7 @@ public class AuthenFilter implements Filter {
         } else {
             response.sendRedirect(loginURI);
         }
-
     }
-
     @Override
     public void destroy() {
         System.out.println("LogFilter destroy!");

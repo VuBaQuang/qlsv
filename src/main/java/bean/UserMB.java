@@ -7,6 +7,7 @@ import org.primefaces.PrimeFaces;
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.*;
 import javax.faces.context.FacesContext;
+import javax.servlet.http.HttpSession;
 
 @ManagedBean
 @RequestScoped
@@ -30,19 +31,23 @@ public class UserMB {
         this.password = password;
     }
 
-    public void login() {
+    public String login() {
         FacesContext context = FacesContext.getCurrentInstance();
         UserDAO userDAO = new UserDAO();
         User user1 = userDAO.findByName(user);
-        System.out.println(user1);
-        FacesMessage message ;
+        FacesMessage message = null;
         boolean loggedIn = false;
         if (user1 != null) {
             if (user1.getPassword().equals(password)) {
                 loggedIn = true;
                 context.getExternalContext().getSessionMap().put("user", user);
                 context.getExternalContext().getSessionMap().put("rule", user1.getRule());
-                message = new FacesMessage(FacesMessage.SEVERITY_INFO, "Welcome", user);
+                if(user1.getRule().equals("1")){
+                    return "admin";
+                }
+                if(user1.getRule().equals("2")){
+                    return "user";
+                }
             } else {
                 message = new FacesMessage(FacesMessage.SEVERITY_WARN, "Loggin Error", "Invalid password");
             }
@@ -51,5 +56,12 @@ public class UserMB {
         }
         FacesContext.getCurrentInstance().addMessage(null, message);
         PrimeFaces.current().ajax().addCallbackParam("loggedIn", loggedIn);
+        return null;
+    }
+    public String logout(){
+        HttpSession session = (HttpSession) FacesContext.getCurrentInstance()
+                .getExternalContext().getSession(false);
+        session.invalidate();
+        return "login";
     }
 }

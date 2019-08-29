@@ -8,20 +8,24 @@
 
 
     <navigation-rule>
-        <from-view-id>/admin/class/info.xhtml</from-view-id>
+        <from-view-id>/home/login.xhtml</from-view-id>
         <navigation-case>
-            <from-outcome>update-student</from-outcome>
-            <to-view-id>/admin/student/update-student.xhtml/update-student.xhtml</to-view-id>
+            <from-outcome>admin</from-outcome>
+            <to-view-id>/admin/admin.xhtml</to-view-id>
+            <redirect/>
         </navigation-case>
     </navigation-rule>
 
     <navigation-rule>
-        <from-view-id>/admin/class/info.xhtml</from-view-id>
+        <from-view-id>/home/login.xhtml</from-view-id>
         <navigation-case>
-            <from-outcome>add-student</from-outcome>
-            <to-view-id>/admin/student/add-student.xhtml/add-student.xhtml</to-view-id>
+            <from-outcome>user</from-outcome>
+            <to-view-id>/user/view.xhtml</to-view-id>
+            <redirect/>
         </navigation-case>
     </navigation-rule>
+
+
 
 
 </faces-config>
