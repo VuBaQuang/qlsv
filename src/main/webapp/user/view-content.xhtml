@@ -5,120 +5,106 @@
                 xmlns:p="http://primefaces.org/ui"
                 xmlns:fn="http://java.sun.com/jsp/jstl/functions"
                 xmlns:ui="http://java.sun.com/jsf/facelets">
+    <f:event listener="#{studentsMB.getStuUser(userMB.user)}" type="preRenderView"/>
+    <div class="container wrap" align="center">
+        <div class="row">
+            <div class="col-xs-12 col-sm-6 col-md-6 col-md-offset-3">
+                <div class="well well-sm">
+                    <div class="row">
+                        <div class="col-sm-4 col-md-6 col-lg-7">
+                            <img src="https://hinhanhdephd.com/wp-content/uploads/2016/03/hinh-anh-meo-con-de-thuong-nhat-1.jpg"
+                                 alt="" class="img-rounded img-responsive" width="200px" height="200px"/>
+                        </div>
+                        <div class="col-sm-8 col-md-6 col-lg-5">
+                            <h4>#{studentsMB.student.name}</h4>
+                            <small style="margin-bottom: 10px"><cite><i class="far fa-map-marker-alt"/> #{studentsMB.student.address}</cite></small>
+                            <p>
+                                <i style="margin-bottom: 10px; margin-right: 10px" class="far fa-mail-bulk"/>#{studentsMB.student.email}
+                                <br/>
+                                <i style="margin-bottom: 10px; margin-right: 10px" class="fal fa-phone"/>#{studentsMB.student.phone}
+                                <br/>
+                                <i style="margin-bottom: 10px; margin-right: 10px" class="far fa-users-class"/>#{studentsMB.student.classPayroll.name}
+                            </p>
+                            <div class="btn-group">
+                                <i class="fal fa-marker"/> #{studentsMB.avgScore(studentsMB.student)}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <style>
+        .wrap {
+            padding-top: 30px;
+        }
+
+        .glyphicon {
+            margin-bottom: 10px;
+            margin-right: 10px;
+        }
+
+        small {
+            display: block;
+            color: #888;
+        }
+
+        .well {
+            border: 1px solid blue;
+        }
+    </style>
 
     <div align="center">
         <br/>
-        <h:outputText value="Students list" styleClass="contentsTitle"/>
+
         <h:form acceptcharset="UTF-8">
-            <h:dataTable value="#{studentsMB.getListStudent()}" var="student"
-                         styleClass="table"
-                         headerClass="table-header"
-                         footerClass="table-footer"
-                         rowClasses="table-odd-row,table-even-row">
-                <h:column>
-                    <f:facet name="header">Id</f:facet>
-                    #{student.id}
-                </h:column>
-
-                <h:column>
-                    <f:facet name="header">Mã sinh viên</f:facet>
-                    #{student.code}
-                </h:column>
-                <h:column>
-                    <f:facet name="header">Họ tên</f:facet>
-                    #{student.name}
-                </h:column>
-                <h:column>
-                    <f:facet name="header">Lớp</f:facet>
-                    #{student.classPayroll.name}
-                </h:column>
-                <h:column>
-                    <f:facet name="header">Tuổi</f:facet>
-                    #{student.age}
-                </h:column>
-
-                <h:column>
-                    <f:facet name="header">Địa chỉ</f:facet>
-                    #{student.address}
-                </h:column>
-
-                <h:column>
-                    <f:facet name="header">Email</f:facet>
-                    #{student.email}
-                </h:column>
-                <h:column>
-                    <f:facet name="header">Điểm trung bình</f:facet>
-                    #{studentsMB.score(student)}
-                </h:column>
-                <h:column>
-                    <f:facet name="header">Ghi chú</f:facet>
-                    #{student.note}
-                </h:column>
-                <h:column>
-                    <f:facet name="header" colspan="2">Thao tác</f:facet>
-                    <h:commandButton value="Sửa" action="#{studentsMB.edit(student)}"/>
-                    <h:commandButton value="Xóa" action="#{studentsMB.delete(student)}"/>
-                </h:column>
-                <f:facet name="footer">
-                    <h:outputText value="Total of student: #{studentsMB.getListStudent().size()}"/>
-                </f:facet>
-            </h:dataTable>
             <br/>
-            <h:dataTable value="#{studentsMB.getListStudent()}" var="student"
+            <br/>
+            <h:outputText value="Subject list" styleClass="contentsTitle"/>
+            <h:dataTable value="#{studentsMB.getClassSubjectLists()}" var="value"
                          styleClass="table"
                          headerClass="table-header"
                          footerClass="table-footer"
                          rowClasses="table-odd-row,table-even-row">
                 <h:column>
-                    <f:facet name="header">Id</f:facet>
-                    #{student.id}
+                    <f:facet name="header">ID</f:facet>
+                    #{value.id}
                 </h:column>
 
-                <h:column>
-                    <f:facet name="header">Mã sinh viên</f:facet>
-                    #{student.code}
-                </h:column>
-                <h:column>
-                    <f:facet name="header">Họ tên</f:facet>
-                    #{student.name}
-                </h:column>
                 <h:column>
                     <f:facet name="header">Lớp</f:facet>
-                    #{student.classPayroll.name}
+                    #{value.classCredit.name}
                 </h:column>
                 <h:column>
-                    <f:facet name="header">Tuổi</f:facet>
-                    #{student.age}
-                </h:column>
-
-                <h:column>
-                    <f:facet name="header">Địa chỉ</f:facet>
-                    #{student.address}
-                </h:column>
-
-                <h:column>
-                    <f:facet name="header">Email</f:facet>
-                    #{student.email}
+                    <f:facet name="header">Môn học</f:facet>
+                    #{value.subject.name}
                 </h:column>
                 <h:column>
-                    <f:facet name="header">Điểm trung bình</f:facet>
-                    #{studentsMB.score(student)}
+                    <f:facet name="header">Số tín chỉ</f:facet>
+                    #{value.subject.coefficient}
                 </h:column>
                 <h:column>
-                    <f:facet name="header">Ghi chú</f:facet>
-                    #{student.note}
+                    <f:facet name="header">Khoảng thời gian</f:facet>
+                    #{value.startTime.toString().replaceAll("-","/")} -  #{value.endTime.toString().replaceAll("-","/")}
                 </h:column>
                 <h:column>
-                    <f:facet name="header" colspan="2">Thao tác</f:facet>
-                    <h:commandButton value="Sửa" action="#{studentsMB.edit(student)}"/>
-                    <h:commandButton value="Xóa" action="#{studentsMB.delete(student)}"/>
+                    <f:facet name="header">Thứ</f:facet>
+                    #{value.day}
+                </h:column>
+                <h:column>
+                    <f:facet name="header">Thời gian</f:facet>
+                    #{value.todStart} -  #{value.todEnd}
+                </h:column>
+                <h:column>
+                    <f:facet name="header" colspan="2">Điểm</f:facet>
+                    #{studentsMB.score(studentsMB.student,value)}
                 </h:column>
                 <f:facet name="footer">
-                    <h:outputText value="Total of student: #{studentsMB.getListStudent().size()}"/>
+                    <h:outputText value="Total of class: #{studentsMB.classSubjectList.size()}"/>
                 </f:facet>
             </h:dataTable>
-            <h:commandButton value="Đăng ký học" action="add-student"/>
+            <h:commandButton value="Đăng ký học" action="register-class"/>
         </h:form>
     </div>
-
 </ui:composition>

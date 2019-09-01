@@ -1,19 +1,54 @@
 package bean;
 
+import bean.classsubject.ClaSubMB;
+import dao.ClaSubDAO;
+import dao.RegistersubDAO;
 import dao.UserDAO;
+import model.ClassSubject;
+import model.Registersub;
+import model.Student;
 import model.User;
 import org.primefaces.PrimeFaces;
 
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.*;
 import javax.faces.context.FacesContext;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpServletResponseWrapper;
 import javax.servlet.http.HttpSession;
+import java.io.IOException;
+import java.util.LinkedList;
+import java.util.List;
 
 @ManagedBean
-@RequestScoped
+@SessionScoped
 public class UserMB {
-  String user;
-  String password;
+    private String user;
+    private String password;
+    private Student student = new Student();
+    UserDAO userDAO = new UserDAO();
+    ClaSubDAO claSubDAO = new ClaSubDAO();
+    RegistersubDAO registersubDAO = new RegistersubDAO();
+    @ManagedProperty("#{claSubMB}")
+    ClaSubMB claSubMB = new ClaSubMB();
+
+    public ClaSubMB getClaSubMB() {
+        return claSubMB;
+    }
+
+    public void setClaSubMB(ClaSubMB claSubMB) {
+        this.claSubMB = claSubMB;
+    }
+
+    public Student getStudent() {
+        setStudent(userDAO.findByName(user).getStudent());
+        return student;
+    }
+
+
+    public void setStudent(Student student) {
+        this.student = student;
+    }
 
     public String getUser() {
         return user;
@@ -42,10 +77,10 @@ public class UserMB {
                 loggedIn = true;
                 context.getExternalContext().getSessionMap().put("user", user);
                 context.getExternalContext().getSessionMap().put("rule", user1.getRule());
-                if(user1.getRule().equals("1")){
+                if (user1.getRule().equals("1")) {
                     return "admin";
                 }
-                if(user1.getRule().equals("2")){
+                if (user1.getRule().equals("2")) {
                     return "user";
                 }
             } else {
@@ -58,10 +93,24 @@ public class UserMB {
         PrimeFaces.current().ajax().addCallbackParam("loggedIn", loggedIn);
         return null;
     }
-    public String logout(){
-        HttpSession session = (HttpSession) FacesContext.getCurrentInstance()
-                .getExternalContext().getSession(false);
-        session.invalidate();
-        return "login";
+
+    public void logout() {
+        FacesContext context = FacesContext.getCurrentInstance();
+        context.getExternalContext().invalidateSession();
+        try {
+            context.getExternalContext().redirect("/QLSV/");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void home() {
+        FacesContext context = FacesContext.getCurrentInstance();
+        try {
+            context.getExternalContext().redirect("/QLSV/");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
     }
 }

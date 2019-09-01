@@ -2,10 +2,13 @@ package bean.classsubject;
 
 import dao.*;
 import model.*;
+import org.primefaces.PrimeFaces;
 
 import javax.annotation.PostConstruct;
+import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
+import javax.faces.context.FacesContext;
 import java.util.*;
 
 @ManagedBean
@@ -26,7 +29,6 @@ public class ClaSubMB {
     private String sub;
     private String classe;
     private String day;
-
 
     private List<Student> listStudent;
     private Map<String, String> listSubject;
@@ -80,11 +82,36 @@ public class ClaSubMB {
         return "view.xhtml?faces-redirect=true";
     }
 
+    public String register(ClassSubject classSubject, Student student) {
+        FacesContext context = FacesContext.getCurrentInstance();
+        FacesMessage message=null;
+        boolean result = false;
+        for (Registersub registersub : registersubDAO.findByStudent(student)) {
+            if (classSubject.getSubject().getName().equals(registersub.getClassSubject().getSubject().getName()) && registersub.getScore() == null) {
+                result = true;
+                break;
+            }
+        }
+        if (result) {
+            message = new FacesMessage(FacesMessage.SEVERITY_INFO, "Failed", "Bạn đã đăng ký môn học này !");
+        } else {
+            Registersub registersub = new Registersub();
+            registersub.setStudent(student);
+            registersub.setClassSubject(classSubject);
+            registersubDAO.create(registersub);
+            classSubject.setRegistered(classSubject.getRegistered()+1);
+            claSubDAO.update(classSubject);
+            message = new FacesMessage(FacesMessage.SEVERITY_WARN, "Success", "Đăng ký thành công "+classSubject.getSubject().getName());
+        }
+        FacesContext.getCurrentInstance().addMessage(null, message);
+        return null;
+    }
+
     public String deleteStuClaSub(Student student) {
         List<Registersub> registersubList = registersubDAO.findByStudent(student);
         List<ClassSubject> classSubjects = claSubDAO.findBySubCla(subjectDAO.getByName(sub), classCreditDAO.getIdByName(classe));
 
-        for ( ClassSubject classSubject : classSubjects) {
+        for (ClassSubject classSubject : classSubjects) {
             for (Registersub registersub : registersubList) {
                 if (registersub.getClassSubject().getId().equals(classSubject.getId())) {
                     registersubDAO.delete(registersub);

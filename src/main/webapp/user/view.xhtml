@@ -7,8 +7,19 @@
       xmlns:p="http://primefaces.org/ui"
       xmlns:fn="http://java.sun.com/jsp/jstl/functions"
       xmlns:ui="http://java.sun.com/jsf/facelets">
+<h:head>
+    <title>
+        <ui:insert name="windowTitle">
+            JSF QLSV
+        </ui:insert>
+    </title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <h:outputStylesheet library="css" name="main.css" target="body"/>
+    <ui:insert name="css"/>
+</h:head>
 
 <h:body>
+
     <ui:insert name="header">
         <ui:include src="/templates/header.xhtml"/>
     </ui:insert>
@@ -21,5 +32,4 @@
         <ui:include src="/templates/footer.xhtml"/>
     </ui:insert>
 </h:body>
-
 </html>

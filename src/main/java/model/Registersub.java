@@ -21,12 +21,12 @@ public class Registersub implements java.io.Serializable {
 	private Integer id;
 	private ClassSubject classSubject;
 	private Student student;
-	private Integer score;
+	private Double score;
 
 	public Registersub() {
 	}
 
-	public Registersub(ClassSubject classSubject, Student student, Integer score) {
+	public Registersub(ClassSubject classSubject, Student student, Double score) {
 		this.classSubject = classSubject;
 		this.student = student;
 		this.score = score;
@@ -65,11 +65,11 @@ public class Registersub implements java.io.Serializable {
 	}
 
 	@Column(name = "score")
-	public Integer getScore() {
+	public Double getScore() {
 		return this.score;
 	}
 
-	public void setScore(Integer score) {
+	public void setScore(Double score) {
 		this.score = score;
 	}
 

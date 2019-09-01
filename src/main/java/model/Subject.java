@@ -22,7 +22,7 @@ public class Subject implements java.io.Serializable {
 
 	private Integer id;
 	private String code;
-	private Double coefficient;
+	private Integer coefficient;
 	private String note;
 	private String name;
 	private Set<ClassSubject> classSubjects = new HashSet<ClassSubject>(0);
@@ -30,7 +30,7 @@ public class Subject implements java.io.Serializable {
 	public Subject() {
 	}
 
-	public Subject(String code, Double coefficient, String note, String name, Set<ClassSubject> classSubjects) {
+	public Subject(String code, Integer coefficient, String note, String name, Set<ClassSubject> classSubjects) {
 		this.code = code;
 		this.coefficient = coefficient;
 		this.note = note;
@@ -60,11 +60,11 @@ public class Subject implements java.io.Serializable {
 	}
 
 	@Column(name = "coefficient", precision = 255, scale = 0)
-	public Double getCoefficient() {
+	public Integer getCoefficient() {
 		return this.coefficient;
 	}
 
-	public void setCoefficient(Double coefficient) {
+	public void setCoefficient(Integer coefficient) {
 		this.coefficient = coefficient;
 	}
 

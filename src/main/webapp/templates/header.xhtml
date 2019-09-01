@@ -5,16 +5,24 @@
                 xmlns:p="http://primefaces.org/ui"
                 xmlns:fn="http://java.sun.com/jsp/jstl/functions"
                 xmlns:ui="http://java.sun.com/jsf/facelets">
+    <link rel="shortcut icon" type="image/x-icon" href="https://image.flaticon.com/icons/svg/25/25694.svg" />
     <h:head>
         <title>
+
             <ui:insert name="windowTitle">
                 JSF QLSV
             </ui:insert>
+<!--            <h:outputStylesheet name="primefaces-omega/theme.css"/>-->
+            <h:outputStylesheet name="font-awesome-5-pro/css/all.min.css"/>
+            <h:outputStylesheet name="bootstrap/css/bootstrap.min.css" target="head"/>
         </title>
-        <h:outputStylesheet library="primefaces-omega" name="theme.css" target="body"/>
-        <h:outputStylesheet library="font-awesome-5-pro" name="cdn/css/fontawesome.min.css"/>
     </h:head>
-
+    <h:form id="form-head">
+        <div align="right">
+            <p:commandButton value="Home" action="#{userMB.home}" process="@this,form-head"/>
+            <p:commandButton value="Logout"  action="#{userMB.logout}" process="@this,form-head"/>
+        </div>
+    </h:form>
     <div align="center">
         <h:outputText value="JSF QLSV project" styleClass="headerTitle"/>
         <br/><br/>

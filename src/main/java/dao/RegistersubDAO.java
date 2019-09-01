@@ -1,18 +1,18 @@
 package dao;
 
-import model.ClassCredit;
-import model.ClassSubject;
-import model.Registersub;
-import model.Student;
+import model.*;
 import org.hibernate.Session;
 import utils.HibernateUtils;
 
 import org.hibernate.query.Query;
 
+import javax.persistence.NoResultException;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
+import javax.persistence.criteria.Subquery;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 public class RegistersubDAO {
@@ -80,9 +80,15 @@ public class RegistersubDAO {
         return result;
     }
 
-    public  List<Registersub> findByClassStu(ClassSubject classSubject, Student student) {
+
+
+
+
+
+
+    public List<Registersub> findByClassStu(ClassSubject classSubject, Student student) {
         Session s = HibernateUtils.getSessionFactory().openSession();
-        List<Registersub> result = null;
+        List<Registersub> result = new LinkedList<>();
         try {
             s.beginTransaction();
             CriteriaBuilder builder = s.getCriteriaBuilder();
@@ -99,7 +105,7 @@ public class RegistersubDAO {
                 query.select(root).where(builder.equal(root.get("classSubject"), classSubject));
             } else if (student != null) {
                 query.select(root).where(builder.equal(root.get("student"), student));
-            }else {
+            } else {
                 query.select(root).where();
             }
             //query.select(root).where(builder.isNull(root.get("classPayroll")));
@@ -114,7 +120,6 @@ public class RegistersubDAO {
         }
         return result;
     }
-
 
 
     public Registersub findById(int id) {

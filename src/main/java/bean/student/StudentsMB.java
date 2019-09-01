@@ -1,9 +1,6 @@
 package bean.student;
 
-import dao.AddressDAO;
-import dao.ClassDAO;
-import dao.RegistersubDAO;
-import dao.StudentDAO;
+import dao.*;
 import model.*;
 
 import javax.annotation.PostConstruct;
@@ -18,6 +15,7 @@ import java.util.*;
 public class StudentsMB implements Serializable {
     private Registersub registersub = new Registersub();
     private Student student = new Student();
+    private List<ClassSubject> classSubjectList = new LinkedList<>();
     private List<Student> listStudent = new ArrayList<>();
     private List<Student> listStudentNone = new ArrayList<>();
     private Map<String, Map<String, String>> provinceDistric = new HashMap<String, Map<String, String>>();
@@ -33,7 +31,9 @@ public class StudentsMB implements Serializable {
     private AddressDAO addressDAO = new AddressDAO();
     private ClassDAO classesDAO = new ClassDAO();
     private StudentDAO studentsDAO = new StudentDAO();
+    private ClaSubDAO claSubDAO = new ClaSubDAO();
     private RegistersubDAO registersubDAO = new RegistersubDAO();
+    private UserDAO userDAO = new UserDAO();
     String redirect = "student";
 
     public void rsStu() {
@@ -41,19 +41,40 @@ public class StudentsMB implements Serializable {
         province = null;
     }
 
+    public List<ClassSubject> getClassSubjectList() {
+        return classSubjectList;
+    }
 
-    public double score(Student student) {
+    public List<ClassSubject> getClassSubjectLists() {
+        classSubjectList = new LinkedList<>();
+        for (Registersub registersub : student.getRegistersubs()) {
+            classSubjectList.add(registersub.getClassSubject());
+        }
+        return classSubjectList;
+    }
+
+    public void setClassSubjectList(List<ClassSubject> classSubjectList) {
+        this.classSubjectList = classSubjectList;
+    }
+
+    public String score(Student student, ClassSubject classSubject) {
+        String result = registersubDAO.findByClassStu(classSubject, student).get(0).getScore()!=null ? registersubDAO.findByClassStu(classSubject, student).get(0).getScore().toString():"Chưa có điểm";
+
+        return result;
+    }
+
+    public double avgScore(Student student) {
         double sum = 0;
         int t = 0;
         double avg = 0;
         for (Registersub registersub : registersubDAO.findByStudent(student)) {
-            sum += registersub.getScore() != null ? registersub.getScore()*registersub.getClassSubject().getSubject().getCoefficient() : 0;
-            t+=1*registersub.getClassSubject().getSubject().getCoefficient();
+            sum += registersub.getScore() != null ? registersub.getScore() * registersub.getClassSubject().getSubject().getCoefficient() : 0;
+            t += registersub.getClassSubject().getSubject().getCoefficient();
         }
         if (t == 0) {
             return 0;
         } else {
-            return sum / t;
+            return Math.ceil((sum / t)*100)/100;
         }
     }
 
@@ -197,6 +218,11 @@ public class StudentsMB implements Serializable {
         this.editStudentMB = editStudentMB;
     }
 
+    public Student getStuUser(String user) {
+        setStudent(userDAO.findByName(user).getStudent());
+        return student;
+    }
+
     public Student getStudent() {
         return student;
     }
@@ -266,7 +292,7 @@ public class StudentsMB implements Serializable {
         return wards;
     }
 
-@PostConstruct
+    @PostConstruct
     public void setWards() {
         wards = districWard.get(district);
     }

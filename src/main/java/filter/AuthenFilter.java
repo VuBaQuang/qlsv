@@ -8,11 +8,11 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
 
-@WebFilter(urlPatterns ={"/faces/user/*","/faces/admin/*"})
+@WebFilter(urlPatterns ={"/faces/admin/*,/faces/user/*"})
 public class AuthenFilter implements Filter {
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
-        System.out.println("LogFilter init!");
+        System.out.println("LogFilter authen init!");
     }
     @Override
     public void doFilter(ServletRequest servletRequest, ServletResponse resp, FilterChain chain) throws IOException, ServletException {
