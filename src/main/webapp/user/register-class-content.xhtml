@@ -10,6 +10,7 @@
     <div align="center">
         <br/>
         <h:outputText value="Chi tiết lớp học - môn học"/>
+        <f:event listener="#{claSubMB.listSub()}" type="preRenderView"/>
         <br/><br/>
         <h:form id="form">
             <p:growl id="msg" showDetail="true" life="4000"/>
@@ -70,7 +71,6 @@
                 </h:dataTable>
             </h:panelGrid>
             <br/>
-            <h:commandButton value="Create" action="add?faces-redirect=true"/>
         </h:form>
     </div>
 </ui:composition>

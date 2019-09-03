@@ -3,12 +3,16 @@ package bean.classsubject;
 import dao.*;
 import model.*;
 import org.primefaces.PrimeFaces;
+import org.primefaces.component.datatable.DataTable;
+import org.primefaces.event.CellEditEvent;
 
 import javax.annotation.PostConstruct;
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
+import javax.faces.bean.ManagedProperty;
 import javax.faces.bean.SessionScoped;
 import javax.faces.context.FacesContext;
+import javax.persistence.Entity;
 import java.util.*;
 
 @ManagedBean
@@ -18,6 +22,8 @@ public class ClaSubMB {
     private Registersub registersub = new Registersub();
     private ClassCredit classCredit = new ClassCredit();
     private Subject subject = new Subject();
+    private String score;
+
 
     private ClaSubDAO claSubDAO = new ClaSubDAO();
     private ClassCreditDAO classCreditDAO = new ClassCreditDAO();
@@ -30,13 +36,15 @@ public class ClaSubMB {
     private String classe;
     private String day;
 
+
     private List<Student> listStudent;
     private Map<String, String> listSubject;
     private Map<String, String> listClass;
     private List<ClassSubject> classSubjects;
 
-    @PostConstruct
+
     public void listSub() {
+        classe = null;
         listSubject = new LinkedHashMap<>();
         for (Subject subject : subjectDAO.findAll()) {
             listSubject.put(subject.getName(), subject.getName());
@@ -46,6 +54,15 @@ public class ClaSubMB {
             listClass.put(classCredit.getName(), classCredit.getName());
         }
         updateListStudent();
+    }
+
+
+    public String getScore() {
+        return score;
+    }
+
+    public void setScore(String score) {
+        this.score = score;
     }
 
     public void updateListStudent() {
@@ -69,7 +86,69 @@ public class ClaSubMB {
         }
         listStudent = new LinkedList<>();
         listStudent.addAll(students);
-        System.out.println(listStudent);
+    }
+
+    public void updateListStudents() {
+        Set<Student> students = null;
+
+        classSubjects = claSubDAO.findBySubCla(subject, classCredit);
+        classSubject = classSubjects.get(0);
+        students = new LinkedHashSet<>();
+        for (Registersub value : classSubject.getRegistersubs()) {
+            students.add(value.getStudent());
+        }
+        listStudent = new LinkedList<>();
+        listStudent.addAll(students);
+    }
+
+    public String getScore(Student student) {
+        score = registersubDAO.findByClassStu(classSubject, student).get(0).getScore() != null ? registersubDAO.findByClassStu(classSubject, student).get(0).getScore().toString() : "Chưa có điểm";
+        return score;
+    }
+
+    public void setClaSub() {
+        classCredit = classCreditDAO.findById(classCredit.getId());
+        subject = subjectDAO.findById(subject.getId());
+        classSubject = claSubDAO.findBySubCla(subject, classCredit).get(0);
+    }
+
+    public String checkClaSub(String classe) {
+        Set<Student> students = null;
+        this.classe = classe;
+        if (classe == null || classe.equals("")) {
+            FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_WARN, "Error", "Class is invalid");
+            FacesContext.getCurrentInstance().addMessage(null, message);
+            return null;
+        }
+        if (sub == null || sub.equals("")) {
+            FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_WARN, "Error", "Subject is invalid");
+            FacesContext.getCurrentInstance().addMessage(null, message);
+            return null;
+        }
+        classCredit = classCreditDAO.getIdByName(classe);
+        subject = subjectDAO.getByName(sub);
+        updateListStudents();
+        return "info.xhtml?faces-redirect=true&includeViewParams=true";
+    }
+
+    public void updateScore(CellEditEvent event) {
+        Student student = (Student) ((DataTable) event.getComponent()).getRowData();
+        registersub = registersubDAO.findByClassStu(classSubject, student).get(0);
+        double score = Double.parseDouble(event.getNewValue().toString());
+        if (score == 0) {
+            FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_WARN, "Failed", "Invalid");
+            FacesContext.getCurrentInstance().addMessage(null, message);
+        } else {
+            registersub.setScore(score);
+            if (registersubDAO.update(registersub)) {
+                FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "Success", "Update score success");
+                FacesContext.getCurrentInstance().addMessage(null, message);
+            } else {
+                FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_WARN, "Failed", "Update score fail");
+                FacesContext.getCurrentInstance().addMessage(null, message);
+            }
+        }
+
     }
 
     public void updateClassSubjects() {
@@ -78,13 +157,16 @@ public class ClaSubMB {
     }
 
     public String delete(ClassSubject classSubject) {
+        for (Registersub registersub : registersubDAO.findByClass(classSubject)) {
+            registersubDAO.delete(registersub);
+        }
         claSubDAO.delete(classSubject);
         return "view.xhtml?faces-redirect=true";
     }
 
     public String register(ClassSubject classSubject, Student student) {
         FacesContext context = FacesContext.getCurrentInstance();
-        FacesMessage message=null;
+        FacesMessage message = null;
         boolean result = false;
         for (Registersub registersub : registersubDAO.findByStudent(student)) {
             if (classSubject.getSubject().getName().equals(registersub.getClassSubject().getSubject().getName()) && registersub.getScore() == null) {
@@ -99,36 +181,28 @@ public class ClaSubMB {
             registersub.setStudent(student);
             registersub.setClassSubject(classSubject);
             registersubDAO.create(registersub);
-            classSubject.setRegistered(classSubject.getRegistered()+1);
+            classSubject.setRegistered(classSubject.getRegistered() != null ? classSubject.getRegistered() + 1 : 1);
             claSubDAO.update(classSubject);
-            message = new FacesMessage(FacesMessage.SEVERITY_WARN, "Success", "Đăng ký thành công "+classSubject.getSubject().getName());
+            message = new FacesMessage(FacesMessage.SEVERITY_WARN, "Success", "Đăng ký thành công " + classSubject.getSubject().getName());
         }
         FacesContext.getCurrentInstance().addMessage(null, message);
         return null;
     }
 
-    public String deleteStuClaSub(Student student) {
+    public void deleteStuClaSub(Student student) {
         List<Registersub> registersubList = registersubDAO.findByStudent(student);
         List<ClassSubject> classSubjects = claSubDAO.findBySubCla(subjectDAO.getByName(sub), classCreditDAO.getIdByName(classe));
-
+        loop:
         for (ClassSubject classSubject : classSubjects) {
             for (Registersub registersub : registersubList) {
                 if (registersub.getClassSubject().getId().equals(classSubject.getId())) {
                     registersubDAO.delete(registersub);
-                    break;
+                    classSubject.setRegistered(classSubject.getRegistered() - 1);
+                    claSubDAO.update(classSubject);
+                    break loop;
                 }
             }
-
-
         }
-
-//        for (ClassSubject classSubject : classSubjects) {
-//            if (classSubject.getSubject().getName().equals(sub) && classSubject.getClassCredit().getName().equals(classe)) {
-//                registersubDAO.delete(registersubDAO.findByClassStu(classSubject, student));
-//                break;
-//            }
-//        }
-        return "view.xhtml?faces-redirect=true";
     }
 
     public String create() {
@@ -230,6 +304,7 @@ public class ClaSubMB {
     }
 
     public Registersub getRegistersub() {
+
         return registersub;
     }
 

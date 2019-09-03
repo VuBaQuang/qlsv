@@ -3,10 +3,13 @@ package bean.Class;
 import bean.student.EditStudentMB;
 import dao.ClassDAO;
 import model.ClassPayroll;
+import org.hibernate.exception.ConstraintViolationException;
 
+import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ManagedProperty;
 import javax.faces.bean.SessionScoped;
+import javax.faces.context.FacesContext;
 import java.io.Serializable;
 import java.util.List;
 
@@ -23,26 +26,20 @@ public class ClassesMB implements Serializable {
     @ManagedProperty(value = "#{editStudentMB}")
     private EditStudentMB editStudentMB;
 
-    public EditStudentMB getEditStudentMB() {
-        return editStudentMB;
-    }
-
-    public void setEditStudentMB(EditStudentMB editStudentMB) {
-        this.editStudentMB = editStudentMB;
-    }
 
     public String create() {
-        classesDAO.create(class_);
-        return "class?faces-redirect=true";
+        int i = classesDAO.create(class_);
+        if (i == 2) {
+            FacesContext context = FacesContext.getCurrentInstance();
+            FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_WARN, "Create error", "Code is exist");
+            FacesContext.getCurrentInstance().addMessage(null, message);
+            return null;
+        } else if (i == 1) {
+            return "class?faces-redirect=true";
+        } else return null;
+
     }
 
-    public InfoClassMB getInfoClassMB() {
-        return infoClassMB;
-    }
-
-    public void setInfoClassMB(InfoClassMB infoClassMB) {
-        this.infoClassMB = infoClassMB;
-    }
 
     public String info(ClassPayroll classes) {
         infoClassMB.setClassPayroll(classes);
@@ -57,6 +54,22 @@ public class ClassesMB implements Serializable {
     public int getStt() {
         stt++;
         return stt;
+    }
+
+    public InfoClassMB getInfoClassMB() {
+        return infoClassMB;
+    }
+
+    public void setInfoClassMB(InfoClassMB infoClassMB) {
+        this.infoClassMB = infoClassMB;
+    }
+
+    public EditStudentMB getEditStudentMB() {
+        return editStudentMB;
+    }
+
+    public void setEditStudentMB(EditStudentMB editStudentMB) {
+        this.editStudentMB = editStudentMB;
     }
 
     public void setStt(int stt) {

@@ -6,10 +6,19 @@
       xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
       xmlns:p="http://primefaces.org/ui"
       xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+<h:head>
+
+</h:head>
+
+<f:metadata>
+    <f:viewParam id="sub" name="sub" value="#{editStuClaSubMB.subject.id}"/>
+    <f:viewParam id="classe" name="classe" value="#{editStuClaSubMB.classCredit.id}"/>
+    <f:event listener="#{claSubMB.updateListStudents()}" type="preRenderView"/>
+</f:metadata>
 <ui:insert name="header">
     <ui:include src="/templates/header.xhtml"/>
     <script type="text/javascript" src="${pageContext.request.contextPath}/resources/js/jquery-3.2.1.js"></script>
-    <h:outputStylesheet library="primefaces-omega" name="theme.css" target="body"/>
     <h:outputStylesheet library="css" name="main.css" target="body"/>
 </ui:insert>
 <!--	Start body	-->

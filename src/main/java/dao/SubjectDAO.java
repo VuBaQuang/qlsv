@@ -31,7 +31,21 @@ public class SubjectDAO {
         }
         return list;
     }
-
+    public Subject findById(int id) {
+        Session s = HibernateUtils.getSessionFactory().openSession();
+        Subject aClass = null;
+        try {
+            s.beginTransaction();
+            aClass = s.get(Subject.class, id);
+            s.getTransaction().commit();
+        } catch (Exception e) {
+            e.printStackTrace();
+            s.getTransaction().rollback();
+        } finally {
+            s.close();
+        }
+        return aClass;
+    }
     public Subject getByName(String name) {
         Session s = HibernateUtils.getSessionFactory().openSession();
         Subject result = null;

@@ -10,6 +10,7 @@
     <div align="center">
         <br/>
         <h:outputText value="Chi tiết lớp học - môn học"/>
+        <f:event listener="#{claSubMB.listSub()}" type="preRenderView"/>
         <br/><br/>
         <h:form>
             Môn học:
@@ -61,6 +62,7 @@
                     </h:column>
                     <h:column>
                         <f:facet name="header" colspan="2">Thao tác</f:facet>
+                        <h:commandButton value="Info" action="#{claSubMB.checkClaSub(value.classCredit.name)}"/>
                         <h:commandButton value="Xóa" action="#{claSubMB.delete(value)}"/>
                     </h:column>
                     <f:facet name="footer">
@@ -69,7 +71,8 @@
                 </h:dataTable>
             </h:panelGrid>
             <br/>
-            <h:commandButton value="Create" action="add?faces-redirect=true"/>
+            <h:commandButton style="margin: 10px" value="Create" action="add?faces-redirect=true"/>
+            <h:commandButton value="Cancel" action="#{userMB.home}"/>
         </h:form>
     </div>
 </ui:composition>

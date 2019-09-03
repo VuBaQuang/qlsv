@@ -155,15 +155,17 @@ public class RegistersubDAO {
         }
     }
 
-    public void update(Registersub student) {
+    public boolean update(Registersub student) {
         Session s = HibernateUtils.getSessionFactory().openSession();
         try {
             s.beginTransaction();
             s.update(student);
             s.getTransaction().commit();
+            return true;
         } catch (Exception e) {
             e.printStackTrace();
             s.getTransaction().rollback();
+            return false;
         } finally {
             s.close();
         }

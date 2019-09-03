@@ -3,6 +3,7 @@ package dao;
 
 import model.ClassPayroll;
 import org.hibernate.Session;
+import org.hibernate.exception.ConstraintViolationException;
 import org.hibernate.query.Query;
 import utils.HibernateUtils;
 
@@ -32,18 +33,23 @@ public class ClassDAO {
     }
 
 
-    public void create(ClassPayroll aClass) {
+    public int create(ClassPayroll aClass) {
         Session s = HibernateUtils.getSessionFactory().openSession();
         try {
             s.beginTransaction();
             s.save(aClass);
             s.getTransaction().commit();
-        } catch (Exception e) {
+        } catch (ConstraintViolationException e){
+            return 2;
+        }
+        catch (Exception e) {
             e.printStackTrace();
             s.getTransaction().rollback();
+            return 1;
         } finally {
             s.close();
         }
+        return 0;
     }
 
     public ClassPayroll findById(int id) {
@@ -51,7 +57,6 @@ public class ClassDAO {
         ClassPayroll aClass = null;
         try {
             s.beginTransaction();
-
             aClass = s.get(ClassPayroll.class, id);
             s.getTransaction().commit();
         } catch (Exception e) {

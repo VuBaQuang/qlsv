@@ -84,10 +84,10 @@ public class UserMB {
                     return "user";
                 }
             } else {
-                message = new FacesMessage(FacesMessage.SEVERITY_WARN, "Loggin Error", "Invalid password");
+                message = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Loggin Error", "Invalid password");
             }
         } else {
-            message = new FacesMessage(FacesMessage.SEVERITY_WARN, "Loggin Error", "Invalid user");
+            message = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Loggin Error", "Invalid user");
         }
         FacesContext.getCurrentInstance().addMessage(null, message);
         PrimeFaces.current().ajax().addCallbackParam("loggedIn", loggedIn);
@@ -111,6 +111,5 @@ public class UserMB {
         } catch (IOException e) {
             e.printStackTrace();
         }
-
     }
 }

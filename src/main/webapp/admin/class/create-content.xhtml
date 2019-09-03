@@ -4,13 +4,16 @@
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:h="http://xmlns.jcp.org/jsf/html"
       xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:pe="http://primefaces.org/ui/extensions"
       xmlns:f="http://xmlns.jcp.org/jsf/core">
 
 <div align="center">
     <br/>
     <h:outputText value="Create new Class payroll" styleClass="contentsTitle"/>
     <br/><br/>
-    <h:form acceptcharset="UTF-8">
+    <h:form acceptcharset="UTF-8" id="form">
+        <p:growl id="msg" showDetail="true" life="4000"/>
         <h:panelGrid columns="2">
             Tên lớp:
             <h:inputText id="name" value="#{classesMB.classes.name}"
@@ -22,7 +25,7 @@
                          requiredMessage="Mã lớp không được để trống"
                          validatorMessage="Mã lớp không đúng định dạng">
                 <f:validateRegex
-                        pattern="^[A][T]+[0-9a-zA-Z]{3}$"/>
+                        pattern="^[A][T]+[0-9a-zA-Z]{2,3}$"/>
             </h:inputText>
         </h:panelGrid>
         <div align="center">
@@ -32,8 +35,8 @@
         </div>
 
         <div align="center">
-            <h:commandButton value="Cancel" immediate="true" action="class?faces-redirect=true"/>
-            <h:commandButton value="Save" action="#{classesMB.create()}"/>
+            <p:commandButton value="Cancel" immediate="true" action="class?faces-redirect=true"/>
+            <p:commandButton value="Save" action="#{classesMB.create()}" update="form"/>
         </div>
     </h:form>
 </div>

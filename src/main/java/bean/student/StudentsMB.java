@@ -59,17 +59,19 @@ public class StudentsMB implements Serializable {
 
     public String score(Student student, ClassSubject classSubject) {
         String result = registersubDAO.findByClassStu(classSubject, student).get(0).getScore()!=null ? registersubDAO.findByClassStu(classSubject, student).get(0).getScore().toString():"Chưa có điểm";
-
         return result;
     }
+
 
     public double avgScore(Student student) {
         double sum = 0;
         int t = 0;
         double avg = 0;
         for (Registersub registersub : registersubDAO.findByStudent(student)) {
-            sum += registersub.getScore() != null ? registersub.getScore() * registersub.getClassSubject().getSubject().getCoefficient() : 0;
-            t += registersub.getClassSubject().getSubject().getCoefficient();
+            if(registersub.getScore() != null){
+                sum += registersub.getScore() != null ? registersub.getScore() * registersub.getClassSubject().getSubject().getCoefficient() : 0;
+                t += registersub.getClassSubject().getSubject().getCoefficient();
+            }
         }
         if (t == 0) {
             return 0;
