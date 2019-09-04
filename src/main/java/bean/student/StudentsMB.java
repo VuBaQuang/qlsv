@@ -58,7 +58,7 @@ public class StudentsMB implements Serializable {
     }
 
     public String score(Student student, ClassSubject classSubject) {
-        String result = registersubDAO.findByClassStu(classSubject, student).get(0).getScore()!=null ? registersubDAO.findByClassStu(classSubject, student).get(0).getScore().toString():"Chưa có điểm";
+        String result = registersubDAO.findByClassStu(classSubject, student).get(0).getScore() != null ? registersubDAO.findByClassStu(classSubject, student).get(0).getScore().toString() : "Chưa có điểm";
         return result;
     }
 
@@ -68,7 +68,7 @@ public class StudentsMB implements Serializable {
         int t = 0;
         double avg = 0;
         for (Registersub registersub : registersubDAO.findByStudent(student)) {
-            if(registersub.getScore() != null){
+            if (registersub.getScore() != null) {
                 sum += registersub.getScore() != null ? registersub.getScore() * registersub.getClassSubject().getSubject().getCoefficient() : 0;
                 t += registersub.getClassSubject().getSubject().getCoefficient();
             }
@@ -76,7 +76,7 @@ public class StudentsMB implements Serializable {
         if (t == 0) {
             return 0;
         } else {
-            return Math.ceil((sum / t)*100)/100;
+            return Math.ceil((sum / t) * 100) / 100;
         }
     }
 
@@ -151,8 +151,8 @@ public class StudentsMB implements Serializable {
         return "update-student";
     }
 
-    @PostConstruct
     public void init() {
+        System.out.println("Update address !");
         classes = new LinkedHashMap<>();
         provinces = new LinkedHashMap<>();
         for (Province province : addressDAO.getAllProvince()) {
@@ -172,9 +172,9 @@ public class StudentsMB implements Serializable {
         for (ClassPayroll classes : classesDAO.findAll()) {
             this.classes.put(classes.getName(), classes.getName());
         }
+        System.out.println("Update address success!");
     }
 
-    @PostConstruct
     public void setDistricts() {
         districts = provinceDistric.get(province);
         wards = new LinkedHashMap<>();

@@ -56,8 +56,6 @@
                 </h:column>
                 <h:column>
                     <f:facet name="header" colspan="2">Thao tác</f:facet>
-
-
                     <h:commandButton value="Sửa" action="#{studentsMB.edit(student)}"/>
                     <h:commandButton value="Xóa" action="#{studentsMB.delete(student)}"/>
                 </h:column>
@@ -71,7 +69,7 @@
             <h:outputLink value="javascript:void(0)" onclick="PF('dlg').show();" title="login">
                 <h:commandButton type="button" value="Add Student"/>
             </h:outputLink>
-            <p:dialog appendToBody="true" header="Add new student" widgetVar="dlg" >
+            <p:dialog appendToBody="true" widgetVar="dlg" >
                 <ui:insert>
                     <ui:include src="add-student.xhtml"/>
                 </ui:insert>
