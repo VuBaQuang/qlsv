@@ -7,6 +7,7 @@ import org.hibernate.exception.ConstraintViolationException;
 import org.hibernate.query.Query;
 import utils.HibernateUtils;
 
+import javax.persistence.NoResultException;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
@@ -15,7 +16,7 @@ import java.util.List;
 
 public class ClassDAO {
 
-    public  List<ClassPayroll> findAll() {
+    public List<ClassPayroll> findAll() {
         Session s = HibernateUtils.getSessionFactory().openSession();
         List<ClassPayroll> list = new ArrayList<>();
         try {
@@ -39,10 +40,9 @@ public class ClassDAO {
             s.beginTransaction();
             s.save(aClass);
             s.getTransaction().commit();
-        } catch (ConstraintViolationException e){
+        } catch (ConstraintViolationException e) {
             return 2;
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
             s.getTransaction().rollback();
             return 1;
@@ -108,8 +108,9 @@ public class ClassDAO {
             query.select(root).where(builder.equal(root.get("name"), name));
             Query<ClassPayroll> q = s.createQuery(query);
             result = q.getSingleResult();
-
             s.getTransaction().commit();
+        } catch (NoResultException e) {
+            return null;
         } catch (Exception e) {
             e.printStackTrace();
             s.getTransaction().rollback();

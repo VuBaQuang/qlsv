@@ -8,13 +8,14 @@ import model.*;
 import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
 @ManagedBean
 @SessionScoped
-public class EditStudentMB {
+public class EditStudentMB implements Serializable {
     private Student student = new Student();
     private String studentClass;
     private String province;
@@ -85,6 +86,9 @@ public class EditStudentMB {
     public void setWards(Map<String, String> wards) {
         this.wards = wards;
     }
+
+
+
 
     public String edit() {
         StringBuilder builder = new StringBuilder();

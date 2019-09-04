@@ -10,9 +10,8 @@
     </h:head>
     <div align="center">
         <f:event listener="#{studentsMB.rsStu()}" type="preRenderView"/>
-        <f:event listener="#{studentsMB.init}" type="preRenderView"/>
-        <h:form acceptcharset="UTF-8">
-            <p:panel header="Personal Details" style="width: 76%">
+<!--        <f:event listener="#{studentsMB.init}" type="preRenderView"/>-->
+            <p:panel header="Add student" style="width: 76%">
                 <p:messages/>
                 <h:panelGrid columns="2" columnClasses="label, value" style="margin: 10px auto" >
 <!--Tên-->
@@ -84,10 +83,8 @@
                 <h:message for="email" style="color:red"/>
             </div>
             <div align="center">
-                <h:commandButton value="Cancel" immediate="true" action="student"/>
-                <h:commandButton value="Save" action="#{studentsMB.addStudent(studentsMB.redirect)}"/>
+                <p:commandButton value="Save" action="#{studentsMB.addStudent()}" update="growl"/>
             </div>
-        </h:form>
     </div>
     <br/>
 </ui:composition>
