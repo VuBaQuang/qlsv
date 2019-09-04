@@ -14,22 +14,11 @@
         </ui:insert>
     </title>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
-    <h:outputStylesheet library="css" name="main.css" target="body"/>
-    <ui:insert name="css"/>
 </h:head>
 
 <h:body>
-
-    <ui:insert name="header">
-        <ui:include src="/templates/header.xhtml"/>
-    </ui:insert>
-    <!--	Start body	-->
     <ui:insert name="contents">
         <ui:include src="add-student-content.xhtml"/>
-    </ui:insert>
-    <!--	End body	-->
-    <ui:insert name="footer">
-        <ui:include src="/templates/footer.xhtml"/>
     </ui:insert>
 </h:body>
 </html>
