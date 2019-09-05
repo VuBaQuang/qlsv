@@ -8,67 +8,89 @@
 
 
     <div align="center">
+        <p:growl id="msgs" showDetail="true"/>
         <br/>
         <h:outputText value="Chi tiết lớp học - môn học"/>
         <f:event listener="#{claSubMB.listSub()}" type="preRenderView"/>
         <br/><br/>
-        <h:form>
+        <h:form id="form">
             Môn học:
-            <h:selectOneMenu id="classe" value="#{claSubMB.sub}" style="width:160px">
-                <p:ajax update="subject" listener="#{claSubMB.updateClassSubjects()}"/>
+            <h:selectOneMenu id="classes" value="#{claSubMB.sub}" style="width:160px">
                 <f:selectItem itemLabel="Chọn" itemValue="" noSelectionOption="true"/>
                 <f:selectItems value="#{claSubMB.listSubject}"/>
+                <f:ajax listener="#{claSubMB.updateClassSubject()}" />
             </h:selectOneMenu>
-            <br/>
-            <br/>
-            <h:panelGrid columns="2">
-                <h:dataTable id="subject" value="#{claSubMB.classSubjects}" var="value"
-                             styleClass="table"
-                             headerClass="table-header"
-                             footerClass="table-footer"
-                             rowClasses="table-odd-row,table-even-row">
-                    <h:column>
-                        <f:facet name="header">ID</f:facet>
-                        #{value.id}
-                    </h:column>
 
-                    <h:column>
-                        <f:facet name="header">Lớp</f:facet>
-                        #{value.classCredit.name}
-                    </h:column>
-                    <h:column>
-                        <f:facet name="header">Khoảng thời gian</f:facet>
-                        #{value.startTime.toString().replaceAll("-","/")} -  #{value.endTime.toString().replaceAll("-","/")}
-                    </h:column>
-                    <h:column>
-                        <f:facet name="header">Thứ</f:facet>
-                        #{value.day}
-                    </h:column>
-                    <h:column>
-                        <f:facet name="header">Thời gian</f:facet>
-                        #{value.todStart} -  #{value.todEnd}
-                    </h:column>
-                    <h:column>
-                        <f:facet name="header">Đã đăng ký</f:facet>
-                        #{value.registered}
-                    </h:column>
-                    <h:column>
-                        <f:facet name="header">Sĩ số</f:facet>
-                        #{value.size}
-                    </h:column>
-                    <h:column>
-                        <f:facet name="header">Ghi chú</f:facet>
-                        #{value.note}
-                    </h:column>
-                    <h:column>
-                        <f:facet name="header" colspan="2">Thao tác</f:facet>
-                        <h:commandButton value="Info" action="#{claSubMB.checkClaSub(value.classCredit.name)}"/>
-                        <h:commandButton value="Xóa" action="#{claSubMB.delete(value)}"/>
-                    </h:column>
-                    <f:facet name="footer">
-                        <h:outputText value="Total of class: #{claSubMB.classSubjects.size()}"/>
-                    </f:facet>
-                </h:dataTable>
+            Môn học:
+            <h:selectOneMenu id="subjects" value="#{claSubMB.classe}" style="width:160px">
+                <f:ajax listener="#{claSubMB.updateClassSubject()}" />
+                <f:selectItem itemLabel="Chọn" itemValue="" noSelectionOption="true"/>
+                <f:selectItems value="#{claSubMB.listClass}"/>
+            </h:selectOneMenu>
+
+            <br/>
+            <br/>
+            <p:commandButton value="Hiển thị" actionListener="#{claSubMB.updateListStudent()}" update="students"/>
+            <br/>
+            <br/>
+            <br/>
+            <h:panelGrid id="students" columns="2">
+                <p:dataTable id="cars2" var="student" value="#{claSubMB.listStudent}" editable="true" editMode="cell" widgetVar="cellCars" >
+                    <p:ajax event="cellEdit" listener="#{claSubMB.updateScore}" update="msgs"/>
+                    <p:column headerText="Mã sinh viên" style="width:100px; align-content: center">
+                        <p:cellEditor disabled="true">
+                            <f:facet name="output"><h:outputText value="#{student.code}" /></f:facet>
+                            <f:facet name="input"><p:inputText id="code" value="#{student.code}"/></f:facet>
+                        </p:cellEditor>
+                    </p:column>
+                    <p:column headerText="Họ tên">
+                        <p:cellEditor disabled="true">
+                            <f:facet name="output"><h:outputText value="#{student.name}" /></f:facet>
+                            <f:facet name="input"><p:inputText id="name" value="#{student.name}"/></f:facet>
+                        </p:cellEditor>
+                    </p:column>
+                    <p:column headerText="Lớp" style="width:80px">
+                        <p:cellEditor disabled="true">
+                            <f:facet name="output"><h:outputText value="#{student.classPayroll.name}" /></f:facet>
+                            <f:facet name="input"><p:inputText id="classe" value="#{student.classPayroll.name}" /></f:facet>
+                        </p:cellEditor>
+                    </p:column>
+                    <p:column headerText="Tuổi" style="width:60px">
+                        <p:cellEditor disabled="true">
+                            <f:facet name="output"><h:outputText value="#{student.age}" /></f:facet>
+                            <f:facet name="input"><p:inputText id="age" value="#{student.age}" style="width: 50px"/></f:facet>
+                        </p:cellEditor>
+                    </p:column>
+                    <p:column headerText="Địa chỉ">
+                        <p:cellEditor disabled="true">
+                            <f:facet name="output"><h:outputText value="#{student.address}" /></f:facet>
+                            <f:facet name="input"><p:inputText id="address" value="#{student.address}"/></f:facet>
+                        </p:cellEditor>
+                    </p:column>
+                    <p:column headerText="Email">
+                        <p:cellEditor disabled="true">
+                            <f:facet name="output"><h:outputText value="#{student.email}" /></f:facet>
+                            <f:facet name="input"><p:inputText id="email" value="#{student.email}"/></f:facet>
+                        </p:cellEditor>
+                    </p:column>
+                    <p:column headerText="Điểm" style="width:60px">
+                        <p:cellEditor>
+                            <f:facet name="output"><h:outputText value="#{claSubMB.getScore(student)}" /></f:facet>
+                            <f:facet name="input"><p:inputText id="score" value="#{claSubMB.score}"/></f:facet>
+                        </p:cellEditor>
+                    </p:column>
+
+                    <p:column headerText="Ghi chú">
+                        <p:cellEditor disabled="true">
+                            <f:facet name="output"><h:outputText value="#{student.note}" /></f:facet>
+                            <f:facet name="input"><p:inputText id="note" value="#{student.note}"/></f:facet>
+                        </p:cellEditor>
+                    </p:column>
+                    <p:column style="width:60px" headerText="Thao tác">
+                        <h:commandButton value="Xóa" action="#{claSubMB.deleteStuClaSub(student)}" update="cars2"/>
+                    </p:column>
+                </p:dataTable>
+                <br/>
             </h:panelGrid>
             <br/>
             <h:commandButton style="margin: 10px" value="Create" action="add?faces-redirect=true"/>

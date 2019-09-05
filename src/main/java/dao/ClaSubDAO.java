@@ -7,10 +7,13 @@ import org.hibernate.Session;
 import utils.HibernateUtils;
 
 import org.hibernate.query.Query;
+
+import javax.persistence.NoResultException;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 public class ClaSubDAO {
@@ -41,10 +44,9 @@ public class ClaSubDAO {
             CriteriaBuilder builder = s.getCriteriaBuilder();
             CriteriaQuery<ClassSubject> query = builder.createQuery(ClassSubject.class);
             Root<ClassSubject> root = query.from(ClassSubject.class);
-            if(subject!=null){
+            if (subject != null) {
                 query.select(root).where(builder.equal(root.get("subject"), subject));
-            }
-          else {
+            } else {
                 query.select(root).where();
             }
             //query.select(root).where(builder.isNull(root.get("classPayroll")));
@@ -124,9 +126,11 @@ public class ClaSubDAO {
         return list;
     }
 
-    public List<ClassSubject> getBySubFtClass(Subject subject, ClassCredit classCredit) {
+    public ClassSubject getBySubFtClass(Subject subject, ClassCredit classCredit) {
+
+
         Session s = HibernateUtils.getSessionFactory().openSession();
-        List<ClassSubject> list = null;
+        ClassSubject result = null;
         try {
             s.beginTransaction();
             CriteriaBuilder builder = s.getCriteriaBuilder();
@@ -138,17 +142,19 @@ public class ClaSubDAO {
                             builder.equal(root.get("classCredit"), classCredit)
                     )
             );
-            //query.select(root).where(builder.isNull(root.get("classPayroll")));
             Query<ClassSubject> q = s.createQuery(query);
-            list = q.getResultList();
+            result = q.getSingleResult();
             s.getTransaction().commit();
+        } catch (NoResultException e) {
+            return result;
         } catch (Exception e) {
             e.printStackTrace();
             s.getTransaction().rollback();
+            return result;
         } finally {
             s.close();
         }
-        return list;
+        return result;
     }
 
     public ClassSubject create(ClassSubject classSubject) {
@@ -167,7 +173,7 @@ public class ClaSubDAO {
         }
     }
 
-    public  List<ClassSubject> findBySubCla(Subject subject, ClassCredit classCredit) {
+    public List<ClassSubject> findBySubCla(Subject subject, ClassCredit classCredit) {
         Session s = HibernateUtils.getSessionFactory().openSession();
         List<ClassSubject> result = null;
         try {
@@ -186,7 +192,7 @@ public class ClaSubDAO {
                 query.select(root).where(builder.equal(root.get("classCredit"), classCredit));
             } else if (subject != null) {
                 query.select(root).where(builder.equal(root.get("subject"), subject));
-            }else {
+            } else {
                 query.select(root).where();
             }
             //query.select(root).where(builder.isNull(root.get("classPayroll")));
@@ -201,7 +207,6 @@ public class ClaSubDAO {
         }
         return result;
     }
-
 
 
     public void update(ClassSubject classSubject) {

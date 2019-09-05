@@ -57,7 +57,7 @@
                     <p:commandButton update="form-2:dialog" value="Sửa" onclick="PF('dlg').show()">
                         <f:setPropertyActionListener value="#{student}" target="#{studentsMB.student}"/>
                     </p:commandButton>
-                    <p:commandButton  value="Xóa" action="#{studentsMB.delete(student)}"/>
+                    <p:commandButton style="background: red; border-color: red" value="Xóa" action="#{studentsMB.delete(student)}"/>
                 </p:column>
                 <f:facet name="footer">
                     <h:outputText value="Total of student: #{studentsMB.getListStudent().size()}"/>
@@ -66,10 +66,7 @@
 
             <br/>
 
-            <p:commandButton value="Thêm sinh viên" onclick="PF('dlg-login').show()">
-
-            </p:commandButton>
-
+            <p:commandButton value="Thêm sinh viên" onclick="PF('dlg-login').show()"/>
 
         </h:form>
 
@@ -245,5 +242,6 @@
                 </div>
             </h:form>
         </p:dialog>
+
     </div>
 </ui:composition>

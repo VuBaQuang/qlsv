@@ -2,22 +2,19 @@ package bean.classsubject;
 
 import dao.*;
 import model.*;
-import org.primefaces.PrimeFaces;
 import org.primefaces.component.datatable.DataTable;
 import org.primefaces.event.CellEditEvent;
 
-import javax.annotation.PostConstruct;
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
-import javax.faces.bean.ManagedProperty;
 import javax.faces.bean.SessionScoped;
 import javax.faces.context.FacesContext;
-import javax.persistence.Entity;
+import java.io.Serializable;
 import java.util.*;
 
 @ManagedBean
 @SessionScoped
-public class ClaSubMB {
+public class ClaSubMB implements Serializable {
     private ClassSubject classSubject = new ClassSubject();
     private Registersub registersub = new Registersub();
     private ClassCredit classCredit = new ClassCredit();
@@ -44,7 +41,7 @@ public class ClaSubMB {
 
 
     public void listSub() {
-        classe = null;
+
         listSubject = new LinkedHashMap<>();
         for (Subject subject : subjectDAO.findAll()) {
             listSubject.put(subject.getName(), subject.getName());
@@ -65,7 +62,7 @@ public class ClaSubMB {
         this.score = score;
     }
 
-    public void updateListStudent() {
+    public void updateListStudents() {
         Set<Student> students = null;
         if (classe != null) {
             if (classe.equals("")) {
@@ -88,17 +85,19 @@ public class ClaSubMB {
         listStudent.addAll(students);
     }
 
-    public void updateListStudents() {
+    public void updateListStudent() {
         Set<Student> students = null;
-
-        classSubjects = claSubDAO.findBySubCla(subject, classCredit);
-        classSubject = classSubjects.get(0);
         students = new LinkedHashSet<>();
-        for (Registersub value : classSubject.getRegistersubs()) {
-            students.add(value.getStudent());
+        try {
+            for (Registersub value : classSubject.getRegistersubs()) {
+                students.add(value.getStudent());
+            }
+            listStudent = new LinkedList<>();
+            listStudent.addAll(students);
+        } catch (NullPointerException e) {
+            listStudent = new LinkedList<>();
         }
-        listStudent = new LinkedList<>();
-        listStudent.addAll(students);
+
     }
 
     public String getScore(Student student) {
@@ -134,11 +133,10 @@ public class ClaSubMB {
     public void updateScore(CellEditEvent event) {
         Student student = (Student) ((DataTable) event.getComponent()).getRowData();
         registersub = registersubDAO.findByClassStu(classSubject, student).get(0);
-        double score = Double.parseDouble(event.getNewValue().toString());
-        if (score == 0) {
-            FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_WARN, "Failed", "Invalid");
-            FacesContext.getCurrentInstance().addMessage(null, message);
-        } else {
+        double score;
+
+        try {
+            score = Double.parseDouble(event.getNewValue().toString());
             registersub.setScore(score);
             if (registersubDAO.update(registersub)) {
                 FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "Success", "Update score success");
@@ -147,9 +145,31 @@ public class ClaSubMB {
                 FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_WARN, "Failed", "Update score fail");
                 FacesContext.getCurrentInstance().addMessage(null, message);
             }
+        } catch (Exception e) {
+            FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_WARN, "Failed", "Invalid");
+            FacesContext.getCurrentInstance().addMessage(null, message);
         }
-
     }
+
+    public void updateClassSubject() {
+        if ((sub != null && !sub.equals("")) && (classe != null && !classe.equals(""))) {
+            Subject subject = subjectDAO.getByName(sub);
+            ClassCredit classCredit = classCreditDAO.getIdByName(classe);
+            classSubject = new ClassSubject();
+            classSubject = claSubDAO.getBySubFtClass(subject, classCredit);
+            if (classSubject == null) {
+                FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_WARN, "Fail", "Not exist!");
+                FacesContext.getCurrentInstance().addMessage(null, message);
+            }
+        } else {
+            classSubject = new ClassSubject();
+            FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_WARN, "Fail", "Invalid");
+            FacesContext.getCurrentInstance().addMessage(null, message);
+        }
+        System.out.println(classe);
+        System.out.println(sub);
+    }
+
 
     public void updateClassSubjects() {
         Subject subject = subjectDAO.getByName(sub);
@@ -203,6 +223,8 @@ public class ClaSubMB {
                 }
             }
         }
+        updateClassSubject();
+
     }
 
     public String create() {
