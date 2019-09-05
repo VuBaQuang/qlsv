@@ -7,10 +7,13 @@ import org.hibernate.Session;
 import utils.HibernateUtils;
 
 import org.hibernate.query.Query;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Root;
+
+import javax.persistence.TemporalType;
+import javax.persistence.criteria.*;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 public class ClaSubDAO {
@@ -149,6 +152,40 @@ public class ClaSubDAO {
             s.close();
         }
         return list;
+    }
+
+    public static List<ClassSubject> rangeTime(){
+        Session s = HibernateUtils.getSessionFactory().openSession();
+        List<ClassSubject> list = null;
+        try {
+            s.beginTransaction();
+            CriteriaBuilder builder = s.getCriteriaBuilder();
+            CriteriaQuery<ClassSubject> query = builder.createQuery(ClassSubject.class);
+            Root<ClassSubject> root = query.from(ClassSubject.class);
+            SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
+            java.util.Date startDate = dateFormat.parse("01-09-2019");
+            java.util.Date endDate = dateFormat.parse("01-10-2019");
+            query.select(root).where(
+                    builder.between(root.<Date>get("startTime"),startDate,endDate)
+            );
+            //query.select(root).where(builder.isNull(root.get("classPayroll")));
+            Query<ClassSubject> q = s.createQuery(query);
+            list = q.getResultList();
+            s.getTransaction().commit();
+        } catch (Exception e) {
+            e.printStackTrace();
+            s.getTransaction().rollback();
+        } finally {
+            s.close();
+        }
+        return list;
+    }
+
+    public static void main(String[] args) {
+        for (ClassSubject classSubject:rangeTime()) {
+            System.out.println(classSubject.getId());
+        }
+        System.out.println();
     }
 
     public ClassSubject create(ClassSubject classSubject) {

@@ -42,7 +42,7 @@
 
  <!-- Welcome page -->
  <welcome-file-list>
-  <welcome-file>faces/admin/student/test.xhtml </welcome-file>
+  <welcome-file>faces/home/login.xhtml </welcome-file>
  </welcome-file-list>
 
 </web-app>

@@ -132,9 +132,10 @@ public class StudentsMB implements Serializable {
         return url + "?faces-redirect=true";
     }
 
-    public void delete(Student student) {
+    public String delete(Student student) {
         StudentDAO dao = new StudentDAO();
         dao.delete(student);
+        return "student.xhtml?faces-redirect=true";
     }
 
     public String edit(Student student) {
