@@ -54,16 +54,15 @@ public class ClassesMB implements Serializable, Converter {
         this.classPayroll = classPayroll;
     }
 
-    public String create() {
+    public void create() {
         int i = classesDAO.create(classPayroll);
-        if (i == 2) {
-            FacesContext context = FacesContext.getCurrentInstance();
-            FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_WARN, "Create error", "Code is exist");
+        if (i ==0) {
+            FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "Success", "Thêm lớp " + classPayroll.getName() + " thành công");
             FacesContext.getCurrentInstance().addMessage(null, message);
-            return null;
-        } else if (i == 1) {
-            return "class?faces-redirect=true";
-        } else return null;
+        } else {
+            FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Failed", "System Error !");
+            FacesContext.getCurrentInstance().addMessage(null, message);
+        }
 
     }
 

@@ -41,11 +41,11 @@ public class ClassDAO {
             s.save(aClass);
             s.getTransaction().commit();
         } catch (ConstraintViolationException e) {
-            return 2;
+            return 1;
         } catch (Exception e) {
             e.printStackTrace();
             s.getTransaction().rollback();
-            return 1;
+            return 2;
         } finally {
             s.close();
         }

@@ -13,8 +13,8 @@
         <hr/>
         <h:form id="form-clasub">
             <div style="float: right">
-                <p:commandButton value="Tạo lớp" oncomplete="PF('dlg-classes').show()"/>
-                <p:commandButton value="Tạo môn học" oncomplete="PF('dlg-subject').show()"/>
+                <p:commandButton value="Tạo lớp" oncomplete="PF('dlg-clasub-classes').show()"/>
+                <p:commandButton value="Tạo môn học" oncomplete="PF('dlg-clasub-subject').show()"/>
             </div>
             <br/>
             <br/><br/>
@@ -40,7 +40,7 @@
             <p:spacer width="20px"/>
 
             <p:commandButton value="Tạo lớp - môn học" actionListener="#{claSubMB.reset()}"
-                             oncomplete="PF('dlg-add').show()"/>
+                             oncomplete="PF('dlg-clasub-add').show()"/>
             <br/><br/>
 
             <h:panelGroup id="pnlContainer" layout="block">
@@ -120,7 +120,7 @@
                 <h:panelGrid rendered="#{claSubMB.checkClSu()}" columns="2">
 
                     <p:commandButton update="form-2:table-stu" value="Thêm sinh viên"
-                                     oncomplete="PF('dlg').show()">
+                                     oncomplete="PF('dlg-clasub').show()">
                     </p:commandButton>
 
 
@@ -141,7 +141,7 @@
             </h:panelGroup>
         </h:form>
 
-        <p:dialog widgetVar="dlg" modal="true" resizable="false" responsive="true" showEffect="true">
+        <p:dialog widgetVar="dlg-clasub" modal="true" resizable="false" responsive="true" showEffect="true">
             <h:form id="form-2">
                 <div align="center">
                     <h:dataTable id="table-stu" value="#{claSubMB.students}" var="student"
@@ -190,7 +190,7 @@
             </h:form>
         </p:dialog>
 
-        <p:dialog widgetVar="dlg-add" resizable="false" prependID="false" modal="true" width="950px" height="550px"
+        <p:dialog widgetVar="dlg-clasub-add" resizable="false" prependID="false" modal="true" width="950px" height="550px"
                   showEffect="true" responsive="true">
 
             <h:form id="form-clasub-3">
@@ -249,14 +249,14 @@
                 <div align="center">
                     <p:commandButton value="Save" action="#{claSubMB.create()}"
                                      update="growl-clasub"
-                                     oncomplete=" if (args &amp;&amp; !args.validationFailed) PF('dlg-add').hide()"/>
+                                     oncomplete=" if (args &amp;&amp; !args.validationFailed) PF('dlg-clasub-add').hide()"/>
 
 
                 </div>
             </h:form>
         </p:dialog>
 
-        <p:dialog widgetVar="dlg-classes" resizable="false" prependID="false" modal="true"
+        <p:dialog widgetVar="dlg-clasub-classes" resizable="false" prependID="false" modal="true"
                   showEffect="true" responsive="true" width="500px">
             <h:form id="form-clasub-classes">
                 <div align="center">
@@ -277,12 +277,12 @@
                 <div align="center">
                     <p:commandButton value="Save" action="#{claSubMB.createClaCre()}"
                                      update="growl-clasub,form-clasub"
-                                     oncomplete=" if (args &amp;&amp; !args.validationFailed) PF('dlg-classes').hide()"/>
+                                     oncomplete=" if (args &amp;&amp; !args.validationFailed) PF('dlg-clasub-classes').hide()"/>
                 </div>
             </h:form>
         </p:dialog>
 
-        <p:dialog widgetVar="dlg-subject" resizable="false" width="500px" prependID="false" modal="true"
+        <p:dialog  widgetVar="dlg-clasub-subject" resizable="false" width="500px" prependID="false" modal="true"
                   showEffect="true" responsive="true">
             <p:ajax listener="#{claSubMB.resetSub}" update="form-clasub-subject"/>
             <h:form id="form-clasub-subject">
@@ -316,7 +316,7 @@
                 <div align="center">
                     <p:commandButton value="Save" action="#{claSubMB.createSubject()}"
                                      update="growl-clasub,form-clasub"
-                                     oncomplete="  if (args &amp;&amp; !args.validationFailed) PF('dlg-subject').hide()"/>
+                                     oncomplete="  if (args &amp;&amp; !args.validationFailed) PF('dlg-clasub-subject').hide()"/>
                 </div>
             </h:form>
         </p:dialog>

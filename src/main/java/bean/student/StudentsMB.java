@@ -2,12 +2,10 @@ package bean.student;
 
 import dao.*;
 import model.*;
-import org.primefaces.event.SelectEvent;
 
 import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ManagedProperty;
-import javax.faces.bean.SessionScoped;
 import javax.faces.bean.ViewScoped;
 import java.io.Serializable;
 import java.util.*;
@@ -36,11 +34,51 @@ public class StudentsMB implements Serializable {
     private ClaSubDAO claSubDAO = new ClaSubDAO();
     private RegistersubDAO registersubDAO = new RegistersubDAO();
     private UserDAO userDAO = new UserDAO();
-    String redirect = "student";
+
+    public void setaddress() {
+        String addres = student.getAddress();
+        if (addres != null) {
+            String ad[] = addres.split("[,]");
+            if(ad.length==3){
+                province=ad[2].trim();
+                district=ad[1].trim();
+                ward=ad[0].trim();
+            }
+        }
+        setDistricts();
+        setWards();
+    }
+
+    public String getProvince() {
+        return province;
+    }
+
+    public void setProvince(String province) {
+        this.province = province;
+    }
+
+    public String getDistrict() {
+        return district;
+    }
+
+    public void setDistrict(String district) {
+        this.district = district;
+    }
+
+    public String getWard() {
+        return ward;
+    }
+
+    public void setWard(String ward) {
+        this.ward = ward;
+    }
 
     public void rsStu() {
         student = new Student();
         province = null;
+        district = null;
+        ward = null;
+        studentClass = null;
     }
 
     public List<ClassSubject> getClassSubjectList() {
@@ -90,13 +128,6 @@ public class StudentsMB implements Serializable {
         this.listStudentNone = listStudentNone;
     }
 
-    public String getRedirect() {
-        return redirect;
-    }
-
-    public void setRedirect(String redirect) {
-        this.redirect = redirect;
-    }
 
     @ManagedProperty(value = "#{editStudentMB}")
     private EditStudentMB editStudentMB;
@@ -118,7 +149,7 @@ public class StudentsMB implements Serializable {
         studentsDAO.update(students);
     }
 
-    public String edit() {
+    public void edit() {
         StringBuilder builder = new StringBuilder();
         builder.append(ward);
         builder.append(", ");
@@ -131,18 +162,17 @@ public class StudentsMB implements Serializable {
         StudentDAO dao = new StudentDAO();
         dao.update(student);
 
-        return "student";
     }
 
-    public String merge() {
+    public void merge() {
         if (student.getId() != null) {
-            return edit();
+            edit();
         } else {
-            return addStudent();
+            addStudent();
         }
     }
 
-    public String addStudent() {
+    public void addStudent() {
         StudentDAO dao = new StudentDAO();
         StringBuilder address = new StringBuilder();
         address.append(ward);
@@ -158,30 +188,16 @@ public class StudentsMB implements Serializable {
         ClassPayroll classes = classesDAO.getClassByName(studentClass);
         student.setClassPayroll(classes);
         student = dao.create(student);
-        return "student.xhtml?faces-redirect=true";
+
     }
 
-    public String delete(Student student) {
+    public void delete(Student student) {
         StudentDAO dao = new StudentDAO();
         dao.delete(student);
-        return "student.xhtml?faces-redirect=true";
     }
 
 
-    public void edit(Student student) {
-//        this.student = student;
-//        System.out.println(this.student.getName());
-        String[] address = student.getAddress().split("[,][ ]");
-        province = address[2];
-        district = address[1];
-        ward = address[0];
-        editStudentMB.setStudentClass(student.getClass() != null ? student.getClass().getName() : "");
-        editStudentMB.setStudent(student);
-        editStudentMB.setProvince(province);
-        editStudentMB.setDistrict(district);
-        editStudentMB.setWard(ward);
-        editStudentMB.setStudentClass(student.getClassPayroll().getName());
-    }
+
 
     @PostConstruct
     public void init() {
@@ -208,25 +224,6 @@ public class StudentsMB implements Serializable {
         System.out.println("Update address success!");
     }
 
-    @PostConstruct
-    public void setDistricts() {
-        districts = provinceDistric.get(province);
-        wards = new LinkedHashMap<>();
-    }
-
-    public String getProvince() {
-        try{
-            if (student.getAddress() != null && province != null ) {
-                setDistricts();
-                province = student.getAddress().split("[,][ ]")[2];
-            }
-            return province;
-        }catch (ArrayIndexOutOfBoundsException e){
-            province= null;
-            return province;
-        }
-
-    }
 
     public String getStudentClass() {
         return studentClass;
@@ -236,52 +233,6 @@ public class StudentsMB implements Serializable {
         this.studentClass = studentClass;
     }
 
-    public void setProvince(String province) {
-        this.province = province;
-    }
-
-    public String getDistrict() {
-
-
-        try{
-            if (student.getAddress() != null && district != null) {
-                district = student.getAddress().split("[,][ ]")[1];
-                setWards();
-            }
-            return district;
-        }catch (ArrayIndexOutOfBoundsException e){
-            district= null;
-            return district;
-        }
-
-
-
-    }
-
-    public void setDistrict(String district) {
-        this.district = district;
-    }
-
-    public String getWard() {
-
-        try{
-            if (student.getAddress() != null && ward != null)
-                ward = student.getAddress().split("[,][ ]")[0];
-            return ward;
-        }catch (ArrayIndexOutOfBoundsException e){
-            ward= null;
-            return ward;
-        }
-
-
-
-
-
-    }
-
-    public void setWard(String ward) {
-        this.ward = ward;
-    }
 
     public EditStudentMB getEditStudentMB() {
         return editStudentMB;
@@ -297,14 +248,7 @@ public class StudentsMB implements Serializable {
     }
 
     public Student getStudent() {
-        if (student.getAddress() != null) {
-            String[] address = student.getAddress().split("[,][ ]");
-            if (address.length == 3) {
-                province = address[2];
-                district = address[1];
-                ward = address[0];
-            }
-        }
+
         return student != null ? student : new Student();
     }
 
@@ -368,6 +312,7 @@ public class StudentsMB implements Serializable {
     }
 
     public Map<String, String> getDistricts() {
+
         return districts;
     }
 
@@ -375,10 +320,6 @@ public class StudentsMB implements Serializable {
         return wards;
     }
 
-    @PostConstruct
-    public void setWards() {
-        wards = districWard.get(district);
-    }
 
     public AddressDAO getAddressDAO() {
         return addressDAO;
@@ -388,4 +329,14 @@ public class StudentsMB implements Serializable {
         this.addressDAO = addressDAO;
     }
 
+    @PostConstruct
+    public void setWards() {
+        wards = districWard.get(district);
+    }
+
+    @PostConstruct
+    public void setDistricts() {
+        districts = provinceDistric.get(province);
+        wards = new LinkedHashMap<>();
+    }
 }

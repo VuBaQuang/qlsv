@@ -10,10 +10,11 @@
     <div align="center">
         <h2>Chi tiết lớp học biên chế</h2>
         <hr/>
-        <f:event listener="#{claSubMB.listSub()}" type="preRenderView"/>
+
         <p:growl id="growl-classes" showDetail="true" life="2000"/>
         <br/><br/>
         <h:form id="form-classes">
+            <f:event listener="#{claSubMB.listSub()}" type="preRenderView"/>
             Lớp:
             <p:selectOneMenu id="classes" required="true" requiredMessage="Bạn chưa chọn môn học"
                              value="#{classesMB.classPayroll}" converter="SelectItemClassConverter" immediate="true">
@@ -27,7 +28,7 @@
                              update="pnlContainer,growl-classes">
             </p:commandButton>
             <p:spacer width="20px"/>
-            <p:commandButton value="Tạo lớp học" oncomplete="PF('dlg-add').show()"/>
+            <p:commandButton value="Tạo lớp học" oncomplete="PF('dlg-classes-add').show()"/>
             <br/><br/>
             <h:panelGroup id="pnlContainer" layout="block">
                 <h:panelGrid columns="2" rendered="#{classesMB.checkNull()}">
@@ -71,7 +72,7 @@
                 <br/>
                 <h:panelGrid rendered="#{classesMB.checkNull()}" columns="2">
                     <p:commandButton update="form-2-classes:table-stu" value="Thêm sinh viên"
-                                     oncomplete="PF('dlg').show()">
+                                     oncomplete="PF('dlg-classes').show()">
                     </p:commandButton>
                     <p:commandButton value="Xóa lớp" action="#{classesMB.delete(classesMB.classPayroll)}"
                                      update="growl-classes,form-classes">
@@ -88,7 +89,7 @@
             </h:panelGroup>
         </h:form>
 
-        <p:dialog widgetVar="dlg" modal="true" resizable="false" responsive="true" showEffect="true">
+        <p:dialog widgetVar="dlg-classes" modal="true" resizable="false" responsive="true" showEffect="true">
             <h:form id="form-2-classes">
                 <div align="center">
                     <h:dataTable id="table-stu" value="#{studentsMB.getListStudentNone()}" var="student"
@@ -137,7 +138,7 @@
             </h:form>
         </p:dialog>
 
-        <p:dialog widgetVar="dlg-add" resizable="false" prependID="false" modal="true" width="600px" height="200px"
+        <p:dialog  widgetVar="dlg-classes-add" resizable="false" prependID="false" modal="true" width="600px" height="200px"
                   showEffect="true" responsive="true">
 
             <h:form id="form-classes-3">
@@ -163,8 +164,8 @@
                 <br/>
                 <div align="center">
                     <p:commandButton value="Save" action="#{classesMB.create()}"
-                                     update="growl-classes"
-                                     oncomplete=" if (args &amp;&amp; !args.validationFailed) PF('dlg-add').hide()"/>
+                                     update="growl-classes,form-classes "
+                                     oncomplete=" if (args &amp;&amp; !args.validationFailed) PF('dlg-classes-add').hide()"/>
                 </div>
             </h:form>
         </p:dialog>
