@@ -6,19 +6,26 @@
                 xmlns:fn="http://java.sun.com/jsp/jstl/functions"
                 xmlns:ui="http://java.sun.com/jsf/facelets">
 
-
+    <h1 align="center">Quản lý sinh viên</h1>
+    <hr/>
     <div align="center">
-        <h:form>
-            <h:commandButton value="Sinh Viên" styleClass="btn btn-primary"
-                             action="student/student.xhtml?faces-redirect=true"> </h:commandButton>
-            <h:commandButton value="Lớp biên chế" styleClass="btn btn-danger"
-                             action="class/class.xhtml?faces-redirect=true"> </h:commandButton>
-            <h:commandButton value="Lớp tín chỉ" styleClass="btn btn-info"
-                             action="classsubject/view.xhtml?faces-redirect=true"> </h:commandButton>
-            <h:commandButton value="Môn học" styleClass="btn btn-success"
-                             action="subject/subject.xhtml?faces-redirect=true"> </h:commandButton>
-        </h:form>
+        <p:tabView orientation="left" prependId="false">
+            <p:tab title="Sinh viên" >
+                <ui:insert>
+                    <ui:include src="student-content.xhtml"/>
+                </ui:insert>
+            </p:tab>
+            <p:tab title="Lớp biên chế">
+                <ui:insert>
+                    <ui:include src="classes-content.xhtml"/>
+                </ui:insert>
+            </p:tab>
+            <p:tab title="Lớp học">
+                <ui:insert>
+                    <ui:include src="classsubject-content.xhtml"/>
+                </ui:insert>
+            </p:tab>
+        </p:tabView>
     </div>
-
 
 </ui:composition>

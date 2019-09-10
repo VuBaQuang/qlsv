@@ -14,14 +14,7 @@ public class SubjectsMB {
     SubjectDAO subjectDAO = new SubjectDAO();
 
 
-    public String create(){
-        subjectDAO.create(subject);
-        return "subject.xhtml?faces-redirect=true";
-    }
-    public void delete(Subject subject){
-        subjectDAO.delete(subject);
 
-    }
     public List<Subject> getSubjects() {
         return subjectDAO.findAll();
     }

@@ -8,50 +8,46 @@
 
     <div align="center">
         <br/>
-        <p:growl id="growl" showDetail="true" life="2000"/>
-        <h:outputText value="Students list" styleClass="contentsTitle"/>
-        <h:form id="form" acceptcharset="UTF-8">
-            <p:dataTable id="table" value="#{subjectsMB.subjects}" var="subject">
-                <p:column>
-                    <f:facet name="header">ID</f:facet>
-                    <h:outputText value=" #{subject.id}"/>
+        <p:growl id="growl-student" showDetail="true" life="2000"/>
+
+        <h2>Danh sách sinh viên</h2>
+        <hr/>
+        <hr/>
+        <h:form id="form-student" acceptcharset="UTF-8">
+            <p:dataTable id="table" value="#{studentsMB.getListStudent()}" var="student">
+                <p:column headerText="ID" style="width: 10px">
+                    <h:outputText value=" #{student.id}"/>
                 </p:column>
-                <p:column>
-                    <f:facet name="header">Mã môn học</f:facet>
-                    <h:outputText value="#{subject.code}"/>
+                <p:column headerText="Mã sinh viên" style="width: 70px;text-align: center">
+                    <h:outputText value="#{student.code}"/>
                 </p:column>
-                <p:column>
-                    <f:facet name="header">Họ tên</f:facet>
-                    <h:outputText value=" #{subject.name}"/>
+                <p:column headerText="Họ tên" style="width: 150px;text-align: center">
+                    <h:outputText value=" #{student.name}"/>
                 </p:column>
-                <p:column>
-                    <f:facet name="header">Lớp</f:facet>
-                    <h:outputText value="#{subject.coefficient}"/>
+                <p:column headerText="Lớp" style="width: 60px;text-align: center">
+                    <h:outputText value="#{student.classPayroll.name}"/>
                 </p:column>
-                <p:column>
-                    <f:facet name="header">Tuổi</f:facet>
+                <p:column headerText="Tuổi" style="width: 20px;text-align: center">
                     <h:outputText value="#{student.age}"/>
                 </p:column>
-                <p:column>
-                    <f:facet name="header">Địa chỉ</f:facet>
+                <p:column headerText="Địa chỉ" style="text-align: center">
                     <h:outputText value="#{student.address}"/>
                 </p:column>
-                <p:column>
-                    <f:facet name="header">Email</f:facet>
+                <p:column headerText="Email" style="text-align: center">
                     <h:outputText value=" #{student.email}"/>
                 </p:column>
-                <p:column>
-                    <f:facet name="header">Điểm trung bình</f:facet>
+                <p:column headerText="Điểm trung bình" style="width: 70px;text-align: center">
                     <h:outputText value="#{studentsMB.avgScore(student)}"/>
                 </p:column>
-                <p:column>
-                    <f:facet name="header">Ghi chú</f:facet>
+                <p:column headerText="Ghi chú" style="width: 100px;text-align: center">
                     <h:outputText value="#{student.note}"/>
                 </p:column>
-                <p:column>
-                    <p:commandButton update="form-2:dialog" value="Sửa" onclick="PF('dlg').show()">
+                <p:column headerText="Thao tác" style="width: 140px;text-align: center">
+
+                    <p:commandButton update="form-student-2:dialog" value="Sửa" onclick="PF('dlg-edit').show()">
                         <f:setPropertyActionListener value="#{student}" target="#{studentsMB.student}"/>
                     </p:commandButton>
+
                     <p:commandButton style="background: red; border-color: red" value="Xóa"
                                      action="#{studentsMB.delete(student)}"/>
                 </p:column>
@@ -65,10 +61,10 @@
 
         </h:form>
 
-        <p:dialog widgetVar="dlg" resizable="false" modal="true" responsive="true" prependID="false">
-            <h:form id="form-2">
+        <p:dialog widgetVar="dlg-edit" resizable="false" modal="true" responsive="true" showEffect="true" prependID="false">
+            <h:form id="form-student-2">
                 <div align="center">
-                    <p:panel id="dialog" header="Update" style="width: 76%">
+                    <p:panel id ="dialog" header="Update" style="width: 76%">
                         <p:messages/>
                         <h:panelGrid columns="2" columnClasses="label, value" style="margin: 10px auto">
                             <!--Tên-->
@@ -81,7 +77,7 @@
                             <h:inputText id="code" value="#{studentsMB.student.code}"
                                          required="true"
                                          requiredMessage="Mã sinh viên không được để trống"
-                                         validatorMessage="Mã sinh viên không đúng định dạng: ATxxxxxx (x là số)"
+                                             validatorMessage="Mã sinh viên không đúng định dạng: ATxxxxxx (x là số)"
                                          label="code"
                                          style="width: 250px">
                                 <f:validateRegex
@@ -107,7 +103,6 @@
                             <h:outputText value="Số điện thoại: "/>
                             <h:inputText id="phone" value="#{studentsMB.student.phone}" label="phone"
                                          style="width: 250px"/>
-
 
                             <h:outputText value="Tỉnh: "/>
                             <h:selectOneMenu id="province" value="#{studentsMB.province}" label="province"
@@ -147,14 +142,15 @@
                 <br/>
                 <div align="center">
                     <p:commandButton value="Save" action="#{studentsMB.merge()}"
-                                     update="growl,form" oncomplete="PF('dlg').hide()"/>
+                                     update="growl-student,form-student" oncomplete="PF('dlg').hide()"/>
                 </div>
             </h:form>
         </p:dialog>
-        <p:dialog widgetVar="dlg-login" resizable="false" prependID="false" showEffect="true" responsive="true" modal="true">
+        <p:dialog widgetVar="dlg-login" resizable="false" prependID="false" showEffect="true" responsive="true"
+                  modal="true">
             <h:form>
                 <div align="center">
-                    <p:panel id="dialog" header="Tạo sinh viên" style="width: 76%">
+                    <p:panel  header="Tạo sinh viên" style="width: 76%">
                         <p:messages/>
                         <h:panelGrid columns="2" columnClasses="label, value" style="margin: 10px auto">
                             <!--Tên-->
@@ -233,9 +229,13 @@
                 <br/>
                 <div align="center">
                     <p:commandButton value="Save" action="#{studentsMB.merge()}"
-                                     update="growl,form" oncomplete="PF('dlg').hide()"/>
+                                     update="growl-student,form-student" oncomplete="PF('dlg').hide()"/>
                 </div>
             </h:form>
         </p:dialog>
+
+
+
+
     </div>
 </ui:composition>

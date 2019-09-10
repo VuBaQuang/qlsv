@@ -7,13 +7,13 @@
                 xmlns:fn="http://java.sun.com/jsp/jstl/functions"
                 xmlns:ui="http://java.sun.com/jsf/facelets">
 
-    <hr/>
     <div align="center">
         <h2>Chi tiết lớp học biên chế</h2>
+        <hr/>
         <f:event listener="#{claSubMB.listSub()}" type="preRenderView"/>
-        <p:growl id="growl" showDetail="true" life="2000"/>
+        <p:growl id="growl-classes" showDetail="true" life="2000"/>
         <br/><br/>
-        <h:form id="form">
+        <h:form id="form-classes">
             Lớp:
             <p:selectOneMenu id="classes" required="true" requiredMessage="Bạn chưa chọn môn học"
                              value="#{classesMB.classPayroll}" converter="SelectItemClassConverter" immediate="true">
@@ -24,7 +24,7 @@
             <p:spacer width="20px"/>
             <br/> <br/>
             <p:commandButton value="Hiển thị" action="#{classesMB.updateStudentList}"
-                             update="pnlContainer,growl">
+                             update="pnlContainer,growl-classes">
             </p:commandButton>
             <p:spacer width="20px"/>
             <p:commandButton value="Tạo lớp học" oncomplete="PF('dlg-add').show()"/>
@@ -64,17 +64,17 @@
                             <h:outputText value="#{student.note}"/>
                         </p:column>
                         <p:column style="width:60px" headerText="Thao tác">
-                            <p:commandButton value="Xóa" action="#{classesMB.delStuClass(student)}" update="form-2,form:pnlContainer"/>
+                            <p:commandButton value="Xóa" action="#{classesMB.delStuClass(student)}" update="form-2-classes,form-classes:pnlContainer"/>
                         </p:column>
                     </p:dataTable>
                 </h:panelGrid>
                 <br/>
                 <h:panelGrid rendered="#{classesMB.checkNull()}" columns="2">
-                    <p:commandButton update="form-2:table-stu" value="Thêm sinh viên"
+                    <p:commandButton update="form-2-classes:table-stu" value="Thêm sinh viên"
                                      oncomplete="PF('dlg').show()">
                     </p:commandButton>
                     <p:commandButton value="Xóa lớp" action="#{classesMB.delete(classesMB.classPayroll)}"
-                                     update="growl,form">
+                                     update="growl-classes,form-classes">
                         <p:confirm header="Xác nhận" message="Bạn muốn xóa lớp #{classesMB.classPayroll.name}"
                                    icon="pi pi-exclamation-triangle"/>
                     </p:commandButton>
@@ -89,7 +89,7 @@
         </h:form>
 
         <p:dialog widgetVar="dlg" modal="true" resizable="false" responsive="true" showEffect="true">
-            <h:form id="form-2">
+            <h:form id="form-2-classes">
                 <div align="center">
                     <h:dataTable id="table-stu" value="#{studentsMB.getListStudentNone()}" var="student"
                                  styleClass="table"
@@ -126,7 +126,7 @@
                         </h:column>
                         <h:column>
                             <f:facet name="header" colspan="2">Thao tác</f:facet>
-                            <p:commandButton update="form-2,form:pnlContainer" value="Thêm"
+                            <p:commandButton update="form-2-classes,form-classes:pnlContainer" value="Thêm"
                                              action="#{classesMB.add2Class(student,classesMB.classPayroll)}"/>
                         </h:column>
                         <f:facet name="footer">
@@ -140,7 +140,7 @@
         <p:dialog widgetVar="dlg-add" resizable="false" prependID="false" modal="true" width="600px" height="200px"
                   showEffect="true" responsive="true">
 
-            <h:form id="form-3">
+            <h:form id="form-classes-3">
                 <div id="create-clas" align="center">
                     <p:panel header="Tạo lớp học" id="dialog-add">
                         <p:messages/>
@@ -163,7 +163,7 @@
                 <br/>
                 <div align="center">
                     <p:commandButton value="Save" action="#{classesMB.create()}"
-                                     update="growl"
+                                     update="growl-classes"
                                      oncomplete=" if (args &amp;&amp; !args.validationFailed) PF('dlg-add').hide()"/>
                 </div>
             </h:form>

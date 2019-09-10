@@ -32,7 +32,7 @@ public class ClaSubMB implements Serializable, Converter {
     private SubjectDAO subjectDAO = new SubjectDAO();
     private ClassDAO classDAO = new ClassDAO();
     private RegistersubDAO registersubDAO = new RegistersubDAO();
-   private StudentDAO studentDAO = new StudentDAO();
+    private StudentDAO studentDAO = new StudentDAO();
 
     private List<Date> range;
     private String sub;
@@ -40,15 +40,14 @@ public class ClaSubMB implements Serializable, Converter {
     private String day;
 
 
-   private List<Student> students;
+    private List<Student> students;
     private List<Student> listStudent;
     private List<String> listSubject;
     private List<String> listClass;
     private List<ClassSubject> classSubjects;
 
-
-    public void update() {
-
+    public void resetSub() {
+        subject = new Subject();
     }
 
     public void reset() {
@@ -65,12 +64,41 @@ public class ClaSubMB implements Serializable, Converter {
         for (Subject subject : subjectDAO.findAll()) {
             listSubject.add(subject.getName());
         }
-        listClass =  new LinkedList<>();
+        listClass = new LinkedList<>();
         for (ClassCredit classCredit : classCreditDAO.findAll()) {
             listClass.add(classCredit.getName());
         }
         updateListStudent();
 
+    }
+
+    public void createClaCre() {
+        ClassCredit classCredit = classCreditDAO.create(this.classCredit);
+        if (classCredit !=null) {
+            FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "Success", "Thêm lớp " + classCredit.getName() + " thành công");
+            FacesContext.getCurrentInstance().addMessage(null, message);
+        } else {
+            FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Failed", "System Error !");
+            FacesContext.getCurrentInstance().addMessage(null, message);
+        }
+    }
+
+    public void createSubject() {
+        int i = subjectDAO.create(subject);
+        if (i == 0) {
+            FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "Success", "Thêm môn học " + subject.getName() + " thành công");
+            FacesContext.getCurrentInstance().addMessage(null, message);
+        } else if (i == 1) {
+            FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_WARN, "Failed", "Đã tồn tại môn học có mã " + subject.getCode());
+            FacesContext.getCurrentInstance().addMessage(null, message);
+        } else {
+            FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Failed", "System Error !");
+            FacesContext.getCurrentInstance().addMessage(null, message);
+        }
+    }
+
+    public void deleteSubject(Subject subject) {
+        subjectDAO.delete(subject);
     }
 
     public boolean check() {
@@ -89,6 +117,7 @@ public class ClaSubMB implements Serializable, Converter {
             updateListStudent();
         }
     }
+
     public boolean checkClSu() {
         if (classe != null) {
             if (classe.equals("")) {
@@ -105,6 +134,7 @@ public class ClaSubMB implements Serializable, Converter {
         }
         return claSubDAO.getBySubFtClass(subjectDAO.getByName(sub), classCreditDAO.getIdByName(classe)) != null;
     }
+
     public void updateListStu() {
         StudentDAO studentDAO = new StudentDAO();
         students = new LinkedList<>();
@@ -153,6 +183,7 @@ public class ClaSubMB implements Serializable, Converter {
         listStudent = new LinkedList<>();
         listStudent.addAll(students);
     }
+
     public void add2Class(Student students, ClassPayroll classes) {
         students.setClassPayroll(classes);
         studentDAO.update(students);
@@ -183,6 +214,7 @@ public class ClaSubMB implements Serializable, Converter {
         subject = subjectDAO.findById(subject.getId());
         classSubject = claSubDAO.findBySubCla(subject, classCredit).get(0);
     }
+
     public void updateScore(CellEditEvent event) {
         Student student = (Student) ((DataTable) event.getComponent()).getRowData();
         registersub = registersubDAO.findByClassStu(classSubject, student).get(0);
@@ -227,12 +259,15 @@ public class ClaSubMB implements Serializable, Converter {
         classSubjects = claSubDAO.findBySub(subject);
     }
 
-    public String delete(ClassSubject classSubject) {
-        for (Registersub registersub : registersubDAO.findByClass(classSubject)) {
-            registersubDAO.delete(registersub);
-        }
-        claSubDAO.delete(classSubject);
-        return "classsubject.xhtml?faces-redirect=true";
+
+    public void delete() {
+            classSubject  = claSubDAO.getBySubFtClass(subjectDAO.getByName(sub),classCreditDAO.getIdByName(classe));
+            for (Registersub registersub : registersubDAO.findByClass(classSubject)) {
+                registersubDAO.delete(registersub);
+            }
+            claSubDAO.delete(classSubject);
+        FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "Success", "Xóa lớp "+sub+" - "+classe+" thành công");
+        FacesContext.getCurrentInstance().addMessage(null, message);
     }
 
     public String register(ClassSubject classSubject, Student student) {
@@ -418,5 +453,5 @@ public class ClaSubMB implements Serializable, Converter {
             throw new ConverterException(new FacesMessage(value + " is not a valid ClaSub"));
         }
     }
-    }
+}
 
