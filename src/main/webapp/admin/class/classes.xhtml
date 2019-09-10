@@ -8,14 +8,12 @@
       xmlns:f="http://xmlns.jcp.org/jsf/core">
 <ui:insert name="header">
     <ui:include src="/templates/header.xhtml"/>
-    <script type="text/javascript" src="${pageContext.request.contextPath}/resources/js/jquery-3.2.1.js"></script>
-    <h:outputStylesheet library="primefaces-omega" name="theme.css" target="body"/>
     <h:outputStylesheet library="css" name="main.css" target="body"/>
 </ui:insert>
 <!--	Start body	-->
 
 <ui:insert name="contents">
-    <ui:include src="add-student-content.xhtml"/>
+    <ui:include src="classes-content.xhtml"/>
 </ui:insert>
 
 <!--	End body	-->

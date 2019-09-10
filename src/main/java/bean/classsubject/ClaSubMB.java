@@ -8,13 +8,18 @@ import org.primefaces.event.CellEditEvent;
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
+import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
+import javax.faces.convert.Converter;
+import javax.faces.convert.ConverterException;
+import javax.faces.convert.FacesConverter;
 import java.io.Serializable;
 import java.util.*;
 
 @ManagedBean
+@FacesConverter(value = "ClaSubConvert")
 @SessionScoped
-public class ClaSubMB implements Serializable {
+public class ClaSubMB implements Serializable, Converter {
     private ClassSubject classSubject = new ClassSubject();
     private Registersub registersub = new Registersub();
     private ClassCredit classCredit = new ClassCredit();
@@ -27,6 +32,7 @@ public class ClaSubMB implements Serializable {
     private SubjectDAO subjectDAO = new SubjectDAO();
     private ClassDAO classDAO = new ClassDAO();
     private RegistersubDAO registersubDAO = new RegistersubDAO();
+   private StudentDAO studentDAO = new StudentDAO();
 
     private List<Date> range;
     private String sub;
@@ -34,25 +40,88 @@ public class ClaSubMB implements Serializable {
     private String day;
 
 
+   private List<Student> students;
     private List<Student> listStudent;
-    private Map<String, String> listSubject;
-    private Map<String, String> listClass;
+    private List<String> listSubject;
+    private List<String> listClass;
     private List<ClassSubject> classSubjects;
+
+
+    public void update() {
+
+    }
+
+    public void reset() {
+        classe = null;
+        sub = null;
+        range = new LinkedList<>();
+        classSubject = new ClassSubject();
+    }
 
 
     public void listSub() {
 
-        listSubject = new LinkedHashMap<>();
+        listSubject = new LinkedList<>();
         for (Subject subject : subjectDAO.findAll()) {
-            listSubject.put(subject.getName(), subject.getName());
+            listSubject.add(subject.getName());
         }
-        listClass = new LinkedHashMap<>();
+        listClass =  new LinkedList<>();
         for (ClassCredit classCredit : classCreditDAO.findAll()) {
-            listClass.put(classCredit.getName(), classCredit.getName());
+            listClass.add(classCredit.getName());
         }
         updateListStudent();
+
     }
 
+    public boolean check() {
+        return classe != null && sub != null;
+    }
+
+    public void add2Class(Student student, String classe, String subject) {
+        ClassSubject classSubject = claSubDAO.getBySubFtClass(subjectDAO.getByName(subject), classCreditDAO.getIdByName(classe));
+        if (registersubDAO.create(new Registersub(classSubject, student, null)).getId() != null) {
+            classSubject.setRegistered(classSubject.getRegistered() != null ? classSubject.getRegistered() + 1 : 1);
+            claSubDAO.update(classSubject);
+            FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "Success", "Thêm thành công sinh viên " + student.getName() + " - " + student.getCode() + " vào lớp " + sub + " - " + classe);
+            FacesContext.getCurrentInstance().addMessage(null, message);
+            updateClassSubject();
+            updateListStu();
+            updateListStudent();
+        }
+    }
+    public boolean checkClSu() {
+        if (classe != null) {
+            if (classe.equals("")) {
+                classe = null;
+            }
+        }
+        if (sub != null) {
+            if (sub.equals("")) {
+                sub = null;
+            }
+        }
+        if (classe == null || sub == null) {
+            return false;
+        }
+        return claSubDAO.getBySubFtClass(subjectDAO.getByName(sub), classCreditDAO.getIdByName(classe)) != null;
+    }
+    public void updateListStu() {
+        StudentDAO studentDAO = new StudentDAO();
+        students = new LinkedList<>();
+        for (Object o : studentDAO.listStudent(subjectDAO.getByName(sub))) {
+            Student student = (Student) o;
+            students.add(student);
+        }
+    }
+
+    public List<Student> getStudents() {
+        updateListStu();
+        return students;
+    }
+
+    public void setStudents(List<Student> students) {
+        this.students = students;
+    }
 
     public String getScore() {
         return score;
@@ -84,6 +153,10 @@ public class ClaSubMB implements Serializable {
         listStudent = new LinkedList<>();
         listStudent.addAll(students);
     }
+    public void add2Class(Student students, ClassPayroll classes) {
+        students.setClassPayroll(classes);
+        studentDAO.update(students);
+    }
 
     public void updateListStudent() {
         Set<Student> students = null;
@@ -110,26 +183,6 @@ public class ClaSubMB implements Serializable {
         subject = subjectDAO.findById(subject.getId());
         classSubject = claSubDAO.findBySubCla(subject, classCredit).get(0);
     }
-
-    public String checkClaSub(String classe) {
-        Set<Student> students = null;
-        this.classe = classe;
-        if (classe == null || classe.equals("")) {
-            FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_WARN, "Error", "Class is invalid");
-            FacesContext.getCurrentInstance().addMessage(null, message);
-            return null;
-        }
-        if (sub == null || sub.equals("")) {
-            FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_WARN, "Error", "Subject is invalid");
-            FacesContext.getCurrentInstance().addMessage(null, message);
-            return null;
-        }
-        classCredit = classCreditDAO.getIdByName(classe);
-        subject = subjectDAO.getByName(sub);
-        updateListStudents();
-        return "info.xhtml?faces-redirect=true&includeViewParams=true";
-    }
-
     public void updateScore(CellEditEvent event) {
         Student student = (Student) ((DataTable) event.getComponent()).getRowData();
         registersub = registersubDAO.findByClassStu(classSubject, student).get(0);
@@ -166,8 +219,6 @@ public class ClaSubMB implements Serializable {
             FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_WARN, "Fail", "Invalid");
             FacesContext.getCurrentInstance().addMessage(null, message);
         }
-        System.out.println(classe);
-        System.out.println(sub);
     }
 
 
@@ -181,7 +232,7 @@ public class ClaSubMB implements Serializable {
             registersubDAO.delete(registersub);
         }
         claSubDAO.delete(classSubject);
-        return "view.xhtml?faces-redirect=true";
+        return "classsubject.xhtml?faces-redirect=true";
     }
 
     public String register(ClassSubject classSubject, Student student) {
@@ -228,17 +279,26 @@ public class ClaSubMB implements Serializable {
     }
 
     public String create() {
-        try {
-            classSubject.setStartTime(range.size() > 0 ? range.get(0) : null);
-            classSubject.setEndTime(range.size() > 1 ? range.get(1) : null);
-            classSubject.setClassCredit(classCreditDAO.getIdByName(classe));
-            classSubject.setSubject(subjectDAO.getByName(sub));
-            classSubject.setDay(day);
-            claSubDAO.create(classSubject);
-        } catch (Exception e) {
-            e.printStackTrace();
+        if (claSubDAO.getBySubFtClass(subjectDAO.getByName(sub), classCreditDAO.getIdByName(classe)) != null) {
+            FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Fail", "Đã tồn tại " + sub + " - " + classe);
+            FacesContext.getCurrentInstance().addMessage(null, message);
+            return null;
+        } else {
+            try {
+                classSubject.setStartTime(range != null && range.size() > 0 ? range.get(0) : null);
+                classSubject.setEndTime(range != null && range.size() > 1 ? range.get(1) : null);
+                classSubject.setClassCredit(classCreditDAO.getIdByName(classe));
+                classSubject.setSubject(subjectDAO.getByName(sub));
+                classSubject.setDay(day);
+                claSubDAO.create(classSubject);
+                FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "Success", "Tạo lớp " + sub + " - " + classe + " thành công !");
+                FacesContext.getCurrentInstance().addMessage(null, message);
+                return null;
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            return "classsubject.xhtml?faces-redirect=true?";
         }
-        return "view.xhtml?faces-redirect=true";
     }
 
     public List<Student> getListStudent() {
@@ -257,11 +317,11 @@ public class ClaSubMB implements Serializable {
         this.day = day;
     }
 
-    public Map<String, String> getListClass() {
+    public List<String> getListClass() {
         return listClass;
     }
 
-    public void setListClass(Map<String, String> listClass) {
+    public void setListClass(List<String> listClass) {
         this.listClass = listClass;
     }
 
@@ -305,7 +365,7 @@ public class ClaSubMB implements Serializable {
         this.subject = subject;
     }
 
-    public Map<String, String> getListSubject() {
+    public List<String> getListSubject() {
         return listSubject;
     }
 
@@ -334,7 +394,29 @@ public class ClaSubMB implements Serializable {
         this.registersub = registersub;
     }
 
-    public void setListSubject(Map<String, String> listSubject) {
+    public void setListSubject(List<String> listSubject) {
         this.listSubject = listSubject;
     }
-}
+
+    @Override
+    public Object getAsObject(FacesContext context, UIComponent component, String value) {
+        if (value == null || value.isEmpty()) {
+            return null;
+        } else {
+            return ClaSubDAO.findById(Integer.parseInt(value));
+        }
+    }
+
+    @Override
+    public String getAsString(FacesContext context, UIComponent component, Object value) {
+        if (value == null) {
+            return "";
+        }
+        if (value instanceof ClassSubject) {
+            return String.valueOf(((ClassSubject) value).getId());
+        } else {
+            throw new ConverterException(new FacesMessage(value + " is not a valid ClaSub"));
+        }
+    }
+    }
+

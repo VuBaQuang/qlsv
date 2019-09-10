@@ -18,3 +18,27 @@
 .value td {
     padding-right: 8px;
 }
+.ui-widget {
+    font-family: -webkit-body, serif;
+}
+
+td .ui-widget {
+    border-radius: 15px;
+    font-family: -webkit-body, serif;
+}
+
+select {
+    border-radius: 3px;
+    height: 30px;
+    width: 186px;
+    font-family: -webkit-body, serif;
+    font-size: 15px;
+}
+
+.ui-widget-content  .ui-inputfield{
+    font-family: -webkit-body, serif;
+    font-size: 15px;
+}
+#create-clas{
+    width: 510px;
+}
