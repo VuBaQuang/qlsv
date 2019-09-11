@@ -16,7 +16,7 @@
         <h:form id="form-classes">
             <f:event listener="#{claSubMB.listSub()}" type="preRenderView"/>
             Lớp:
-            <p:selectOneMenu id="classes" required="true" requiredMessage="Bạn chưa chọn môn học"
+            <p:selectOneMenu id="classes-classes" required="true" requiredMessage="Bạn chưa chọn môn học"
                              value="#{classesMB.classPayroll}" converter="SelectItemClassConverter" immediate="true">
                 <f:selectItem itemLabel="Chọn" itemValue="#{null}"/>
                 <f:selectItems value="#{classesMB.listClasses}" var="classes" itemLabel="#{classes.name}"
@@ -25,21 +25,21 @@
             <p:spacer width="20px"/>
             <br/> <br/>
             <p:commandButton value="Hiển thị" action="#{classesMB.updateStudentList}"
-                             update="pnlContainer,growl-classes">
+                             update="pnlContainer-classes,growl-classes">
             </p:commandButton>
             <p:spacer width="20px"/>
             <p:commandButton value="Tạo lớp học" oncomplete="PF('dlg-classes-add').show()"/>
             <br/><br/>
-            <h:panelGroup id="pnlContainer" layout="block">
+            <h:panelGroup id="pnlContainer-classes" layout="block">
                 <h:panelGrid columns="2" rendered="#{classesMB.checkNull()}">
                     <hr/>
                     <hr/>
                     <h3>Danh sách sinh viên lớp #{classesMB.classPayroll.name}</h3>
                 </h:panelGrid>
-                <h:panelGrid id="students" columns="2" rendered="#{classesMB.checkNull()}">
+                <h:panelGrid id="students-classes" columns="2" rendered="#{classesMB.checkNull()}">
                     <hr/>
                     <br/><br/>
-                    <p:dataTable id="cars2" var="student" value="#{classesMB.studentList}">
+                    <p:dataTable var="student" value="#{classesMB.studentList}">
                         <p:ajax event="sort" skipChildren="false" />
                         <p:column headerText="Mã sinh viên" style="width:100px; align-content: center">
                             <h:outputText value="#{student.code}"/>
@@ -66,13 +66,13 @@
                             <h:outputText value="#{student.note}"/>
                         </p:column>
                         <p:column style="width:60px" headerText="Thao tác">
-                            <p:commandButton value="Xóa" action="#{classesMB.delStuClass(student)}" update="form-2-classes,form-classes:pnlContainer"/>
+                            <p:commandButton value="Xóa" action="#{classesMB.delStuClass(student)}" update="form-2-classes,form-classes:pnlContainer-classes"/>
                         </p:column>
                     </p:dataTable>
                 </h:panelGrid>
                 <br/>
                 <h:panelGrid rendered="#{classesMB.checkNull()}" columns="2">
-                    <p:commandButton update="form-2-classes:table-stu" value="Thêm sinh viên"
+                    <p:commandButton update="form-2-classes:table-stu-classes" value="Thêm sinh viên"
                                      oncomplete="PF('dlg-classes').show()">
                     </p:commandButton>
                     <p:commandButton value="Xóa lớp" action="#{classesMB.delete(classesMB.classPayroll)}"
@@ -93,7 +93,7 @@
         <p:dialog widgetVar="dlg-classes" modal="true" resizable="false" responsive="true" showEffect="true">
             <h:form id="form-2-classes">
                 <div align="center">
-                    <h:dataTable id="table-stu" value="#{studentsMB.getListStudentNone()}" var="student"
+                    <h:dataTable id="table-stu-classes" value="#{studentsMB.getListStudentNone()}" var="student"
                                  styleClass="table"
                                  headerClass="table-header"
                                  footerClass="table-footer"
@@ -129,7 +129,7 @@
                         </h:column>
                         <h:column>
                             <f:facet name="header" colspan="2">Thao tác</f:facet>
-                            <p:commandButton update="form-2-classes,form-classes:pnlContainer" value="Thêm"
+                            <p:commandButton update="form-2-classes,form-classes:pnlContainer-classes" value="Thêm"
                                              action="#{classesMB.add2Class(student,classesMB.classPayroll)}"/>
                         </h:column>
                         <f:facet name="footer">
@@ -144,16 +144,16 @@
                   showEffect="true" responsive="true">
 
             <h:form id="form-classes-3">
-                <div id="create-clas" align="center">
-                    <p:panel header="Tạo lớp học" id="dialog-add">
+                <div id="create-classes" align="center">
+                    <p:panel header="Tạo lớp học" id="dialog-add-classes">
                         <p:messages/>
                         <h:panelGrid columns="2">
                             Tên lớp:
-                            <h:inputText id="name" value="#{classesMB.classPayroll.name}"
+                            <h:inputText id="name-classes" value="#{classesMB.classPayroll.name}"
                                          required="true"
                                          requiredMessage="Tên lớp không được để trống"/>
                             Mã lớp:
-                            <h:inputText id="code" value="#{classesMB.classPayroll.code}"
+                            <h:inputText id="code-classes" value="#{classesMB.classPayroll.code}"
                                          required="true"
                                          requiredMessage="Mã lớp không được để trống"
                                          validatorMessage="Mã lớp không đúng định dạng">
