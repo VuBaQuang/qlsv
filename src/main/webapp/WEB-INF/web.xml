@@ -43,7 +43,7 @@
 
     <!-- Welcome page -->
     <welcome-file-list>
-        <welcome-file>faces/home/login.xhtml</welcome-file>
+        <welcome-file>faces/admin/admin.xhtml</welcome-file>
     </welcome-file-list>
 
 </web-app>

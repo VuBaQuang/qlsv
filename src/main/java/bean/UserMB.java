@@ -1,11 +1,6 @@
 package bean;
 
-import bean.classsubject.ClaSubMB;
-import dao.ClaSubDAO;
-import dao.RegistersubDAO;
 import dao.UserDAO;
-import model.ClassSubject;
-import model.Registersub;
 import model.Student;
 import model.User;
 import org.primefaces.PrimeFaces;
@@ -13,12 +8,7 @@ import org.primefaces.PrimeFaces;
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.*;
 import javax.faces.context.FacesContext;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpServletResponseWrapper;
-import javax.servlet.http.HttpSession;
 import java.io.IOException;
-import java.util.LinkedList;
-import java.util.List;
 
 @ManagedBean
 @SessionScoped
@@ -26,11 +16,9 @@ public class UserMB {
     private String user;
     private String password;
     private Student student = new Student();
-    UserDAO userDAO = new UserDAO();
-    ClaSubDAO claSubDAO = new ClaSubDAO();
-    RegistersubDAO registersubDAO = new RegistersubDAO();
+    private UserDAO userDAO = new UserDAO();
     @ManagedProperty("#{claSubMB}")
-    ClaSubMB claSubMB = new ClaSubMB();
+    private ClaSubMB claSubMB = new ClaSubMB();
 
     public ClaSubMB getClaSubMB() {
         return claSubMB;

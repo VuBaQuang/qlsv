@@ -1,4 +1,4 @@
-package bean.classsubject;
+package bean;
 
 import dao.*;
 import model.*;

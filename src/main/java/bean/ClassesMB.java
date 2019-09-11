@@ -1,12 +1,9 @@
-package bean.Class;
+package bean;
 
-import bean.student.EditStudentMB;
 import dao.ClassDAO;
 import dao.StudentDAO;
-import model.ClassCredit;
 import model.ClassPayroll;
 import model.Student;
-import org.hibernate.exception.ConstraintViolationException;
 
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
@@ -32,11 +29,8 @@ public class ClassesMB implements Serializable, Converter {
     private List<ClassPayroll> listClasses;
     private int stt = 0;
     private ClassDAO classesDAO = new ClassDAO();
-    StudentDAO studentDAO = new StudentDAO();
-    @ManagedProperty(value = "#{infoClassMB}")
-    private InfoClassMB infoClassMB;
-    @ManagedProperty(value = "#{editStudentMB}")
-    private EditStudentMB editStudentMB;
+    private StudentDAO studentDAO = new StudentDAO();
+
 
     public ClassPayroll getClassPayroll() {
         return classPayroll;
@@ -56,7 +50,7 @@ public class ClassesMB implements Serializable, Converter {
 
     public void create() {
         int i = classesDAO.create(classPayroll);
-        if (i ==0) {
+        if (i == 0) {
             FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "Success", "Thêm lớp " + classPayroll.getName() + " thành công");
             FacesContext.getCurrentInstance().addMessage(null, message);
         } else {
@@ -70,10 +64,6 @@ public class ClassesMB implements Serializable, Converter {
         return classPayroll.getCode() != null;
     }
 
-    public String info(ClassPayroll classes) {
-        infoClassMB.setClassPayroll(classes);
-        return "info?faces-redirect=true&includeViewParams=true";
-    }
 
     public void add2Class(Student students, ClassPayroll classes) {
         students.setClassPayroll(classes);
@@ -91,21 +81,6 @@ public class ClassesMB implements Serializable, Converter {
         return stt;
     }
 
-    public InfoClassMB getInfoClassMB() {
-        return infoClassMB;
-    }
-
-    public void setInfoClassMB(InfoClassMB infoClassMB) {
-        this.infoClassMB = infoClassMB;
-    }
-
-    public EditStudentMB getEditStudentMB() {
-        return editStudentMB;
-    }
-
-    public void setEditStudentMB(EditStudentMB editStudentMB) {
-        this.editStudentMB = editStudentMB;
-    }
 
     public void setStt(int stt) {
         this.stt = stt;
@@ -129,6 +104,7 @@ public class ClassesMB implements Serializable, Converter {
     public void updateClass() {
         classPayroll = classesDAO.findById(classPayroll.getId());
     }
+
     public void delStuClass(Student students) {
         students.setClassPayroll(null);
         studentDAO.update(students);

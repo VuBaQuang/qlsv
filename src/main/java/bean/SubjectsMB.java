@@ -9,9 +9,9 @@ import java.util.List;
 
 @ManagedBean
 public class SubjectsMB {
-    Subject subject = new Subject();
-    List<Subject> subjects = new ArrayList<>();
-    SubjectDAO subjectDAO = new SubjectDAO();
+    private  Subject subject = new Subject();
+    private  List<Subject> subjects = new ArrayList<>();
+    private SubjectDAO subjectDAO = new SubjectDAO();
 
 
 

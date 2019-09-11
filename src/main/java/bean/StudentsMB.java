@@ -1,4 +1,4 @@
-package bean.student;
+package bean;
 
 import dao.*;
 import model.*;
@@ -129,8 +129,6 @@ public class StudentsMB implements Serializable {
     }
 
 
-    @ManagedProperty(value = "#{editStudentMB}")
-    private EditStudentMB editStudentMB;
 
 
     public List<Student> getListStudent() {
@@ -234,13 +232,6 @@ public class StudentsMB implements Serializable {
     }
 
 
-    public EditStudentMB getEditStudentMB() {
-        return editStudentMB;
-    }
-
-    public void setEditStudentMB(EditStudentMB editStudentMB) {
-        this.editStudentMB = editStudentMB;
-    }
 
     public Student getStuUser(String user) {
         setStudent(userDAO.findByName(user).getStudent());
