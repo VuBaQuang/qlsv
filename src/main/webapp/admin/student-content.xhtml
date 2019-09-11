@@ -17,11 +17,7 @@
             <p:dataTable id="form-student-table" value="#{studentsMB.getListStudent()}" var="student"
                          widgetVar="table-student-student"
                          sortMode="multiple" resizableColumns="true" filteredValue="#{studentsMB.filteredStudents}">
-                <p:ajax event="sort" skipChildren="false" />
-                <!--                <p:column headerText="ID" style="width: 10px">-->
-                <!--                    <h:outputText value=" #{student.id}"/>-->
-                <!--                </p:column>-->
-
+                <p:ajax event="sort" skipChildren="false"/>
                 <p:column sortBy="#{student.id}" headerText="ID" filterBy="#{student.id}" filterMatchMode="contains"
                           style="text-align: center;width:30px;">
                     <h:outputText value="#{student.id}"/>
@@ -66,7 +62,8 @@
                 <p:column sortBy="#{studentsMB.avgScore(student)}" filterBy="#{studentsMB.avgScore(student)}"
                           headerText="Điểm TB" filterMatchMode="gte" style="width: 70px;text-align: center">
                     <f:facet name="filter">
-                        <p:spinner onchange="PF('table-student-student').filter()" styleClass="year-spinner custom-filter">
+                        <p:spinner onchange="PF('table-student-student').filter()"
+                                   styleClass="year-spinner custom-filter">
                             <f:converter converterId="javax.faces.Double"/>
                         </p:spinner>
                     </f:facet>
@@ -84,9 +81,9 @@
                         <f:setPropertyActionListener value="#{student}" target="#{studentsMB.student}"/>
                     </p:commandButton>
 
-                    <p:commandButton style="background: red; border-color: red"
-                                     value="Xóa"
-                                     action="#{studentsMB.delete(student)}" update="form-student-2:dialog"/>
+                    <p:commandButton style="background: red; border-color: red" value="Xóa" action="#{studentsMB.delete(student)}"  update="form-student"/>
+
+
                 </p:column>
                 <f:facet name="footer">
                     <h:outputText value="Total of student: #{studentsMB.getListStudent().size()}"/>
@@ -147,23 +144,23 @@
 
 
                             <h:outputText value="Tỉnh: "/>
-                            <h:selectOneMenu id="province" value="#{studentsMB.province}" label="province"
+                            <h:selectOneMenu id="province-login" value="#{studentsMB.province}" label="province-login"
                                              style="width: 250px">
-                                <p:ajax listener="#{studentsMB.setDistricts}" update="district,ward"/>
+                                <p:ajax listener="#{studentsMB.setDistricts}" update="district-login,ward-login"/>
                                 <f:selectItem itemLabel="Chọn" itemValue="" noSelectionOption="true"/>
                                 <f:selectItems value="#{studentsMB.provinces}"/>
                             </h:selectOneMenu>
 
                             <h:outputText value="Quận/Huyện: "/>
-                            <h:selectOneMenu id="district" value="#{studentsMB.district}" label="district"
+                            <h:selectOneMenu id="district-login" value="#{studentsMB.district}" label="district-login"
                                              style="width: 250px">
-                                <p:ajax listener="#{studentsMB.setWards}" update="ward"/>
+                                <p:ajax listener="#{studentsMB.setWards}" update="ward-login"/>
                                 <f:selectItem itemLabel="Chọn" itemValue="" noSelectionOption="true"/>
                                 <f:selectItems value="#{studentsMB.districts}"/>
                             </h:selectOneMenu>
 
                             <h:outputText value="Xã/Phường: "/>
-                            <h:selectOneMenu id="ward" value="#{studentsMB.ward}" label="ward"
+                            <h:selectOneMenu id="ward-login" value="#{studentsMB.ward}" label="ward-login"
                                              style="width: 250px">
                                 <f:selectItem itemLabel="Chọn" itemValue="" noSelectionOption="true"/>
                                 <f:selectItems value="#{studentsMB.wards}"/>
