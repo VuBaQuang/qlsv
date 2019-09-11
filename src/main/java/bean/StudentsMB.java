@@ -145,6 +145,9 @@ public class StudentsMB implements Serializable {
         this.registersub = registersub;
     }
 
+    public void updateListStudent(){
+        listStudent = studentsDAO.findAll();
+    }
     public List<Student> getListStudent() {
         StudentDAO dao = new StudentDAO();
         if(listStudent==null)

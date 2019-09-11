@@ -1,5 +1,6 @@
 package bean;
 
+import com.sun.xml.bind.v2.TODO;
 import dao.ClassDAO;
 import dao.StudentDAO;
 import model.ClassPayroll;
@@ -64,11 +65,12 @@ public class ClassesMB implements Serializable, Converter {
         return classPayroll.getCode() != null;
     }
 
-
+//TODO
     public void add2Class(Student students, ClassPayroll classes) {
         students.setClassPayroll(classes);
         studentDAO.update(students);
         updateStudentList();
+
     }
 
     public void delete(ClassPayroll classes) {

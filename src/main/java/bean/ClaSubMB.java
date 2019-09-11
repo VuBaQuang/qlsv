@@ -205,7 +205,12 @@ public class ClaSubMB implements Serializable, Converter {
     }
 
     public String getScores(Student student) {
-        score = registersubDAO.findByClassStu(classSubject, student).get(0).getScore() != null ? registersubDAO.findByClassStu(classSubject, student).get(0).getScore().toString() : "Chưa có điểm";
+        score="Chưa có điểm";
+
+        List<Registersub> list = registersubDAO.findByClassStu(classSubject, student);
+        if(list.size()>0){
+            score = registersubDAO.findByClassStu(classSubject, student).get(0).getScore() != null ? registersubDAO.findByClassStu(classSubject, student).get(0).getScore().toString() : "Chưa có điểm";
+        }
         return score;
     }
 
@@ -242,14 +247,8 @@ public class ClaSubMB implements Serializable, Converter {
             ClassCredit classCredit = classCreditDAO.getIdByName(classe);
             classSubject = new ClassSubject();
             classSubject = claSubDAO.getBySubFtClass(subject, classCredit);
-            if (classSubject == null) {
-                FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_WARN, "Fail", "Not exist!");
-                FacesContext.getCurrentInstance().addMessage(null, message);
-            }
         } else {
             classSubject = new ClassSubject();
-            FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_WARN, "Fail", "Invalid");
-            FacesContext.getCurrentInstance().addMessage(null, message);
         }
     }
 

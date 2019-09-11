@@ -16,16 +16,17 @@
     <hr/>
     <div align="center">
         <p:tabView orientation="left" prependId="false">
+            <p:ajax event="tabChange" listener="#{studentsMB.updateListStudent()}" update="form-student"/>
             <p:tab title="Sinh viên">
 
                 <div align="center">
-
                     <br/>
                     <p:growl id="growl-student" showDetail="true" life="2000"/>
                     <h2>Danh sách sinh viên</h2>
                     <hr/>
                     <hr/>
                     <h:form id="form-student" acceptcharset="UTF-8">
+
                         <p:dataTable id="form-student-table" value="#{studentsMB.getListStudent()}" var="student"
                                      widgetVar="table-student-student"
                                      sortMode="multiple" resizableColumns="true"
@@ -45,10 +46,6 @@
                                       headerText="Họ tên" style="text-align: center">
                                 <h:outputText value=" #{student.name}"/>
                             </p:column>
-
-                            <!--                <p:column  headerText="Lớp" style="width: 60px;text-align: center">-->
-                            <!--                    <h:outputText value="#{student.classPayroll.name}"/>-->
-                            <!--                </p:column>-->
 
                             <p:column sortBy="#{student.classPayroll.name}" filterBy="#{student.classPayroll.name}"
                                       headerText="Lớp"
@@ -375,7 +372,7 @@
                                                  oncomplete="PF('dlg-classes').show()">
                                 </p:commandButton>
                                 <p:commandButton value="Xóa lớp" action="#{classesMB.delete(classesMB.classPayroll)}"
-                                                 update="growl-classes,form-classes">
+                                                 update="growl-classes,form-classes,form-student">
                                     <p:confirm header="Xác nhận"
                                                message="Bạn muốn xóa lớp #{classesMB.classPayroll.name}"
                                                icon="pi pi-exclamation-triangle"/>
@@ -431,7 +428,7 @@
                                     </h:column>
                                     <h:column>
                                         <f:facet name="header" colspan="2">Thao tác</f:facet>
-                                        <p:commandButton update="form-2-classes,form-classes:pnlContainer-classes"
+                                        <p:commandButton update="form-2-classes,form-classes:pnlContainer-classes,form-student"
                                                          value="Thêm"
                                                          action="#{classesMB.add2Class(student,classesMB.classPayroll)}"/>
                                     </h:column>
@@ -618,7 +615,7 @@
                                         </p:column>
                                         <p:column style="width:60px" headerText="Thao tác">
                                             <p:commandButton value="Xóa" action="#{claSubMB.deleteStuClaSub(student)}"
-                                                             update="cars2-clasub"/>
+                                                             update="cars2-clasub,form-student "/>
                                         </p:column>
                                     </p:dataTable>
 
@@ -633,7 +630,7 @@
 
 
                                     <p:commandButton value="Xóa lớp" action="#{claSubMB.delete}"
-                                                     update="growl-clasub,form-clasub,form-2-clasub:table-stu">
+                                                     update="growl-clasub,form-student,form-clasub,form-2-clasub:table-stu">
                                         <p:confirm header="Xác nhận"
                                                    message="Bạn muốn xóa lớp #{claSubMB.sub} - #{claSubMB.classe}"
                                                    icon="pi pi-exclamation-triangle"/>
@@ -686,7 +683,7 @@
                                         </h:column>
                                         <h:column>
                                             <f:facet name="header" colspan="2">Thao tác</f:facet>
-                                            <p:commandButton update="form-2-clasub,growl-clasub,form-clasub"
+                                            <p:commandButton update="form-2-clasub,growl-clasub,form-clasub,form-student"
                                                              value="Thêm"
                                                              action="#{claSubMB.add2Class(student,claSubMB.classe,claSubMB.sub)}"/>
                                         </h:column>
@@ -836,7 +833,6 @@
                             </h:form>
                         </p:dialog>
                     </div>
-
             </p:tab>
         </p:tabView>
     </div>
