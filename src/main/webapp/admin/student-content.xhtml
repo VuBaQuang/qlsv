@@ -7,48 +7,84 @@
                 xmlns:ui="http://java.sun.com/jsf/facelets">
 
     <div align="center">
+
         <br/>
         <p:growl id="growl-student" showDetail="true" life="2000"/>
-
         <h2>Danh sách sinh viên</h2>
         <hr/>
         <hr/>
         <h:form id="form-student" acceptcharset="UTF-8">
-            <p:dataTable id="table" value="#{studentsMB.getListStudent()}" var="student">
-                <p:column headerText="ID" style="width: 10px">
-                    <h:outputText value=" #{student.id}"/>
+            <p:dataTable id="table" value="#{studentsMB.getListStudent()}" var="student" widgetVar="carsTable"
+                         sortMode="multiple" resizableColumns="true" filteredValue="#{studentsMB.filteredStudents}">
+
+                <!--                <p:column headerText="ID" style="width: 10px">-->
+                <!--                    <h:outputText value=" #{student.id}"/>-->
+                <!--                </p:column>-->
+
+                <p:column sortBy="#{student.id}" headerText="ID" filterBy="#{student.id}" filterMatchMode="contains"
+                          style="text-align: center;width:30px;">
+                    <h:outputText value="#{student.id}"/>
                 </p:column>
-                <p:column headerText="Mã sinh viên" style="width: 70px;text-align: center">
+
+                <p:column sortBy="#{student.code}" filterBy="#{student.code}" filterMatchMode="contains"
+                          headerText="Mã sinh viên" style="text-align: center">
                     <h:outputText value="#{student.code}"/>
                 </p:column>
-                <p:column headerText="Họ tên" style="width: 150px;text-align: center">
+                <p:column sortBy="#{student.name}" filterBy="#{student.name}" filterMatchMode="contains"
+                          headerText="Họ tên" style="text-align: center">
                     <h:outputText value=" #{student.name}"/>
                 </p:column>
-                <p:column headerText="Lớp" style="width: 60px;text-align: center">
+
+                <!--                <p:column  headerText="Lớp" style="width: 60px;text-align: center">-->
+                <!--                    <h:outputText value="#{student.classPayroll.name}"/>-->
+                <!--                </p:column>-->
+
+                <p:column sortBy="#{student.classPayroll.name}" filterBy="#{student.classPayroll.name}" headerText="Lớp"
+                          filterMatchMode="exact" style="text-align: center">
+                    <f:facet name="filter">
+                        <p:selectOneMenu onchange="PF('carsTable').filter()" styleClass="custom-filter"
+                                         style="width: 70%">
+                            <f:selectItem itemLabel="Chọn" itemValue="#{null}" noSelectionOption="true"/>
+                            <f:selectItems value="#{studentsMB.classes}"/>
+                        </p:selectOneMenu>
+                    </f:facet>
                     <h:outputText value="#{student.classPayroll.name}"/>
                 </p:column>
-                <p:column headerText="Tuổi" style="width: 20px;text-align: center">
+
+
+                <p:column sortBy="#{student.age}" headerText="Tuổi" style="width: 20px;text-align: center">
                     <h:outputText value="#{student.age}"/>
                 </p:column>
-                <p:column headerText="Địa chỉ" style="text-align: center">
+                <p:column sortBy="#{student.address}" headerText="Địa chỉ" style="text-align: center">
                     <h:outputText value="#{student.address}"/>
                 </p:column>
-                <p:column headerText="Email" style="text-align: center">
+                <p:column sortBy="#{student.email}" headerText="Email" style="text-align: center">
                     <h:outputText value=" #{student.email}"/>
                 </p:column>
-                <p:column headerText="Điểm trung bình" style="width: 70px;text-align: center">
+
+                <p:column sortBy="#{studentsMB.avgScore(student)}" filterBy="#{studentsMB.avgScore(student)}"
+                          headerText="Điểm TB" filterMatchMode="gte" style="width: 70px;text-align: center">
+                    <f:facet name="filter">
+                        <p:spinner onchange="PF('carsTable').filter()" styleClass="year-spinner custom-filter">
+                            <f:converter converterId="javax.faces.Double"/>
+                        </p:spinner>
+                    </f:facet>
                     <h:outputText value="#{studentsMB.avgScore(student)}"/>
                 </p:column>
-                <p:column headerText="Ghi chú" style="width: 100px;text-align: center">
+
+
+                <p:column sortBy="#{student.note}" headerText="Ghi chú" style="width: 100px;text-align: center">
                     <h:outputText value="#{student.note}"/>
                 </p:column>
                 <p:column headerText="Thao tác" style="width: 140px;text-align: center">
 
-                    <p:commandButton update="form-student-2:dialog" value="Sửa" oncomplete="PF('dlg-edit').show()" action="#{studentsMB.setaddress()}">
+                    <p:commandButton update="form-student-2:dialog" value="Sửa" oncomplete="PF('dlg-edit').show()"
+                                     action="#{studentsMB.setaddress()}">
                         <f:setPropertyActionListener value="#{student}" target="#{studentsMB.student}"/>
-                     </p:commandButton>
+                    </p:commandButton>
 
-                    <p:commandButton update="form-student-2:dialog" style="background: red; border-color: red" value="Xóa"
+                    <p:commandButton update="form-student-2:dialog" style="background: red; border-color: red"
+                                     value="Xóa"
                                      action="#{studentsMB.delete(student)}"/>
                 </p:column>
                 <f:facet name="footer">
@@ -64,7 +100,7 @@
         </h:form>
 
 
-        <p:dialog widgetVar="dlg-addstu" resizable="false"  responsive="true" showEffect="true" prependID="false"
+        <p:dialog widgetVar="dlg-addstu" resizable="false" responsive="true" showEffect="true" prependID="false"
                   modal="true">
             <h:form id="form-addstu">
                 <div align="center">
@@ -147,12 +183,14 @@
                 <br/>
                 <div align="center">
                     <p:commandButton value="Save" action="#{studentsMB.merge()}"
-                                     update="growl-student,form-student" oncomplete=" if (args &amp;&amp; !args.validationFailed) PF('dlg-addstu').hide()"/>
+                                     update="growl-student,form-student"
+                                     oncomplete=" if (args &amp;&amp; !args.validationFailed) PF('dlg-addstu').hide()"/>
                 </div>
             </h:form>
         </p:dialog>
 
-        <p:dialog widgetVar="dlg-edit" resizable="false" modal="true" responsive="true" showEffect="true" prependID="false">
+        <p:dialog widgetVar="dlg-edit" resizable="false" modal="true" responsive="true" showEffect="true"
+                  prependID="false">
             <h:form id="form-student-2">
                 <div align="center">
                     <p:panel id="dialog" header="Update" style="width: 76%">
@@ -232,8 +270,9 @@
                 </div>
                 <br/>
                 <div align="center">
-                    <p:commandButton  value="Save" action="#{studentsMB.merge()}"
-                                     update="growl-student,form-student" oncomplete="if (args &amp;&amp; !args.validationFailed) PF('dlg-edit').hide()"/>
+                    <p:commandButton value="Save" action="#{studentsMB.merge()}"
+                                     update="growl-student,form-student"
+                                     oncomplete="if (args &amp;&amp; !args.validationFailed) PF('dlg-edit').hide()"/>
                 </div>
             </h:form>
         </p:dialog>

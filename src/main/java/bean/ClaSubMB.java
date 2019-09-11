@@ -204,7 +204,7 @@ public class ClaSubMB implements Serializable, Converter {
 
     }
 
-    public String getScore(Student student) {
+    public String getScores(Student student) {
         score = registersubDAO.findByClassStu(classSubject, student).get(0).getScore() != null ? registersubDAO.findByClassStu(classSubject, student).get(0).getScore().toString() : "Chưa có điểm";
         return score;
     }

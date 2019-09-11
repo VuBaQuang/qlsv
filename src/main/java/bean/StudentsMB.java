@@ -6,17 +6,19 @@ import model.*;
 import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ManagedProperty;
+import javax.faces.bean.SessionScoped;
 import javax.faces.bean.ViewScoped;
 import java.io.Serializable;
 import java.util.*;
 
 @ManagedBean
-@ViewScoped
+@SessionScoped
 public class StudentsMB implements Serializable {
     private Registersub registersub = new Registersub();
     private Student student = new Student();
     private List<ClassSubject> classSubjectList = new LinkedList<>();
-    private List<Student> listStudent = new ArrayList<>();
+    private List<Student> filteredStudents ;
+    private List<Student> listStudent ;
     private List<Student> listStudentNone = new ArrayList<>();
     private Map<String, Map<String, String>> provinceDistric = new HashMap<String, Map<String, String>>();
     private Map<String, Map<String, String>> districWard = new HashMap<String, Map<String, String>>();
@@ -34,6 +36,14 @@ public class StudentsMB implements Serializable {
     private ClaSubDAO claSubDAO = new ClaSubDAO();
     private RegistersubDAO registersubDAO = new RegistersubDAO();
     private UserDAO userDAO = new UserDAO();
+
+    public List<Student> getFilteredStudents() {
+        return filteredStudents;
+    }
+
+    public void setFilteredStudents(List<Student> filteredStudents) {
+        this.filteredStudents = filteredStudents;
+    }
 
     public void setaddress() {
         String addres = student.getAddress();
@@ -129,23 +139,30 @@ public class StudentsMB implements Serializable {
     }
 
 
+    public Registersub getRegistersub() {
+        return registersub;
+    }
 
+    public void setRegistersub(Registersub registersub) {
+        this.registersub = registersub;
+    }
 
     public List<Student> getListStudent() {
         StudentDAO dao = new StudentDAO();
-        return dao.findAll();
+        if(listStudent==null)
+        listStudent = dao.findAll();
+        return listStudent;
     }
 
-
-    public void add2Class(Student students, ClassPayroll classes) {
-        students.setClassPayroll(classes);
-        studentsDAO.update(students);
-    }
-
-    public void delStuClass(Student students) {
-        students.setClassPayroll(null);
-        studentsDAO.update(students);
-    }
+//    public void add2Class(Student students, ClassPayroll classes) {
+//        students.setClassPayroll(classes);
+//        studentsDAO.update(students);
+//    }
+//
+//    public void delStuClass(Student students) {
+//        students.setClassPayroll(null);
+//        studentsDAO.update(students);
+//    }
 
     public void edit() {
         StringBuilder builder = new StringBuilder();
