@@ -5,7 +5,12 @@
                 xmlns:p="http://primefaces.org/ui"
                 xmlns:fn="http://java.sun.com/jsp/jstl/functions"
                 xmlns:ui="http://java.sun.com/jsf/facelets">
-
+    <h:form id="form-head">
+        <div align="right">
+            <p:commandButton value="Home" action="#{userMB.home}" process="@this,form-head"/>
+            <p:commandButton value="Logout"  action="#{userMB.logout}" process="@this,form-head"/>
+        </div>
+    </h:form>
     <h1 align="center">Quản lý sinh viên</h1>
     <hr/>
     <div align="center">
@@ -15,16 +20,21 @@
                 <ui:insert>
                     <ui:include src="student-content.xhtml"/>
                 </ui:insert>
+
             </p:tab>
             <p:tab title="Lớp biên chế">
+
                 <ui:insert>
                     <ui:include src="classes-content.xhtml"/>
                 </ui:insert>
+
             </p:tab>
             <p:tab title="Lớp học">
+
                 <ui:insert>
                     <ui:include src="classsubject-content.xhtml"/>
                 </ui:insert>
+
             </p:tab>
         </p:tabView>
     </div>

@@ -190,7 +190,7 @@ public class ClaSubMB implements Serializable, Converter {
     }
 
     public void updateListStudent() {
-        Set<Student> students = null;
+        Set<Student> students ;
         students = new LinkedHashSet<>();
         try {
             for (Registersub value : classSubject.getRegistersubs()) {
@@ -275,7 +275,7 @@ public class ClaSubMB implements Serializable, Converter {
         FacesMessage message = null;
         boolean result = false;
         for (Registersub registersub : registersubDAO.findByStudent(student)) {
-            if (classSubject.getSubject().getName().equals(registersub.getClassSubject().getSubject().getName()) && registersub.getScore() == null) {
+            if (classSubject.getSubject().getName().equals(registersub.getClassSubject().getSubject().getName())) {
                 result = true;
                 break;
             }

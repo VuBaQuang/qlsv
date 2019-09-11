@@ -40,6 +40,7 @@
                     <hr/>
                     <br/><br/>
                     <p:dataTable id="cars2" var="student" value="#{classesMB.studentList}">
+                        <p:ajax event="sort" skipChildren="false" />
                         <p:column headerText="Mã sinh viên" style="width:100px; align-content: center">
                             <h:outputText value="#{student.code}"/>
                         </p:column>
@@ -97,6 +98,7 @@
                                  headerClass="table-header"
                                  footerClass="table-footer"
                                  rowClasses="table-odd-row,table-even-row">
+
                         <h:column>
                             <f:facet name="header">Id</f:facet>
                             #{student.id}

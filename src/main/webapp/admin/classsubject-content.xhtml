@@ -59,7 +59,7 @@
                     <br/><br/>
                     <p:dataTable id="cars2" var="student" value="#{claSubMB.listStudent}" editable="true"
                                  editMode="cell"
-                                 widgetVar="carsTable"
+                                 widgetVar="table-student-clasub"
                                  sortMode="multiple" resizableColumns="true"
                                  filteredValue="#{studentsMB.filteredStudents}">
                         <p:ajax event="sort" skipChildren="false" />
@@ -84,7 +84,7 @@
                                   filterMatchMode="exact" style="width:50px">
 
                             <f:facet name="filter">
-                                <p:selectOneMenu onchange="PF('carsTable').filter()" styleClass="custom-filter"
+                                <p:selectOneMenu onchange="PF('table-student-clasub').filter()" styleClass="custom-filter"
                                                  style="width: 70%">
                                     <f:selectItem itemLabel="Chọn" itemValue="#{null}" noSelectionOption="true"/>
                                     <f:selectItems value="#{studentsMB.classes}"/>

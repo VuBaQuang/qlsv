@@ -14,9 +14,10 @@
         <hr/>
         <hr/>
         <h:form id="form-student" acceptcharset="UTF-8">
-            <p:dataTable id="table" value="#{studentsMB.getListStudent()}" var="student" widgetVar="carsTable"
+            <p:dataTable id="form-student-table" value="#{studentsMB.getListStudent()}" var="student"
+                         widgetVar="table-student-student"
                          sortMode="multiple" resizableColumns="true" filteredValue="#{studentsMB.filteredStudents}">
-
+                <p:ajax event="sort" skipChildren="false" />
                 <!--                <p:column headerText="ID" style="width: 10px">-->
                 <!--                    <h:outputText value=" #{student.id}"/>-->
                 <!--                </p:column>-->
@@ -42,7 +43,7 @@
                 <p:column sortBy="#{student.classPayroll.name}" filterBy="#{student.classPayroll.name}" headerText="Lớp"
                           filterMatchMode="exact" style="text-align: center">
                     <f:facet name="filter">
-                        <p:selectOneMenu onchange="PF('carsTable').filter()" styleClass="custom-filter"
+                        <p:selectOneMenu onchange="PF('table-student-student').filter()" styleClass="custom-filter"
                                          style="width: 70%">
                             <f:selectItem itemLabel="Chọn" itemValue="#{null}" noSelectionOption="true"/>
                             <f:selectItems value="#{studentsMB.classes}"/>
@@ -65,7 +66,7 @@
                 <p:column sortBy="#{studentsMB.avgScore(student)}" filterBy="#{studentsMB.avgScore(student)}"
                           headerText="Điểm TB" filterMatchMode="gte" style="width: 70px;text-align: center">
                     <f:facet name="filter">
-                        <p:spinner onchange="PF('carsTable').filter()" styleClass="year-spinner custom-filter">
+                        <p:spinner onchange="PF('table-student-student').filter()" styleClass="year-spinner custom-filter">
                             <f:converter converterId="javax.faces.Double"/>
                         </p:spinner>
                     </f:facet>
@@ -83,9 +84,9 @@
                         <f:setPropertyActionListener value="#{student}" target="#{studentsMB.student}"/>
                     </p:commandButton>
 
-                    <p:commandButton update="form-student-2:dialog" style="background: red; border-color: red"
+                    <p:commandButton style="background: red; border-color: red"
                                      value="Xóa"
-                                     action="#{studentsMB.delete(student)}"/>
+                                     action="#{studentsMB.delete(student)}" update="form-student-2:dialog"/>
                 </p:column>
                 <f:facet name="footer">
                     <h:outputText value="Total of student: #{studentsMB.getListStudent().size()}"/>

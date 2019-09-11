@@ -118,6 +118,7 @@ public class ClassesMB implements Serializable, Converter {
         while (iterator.hasNext()) {
             studentList.add(iterator.next());
         }
+        this.studentList = new LinkedList<>();
         this.studentList = studentList;
     }
 

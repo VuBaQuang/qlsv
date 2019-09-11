@@ -5,14 +5,12 @@ import model.*;
 
 import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
-import javax.faces.bean.ManagedProperty;
-import javax.faces.bean.SessionScoped;
 import javax.faces.bean.ViewScoped;
 import java.io.Serializable;
 import java.util.*;
 
 @ManagedBean
-@SessionScoped
+@ViewScoped
 public class StudentsMB implements Serializable {
     private Registersub registersub = new Registersub();
     private Student student = new Student();
@@ -185,6 +183,7 @@ public class StudentsMB implements Serializable {
         } else {
             addStudent();
         }
+        listStudent = studentsDAO.findAll();
     }
 
     public void addStudent() {
@@ -209,6 +208,7 @@ public class StudentsMB implements Serializable {
     public void delete(Student student) {
         StudentDAO dao = new StudentDAO();
         dao.delete(student);
+        listStudent = studentsDAO.findAll();
     }
 
 
