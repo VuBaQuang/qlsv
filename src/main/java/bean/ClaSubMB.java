@@ -161,28 +161,28 @@ public class ClaSubMB implements Serializable, Converter {
         this.score = score;
     }
 
-    public void updateListStudents() {
-        Set<Student> students = null;
-        if (classe != null) {
-            if (classe.equals("")) {
-                classe = null;
-            }
-        }
-        if (sub != null) {
-            if (sub.equals("")) {
-                sub = null;
-            }
-        }
-        classSubjects = claSubDAO.findBySubCla(subjectDAO.getByName(sub), classCreditDAO.getIdByName(classe));
-        students = new LinkedHashSet<>();
-        for (ClassSubject classSubject : classSubjects) {
-            for (Registersub value : classSubject.getRegistersubs()) {
-                students.add(value.getStudent());
-            }
-        }
-        listStudent = new LinkedList<>();
-        listStudent.addAll(students);
-    }
+//    public void updateListStudents() {
+//        Set<Student> students = null;
+//        if (classe != null) {
+//            if (classe.equals("")) {
+//                classe = null;
+//            }
+//        }
+//        if (sub != null) {
+//            if (sub.equals("")) {
+//                sub = null;
+//            }
+//        }
+//        classSubjects = claSubDAO.findBySubCla(subjectDAO.getByName(sub), classCreditDAO.getIdByName(classe));
+//        students = new LinkedHashSet<>();
+//        for (ClassSubject classSubject : classSubjects) {
+//            for (Registersub value : classSubject.getRegistersubs()) {
+//                students.add(value.getStudent());
+//            }
+//        }
+//        listStudent = new LinkedList<>();
+//        listStudent.addAll(students);
+//    }
 
     public void add2Class(Student students, ClassPayroll classes) {
         students.setClassPayroll(classes);
@@ -312,11 +312,10 @@ public class ClaSubMB implements Serializable, Converter {
 
     }
 
-    public String create() {
+    public void create() {
         if (claSubDAO.getBySubFtClass(subjectDAO.getByName(sub), classCreditDAO.getIdByName(classe)) != null) {
             FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Fail", "Đã tồn tại " + sub + " - " + classe);
             FacesContext.getCurrentInstance().addMessage(null, message);
-            return null;
         } else {
             try {
                 classSubject.setStartTime(range != null && range.size() > 0 ? range.get(0) : null);
@@ -327,11 +326,9 @@ public class ClaSubMB implements Serializable, Converter {
                 claSubDAO.create(classSubject);
                 FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "Success", "Tạo lớp " + sub + " - " + classe + " thành công !");
                 FacesContext.getCurrentInstance().addMessage(null, message);
-                return null;
             } catch (Exception e) {
                 e.printStackTrace();
             }
-            return "classsubject.xhtml?faces-redirect=true?";
         }
     }
 
