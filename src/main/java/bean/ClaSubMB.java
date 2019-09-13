@@ -266,7 +266,7 @@ public class ClaSubMB implements Serializable, Converter {
         }
         List<ClassSubject> subjectList = claSubDAO.findRangeDay(classSubject, student);
         if (result) {
-            message = new FacesMessage(FacesMessage.SEVERITY_INFO, "Failed", "Bạn đã đăng ký môn học này !");
+            message = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Failed", "Bạn đã đăng ký môn học này !");
         } else if (subjectList.size() > 0) {
             List<ClassSubject> list = claSubDAO.findRangeTime(classSubject, student);
             if (list.size() > 0) {
@@ -277,7 +277,7 @@ public class ClaSubMB implements Serializable, Converter {
                     builder.append(subject.getClassCredit().getName());
                     builder.append(";");
                 }
-                message = new FacesMessage(FacesMessage.SEVERITY_INFO, "Failed", "Trùng thời gian/khoảng thời gian/thứ với lớp : " + builder.toString().substring(0,builder.toString().length()-1)+" mà bạn đã đăng ký !");
+                message = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Failed", "Trùng thời gian/khoảng thời gian/thứ với lớp : " + builder.toString().substring(0,builder.toString().length()-1)+" mà bạn đã đăng ký !");
             } else {
                 reg = true;
             }
@@ -291,7 +291,7 @@ public class ClaSubMB implements Serializable, Converter {
             registersubDAO.create(registersub);
             classSubject.setRegistered(classSubject.getRegistered() != null ? classSubject.getRegistered() + 1 : 1);
             claSubDAO.update(classSubject);
-            message = new FacesMessage(FacesMessage.SEVERITY_WARN, "Success", "Đăng ký thành công " + classSubject.getSubject().getName());
+            message = new FacesMessage(FacesMessage.SEVERITY_INFO, "Success", "Đăng ký thành công " + classSubject.getSubject().getName());
         }
         FacesContext.getCurrentInstance().addMessage(null, message);
         return null;
