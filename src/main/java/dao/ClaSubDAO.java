@@ -2,6 +2,7 @@ package dao;
 
 import model.ClassCredit;
 import model.ClassSubject;
+import model.Student;
 import model.Subject;
 import org.hibernate.Session;
 import utils.HibernateUtils;
@@ -19,7 +20,7 @@ import java.util.List;
 public class ClaSubDAO {
 
 
-    public List<ClassSubject> findAll() {
+    public static List<ClassSubject> findAll() {
         Session s = HibernateUtils.getSessionFactory().openSession();
         List<ClassSubject> list = new ArrayList<>();
         try {
@@ -208,6 +209,64 @@ public class ClaSubDAO {
         return result;
     }
 
+
+    public List<ClassSubject> findRangeDay(ClassSubject classSubject, Student student) {
+        Session s = HibernateUtils.getSessionFactory().openSession();
+        List<ClassSubject> claSub = null;
+        try {
+            s.beginTransaction();
+            String hql = "SELECT DISTINCT cs " +
+                    "FROM ClassSubject as cs," +
+                    "     Subject as su " +
+                    "WHERE (su = cs.subject)" +
+                    "     and (:start_time >= cs.endTime or :end_time <= cs.startTime)" +
+                    "      and (cs.day = :day)  ";
+            org.hibernate.query.Query query = s.createQuery(hql);
+            query.setParameter("start_time", classSubject.getStartTime());
+            query.setParameter("end_time", classSubject.getEndTime());
+            query.setParameter("day", classSubject.getDay());
+            claSub = query.getResultList();
+            s.getTransaction().commit();
+        } catch (Exception e) {
+            e.printStackTrace();
+            s.getTransaction().rollback();
+        } finally {
+            s.close();
+        }
+        return claSub;
+    }
+
+    public  List<ClassSubject> findRangeTime(ClassSubject classSubject, Student student) {
+        Session s = HibernateUtils.getSessionFactory().openSession();
+        List<ClassSubject> claSub = null;
+        try {
+            s.beginTransaction();
+            String hql = "SELECT DISTINCT cs " +
+                    "FROM ClassSubject as cs," +
+                    "     Subject as su," +
+                    "     Student as st," +
+                    "     Registersub as re " +
+                    "WHERE (su = cs.subject)" +
+                    "  and (st = re.student)" +
+                    "  and re.classSubject = cs" +
+                    "  and (:start_time >= cs.todStart or :end_time <= cs.todEnd)" +
+                    "  and cs.day = :day" +
+                    "  and st = :student";
+            org.hibernate.query.Query query = s.createQuery(hql);
+            query.setParameter("start_time", classSubject.getTodStart());
+            query.setParameter("end_time", classSubject.getTodEnd());
+            query.setParameter("day", classSubject.getDay());
+            query.setParameter("student",student);
+            claSub = query.getResultList();
+            s.getTransaction().commit();
+        } catch (Exception e) {
+            e.printStackTrace();
+            s.getTransaction().rollback();
+        } finally {
+            s.close();
+        }
+        return claSub;
+    }
 
     public void update(ClassSubject classSubject) {
         Session s = HibernateUtils.getSessionFactory().openSession();

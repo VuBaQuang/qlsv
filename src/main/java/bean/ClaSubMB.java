@@ -46,8 +46,14 @@ public class ClaSubMB implements Serializable, Converter {
     private List<String> listClass;
     private List<ClassSubject> classSubjects;
 
+
+
     public void resetSub() {
         subject = new Subject();
+    }
+
+    public void rsClaSub() {
+        classSubject = new ClassSubject();
     }
 
     public void reset() {
@@ -74,7 +80,7 @@ public class ClaSubMB implements Serializable, Converter {
 
     public void createClaCre() {
         ClassCredit classCredit = classCreditDAO.create(this.classCredit);
-        if (classCredit !=null) {
+        if (classCredit != null) {
             FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "Success", "Thêm lớp " + classCredit.getName() + " thành công");
             FacesContext.getCurrentInstance().addMessage(null, message);
         } else {
@@ -161,36 +167,14 @@ public class ClaSubMB implements Serializable, Converter {
         this.score = score;
     }
 
-//    public void updateListStudents() {
-//        Set<Student> students = null;
-//        if (classe != null) {
-//            if (classe.equals("")) {
-//                classe = null;
-//            }
-//        }
-//        if (sub != null) {
-//            if (sub.equals("")) {
-//                sub = null;
-//            }
-//        }
-//        classSubjects = claSubDAO.findBySubCla(subjectDAO.getByName(sub), classCreditDAO.getIdByName(classe));
-//        students = new LinkedHashSet<>();
-//        for (ClassSubject classSubject : classSubjects) {
-//            for (Registersub value : classSubject.getRegistersubs()) {
-//                students.add(value.getStudent());
-//            }
-//        }
-//        listStudent = new LinkedList<>();
-//        listStudent.addAll(students);
-//    }
-
     public void add2Class(Student students, ClassPayroll classes) {
         students.setClassPayroll(classes);
         studentDAO.update(students);
     }
 
     public void updateListStudent() {
-        Set<Student> students ;
+        updateClassSubject();
+        Set<Student> students;
         students = new LinkedHashSet<>();
         try {
             for (Registersub value : classSubject.getRegistersubs()) {
@@ -205,13 +189,14 @@ public class ClaSubMB implements Serializable, Converter {
     }
 
     public String getScores(Student student) {
-        score="Chưa có điểm";
 
+        score = "Chưa có điểm";
         List<Registersub> list = registersubDAO.findByClassStu(classSubject, student);
-        if(list.size()>0){
+        if (list.size() > 0) {
             score = registersubDAO.findByClassStu(classSubject, student).get(0).getScore() != null ? registersubDAO.findByClassStu(classSubject, student).get(0).getScore().toString() : "Chưa có điểm";
         }
         return score;
+
     }
 
     public void setClaSub() {
@@ -260,28 +245,46 @@ public class ClaSubMB implements Serializable, Converter {
 
 
     public void delete() {
-            classSubject  = claSubDAO.getBySubFtClass(subjectDAO.getByName(sub),classCreditDAO.getIdByName(classe));
-            for (Registersub registersub : registersubDAO.findByClass(classSubject)) {
-                registersubDAO.delete(registersub);
-            }
-            claSubDAO.delete(classSubject);
-        FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "Success", "Xóa lớp "+sub+" - "+classe+" thành công");
+        classSubject = claSubDAO.getBySubFtClass(subjectDAO.getByName(sub), classCreditDAO.getIdByName(classe));
+        for (Registersub registersub : registersubDAO.findByClass(classSubject)) {
+            registersubDAO.delete(registersub);
+        }
+        claSubDAO.delete(classSubject);
+        FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "Success", "Xóa lớp " + sub + " - " + classe + " thành công");
         FacesContext.getCurrentInstance().addMessage(null, message);
     }
 
     public String register(ClassSubject classSubject, Student student) {
-        FacesContext context = FacesContext.getCurrentInstance();
         FacesMessage message = null;
         boolean result = false;
+        boolean reg = false;
         for (Registersub registersub : registersubDAO.findByStudent(student)) {
             if (classSubject.getSubject().getName().equals(registersub.getClassSubject().getSubject().getName())) {
                 result = true;
                 break;
             }
         }
+        List<ClassSubject> subjectList = claSubDAO.findRangeDay(classSubject, student);
         if (result) {
             message = new FacesMessage(FacesMessage.SEVERITY_INFO, "Failed", "Bạn đã đăng ký môn học này !");
+        } else if (subjectList.size() > 0) {
+            List<ClassSubject> list = claSubDAO.findRangeTime(classSubject, student);
+            if (list.size() > 0) {
+                StringBuilder builder = new StringBuilder();
+                for (ClassSubject subject : list) {
+                    builder.append(subject.getSubject().getName());
+                    builder.append(" - ");
+                    builder.append(subject.getClassCredit().getName());
+                    builder.append(";");
+                }
+                message = new FacesMessage(FacesMessage.SEVERITY_INFO, "Failed", "Trùng thời gian/khoảng thời gian/thứ với lớp : " + builder.toString().substring(0,builder.toString().length()-1)+" mà bạn đã đăng ký !");
+            } else {
+                reg = true;
+            }
         } else {
+            reg = true;
+        }
+        if (reg) {
             Registersub registersub = new Registersub();
             registersub.setStudent(student);
             registersub.setClassSubject(classSubject);
@@ -313,6 +316,7 @@ public class ClaSubMB implements Serializable, Converter {
     }
 
     public void create() {
+
         if (claSubDAO.getBySubFtClass(subjectDAO.getByName(sub), classCreditDAO.getIdByName(classe)) != null) {
             FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Fail", "Đã tồn tại " + sub + " - " + classe);
             FacesContext.getCurrentInstance().addMessage(null, message);
@@ -409,6 +413,16 @@ public class ClaSubMB implements Serializable, Converter {
     }
 
     public ClassSubject getClassSubject() {
+        if(classSubject.getTodStart()==null){
+            Calendar calendar = Calendar.getInstance();
+            calendar.set(Calendar.AM_PM, Calendar.AM);
+            calendar.set(Calendar.HOUR, 0);
+            calendar.set(Calendar.MINUTE, 0);
+            classSubject.setTodStart(calendar.getTime());
+            calendar.set(Calendar.HOUR, 23);
+            calendar.set(Calendar.MINUTE, 55);
+            classSubject.setTodEnd(calendar.getTime());
+        }
         return classSubject;
     }
 

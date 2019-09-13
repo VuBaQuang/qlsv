@@ -325,7 +325,8 @@
                                          update="pnlContainer-classes,growl-classes">
                         </p:commandButton>
                         <p:spacer width="20px"/>
-                        <p:commandButton value="Tạo lớp học" oncomplete="PF('dlg-classes-add').show()"/>
+                        <p:commandButton value="Tạo lớp học" oncomplete="PF('dlg-classes-add').show()">
+                        </p:commandButton>
                         <br/><br/>
                         <h:panelGroup id="pnlContainer-classes" layout="block">
                             <h:panelGrid columns="2" rendered="#{classesMB.checkNull()}">
@@ -373,12 +374,14 @@
                                 <p:commandButton update="form-2-classes:table-stu-classes" value="Thêm sinh viên"
                                                  oncomplete="PF('dlg-classes').show()">
                                 </p:commandButton>
+
                                 <p:commandButton value="Xóa lớp" action="#{classesMB.delete(classesMB.classPayroll)}"
                                                  update="growl-classes,form-classes,form-student">
                                     <p:confirm header="Xác nhận"
                                                message="Bạn muốn xóa lớp #{classesMB.classPayroll.name}"
                                                icon="pi pi-exclamation-triangle"/>
                                 </p:commandButton>
+
                                 <p:confirmDialog global="true" showEffect="fade" hideEffect="fade" responsive="true">
                                     <p:commandButton value="Yes" type="button" styleClass="ui-confirmdialog-yes"
                                                      icon="fas fa-check-circle"/>
@@ -486,7 +489,9 @@
                     <hr/>
                     <h:form id="form-clasub">
                         <div style="float: right">
-                            <p:commandButton value="Tạo lớp" oncomplete="PF('dlg-clasub-classes').show()"/>
+                            <p:commandButton value="Tạo lớp" oncomplete="PF('dlg-clasub-classes').show()">
+                                <p:ajax listener="#{claSubMB.rsClaSub()}" update="form-clasub"/>
+                            </p:commandButton>
                             <p:commandButton value="Tạo môn học" oncomplete="PF('dlg-clasub-subject').show()"/>
                         </div>
                         <br/>
@@ -514,19 +519,44 @@
                         <p:spacer width="20px"/>
 
                         <p:commandButton value="Tạo lớp - môn học" actionListener="#{claSubMB.reset()}"
+                                         action="form-clasub"
                                          oncomplete="PF('dlg-clasub-add').show()"/>
                         <br/><br/>
 
                         <h:panelGroup id="pnlContainer-clasub" layout="block">
+
                             <h:panelGrid columns="2" rendered="#{!claSubMB.checkClSu() and claSubMB.check()}">
                                 <h3>Không tồn tại lớp học #{claSubMB.sub} - #{claSubMB.classe} </h3>
                             </h:panelGrid>
 
+
                             <h:panelGrid columns="2" rendered="#{claSubMB.checkClSu()}">
-                                <hr/>
-                                <hr/>
-                                <h3>Danh sách sinh viên #{claSubMB.classe} - #{claSubMB.sub}</h3>
+                                <br/>
+                                <h3>Thông tin lớp #{claSubMB.classe} - #{claSubMB.sub}</h3>
+
                             </h:panelGrid>
+
+                            <h:panelGrid rendered="#{claSubMB.checkClSu()}">
+                                <h5>Khoảng thời gian học:  #{claSubMB.classSubject.startTime.toString().replaceAll("-","/")} -  #{claSubMB.classSubject.endTime.toString().replaceAll("-","/")} </h5>
+                                <h5>Thứ:  #{claSubMB.classSubject.day}</h5>
+                                <h5>Thời gian học: #{claSubMB.classSubject.todStart} -  #{claSubMB.classSubject.todEnd}</h5>
+                                <h5>Sĩ số:  #{claSubMB.classSubject.size}</h5>
+                                <h5>Số sinh viên hiện tại:  #{claSubMB.classSubject.registered}</h5>
+                                <h5>Ghi chú: #{claSubMB.classSubject.note}</h5>
+
+                                <p:commandButton update="form-2-clasub:table-stu" value="Sửa thông tin lớp học"
+                                                 oncomplete="PF('dlg-clasub-edit').show()">
+                                    <f:setPropertyActionListener value="#{claSubMB.classSubject}"
+                                                                 target="#{claSubMB.classSubject}"/>
+                                </p:commandButton>
+
+                            </h:panelGrid>
+                            <h:panelGrid columns="2" rendered="#{claSubMB.checkClSu()}">
+
+                                <h4>Danh sách sinh viên</h4>
+                            </h:panelGrid>
+
+
                             <h:panelGrid id="students-clasub" columns="2" rendered="#{claSubMB.checkClSu()}">
 
                                 <hr/>
@@ -616,7 +646,7 @@
                                     </p:column>
                                     <p:column style="width:60px" headerText="Thao tác">
                                         <p:commandButton value="Xóa" action="#{claSubMB.deleteStuClaSub(student)}"
-                                                         update="cars2-clasub,form-student "/>
+                                                         update="cars2-clasub,form-student"/>
                                     </p:column>
                                 </p:dataTable>
 
@@ -728,6 +758,81 @@
                                         Ngày*:
                                         <h:selectOneRadio id="day-clasub" value="#{claSubMB.day}" rendered="true"
                                                           requiredMessage="Mời bạn chọn ngày học">
+                                            <p:ajax listener="#{claSubMB.setTime()}" update="timehour" />
+                                            <f:selectItem itemValue="2" itemLabel="Thứ 2"/>
+                                            <f:selectItem itemValue="3" itemLabel="Thứ 3"/>
+                                            <f:selectItem itemValue="4" itemLabel="Thứ 4"/>
+                                            <f:selectItem itemValue="5" itemLabel="Thứ 5"/>
+                                            <f:selectItem itemValue="6" itemLabel="Thứ 6"/>
+                                        </h:selectOneRadio>
+                                        Thời gian*:
+                                        <h:panelGrid id="timehour" columns="5">
+                                            <h:outputText value="Start time"/>
+                                            <pe:timePicker  value="#{claSubMB.classSubject.todStart}" mode="popup" onHourShow="tpStartOnHourShowCallback"
+                                                           onMinuteShow="tpStartOnMinuteShowCallback" widgetVar="startTimeWidget"/>
+
+                                            <h:panelGroup layout="block" style="width:20px;"/>
+
+                                            <h:outputText value="End time"/>
+                                            <pe:timePicker value="#{claSubMB.classSubject.todEnd}" mode="popup" onHourShow="tpEndOnHourShowCallback"
+                                                           onMinuteShow="tpEndOnMinuteShowCallback" widgetVar="endTimeWidget"/>
+                                        </h:panelGrid>
+
+
+                                        Sĩ số*:
+                                        <p:spinner value="#{claSubMB.classSubject.size}" style="width: 186px; "
+                                                   min="0"
+                                                   required="true" requiredMessage="Mời bạn nhập sĩ số"/>
+                                        Ghi chú:
+                                        <h:inputText value="#{claSubMB.classSubject.note}"
+                                                     style="width: 183px;border-radius: 3px;height: 22px;font-family: -webkit-body, serif;font-size: 15px;"/>
+                                    </h:panelGrid>
+                                </p:panel>
+                            </div>
+                            <br/>
+                            <div align="center">
+                                <p:commandButton value="Save" action="#{claSubMB.create()}"
+                                                 update="growl-clasub,form-clasub"
+                                                 oncomplete=" if (args &amp;&amp; !args.validationFailed) PF('dlg-clasub-add').hide()"/>
+
+
+                            </div>
+                        </h:form>
+                    </p:dialog>
+
+                    <p:dialog widgetVar="dlg-clasub-edit" resizable="false" prependID="false" modal="true"
+                              width="950px"
+                              height="550px"
+                              showEffect="true" responsive="true">
+
+                        <h:form id="form-clasub-4">
+                            <div id="edit-clasub" align="center">
+                                <p:panel header="Tạo lớp học" id="dialog-edit">
+                                    <p:messages/>
+                                    <h:panelGrid columns="2">
+                                        Lớp*:
+                                        <h:selectOneMenu id="clase-clasub-edit"
+                                                         value="#{claSubMB.classSubject.classCredit.name}"
+                                                         required="true"
+                                                         requiredMessage="Mời bạn chọn lớp"
+                                                         label="clase">
+                                            <f:selectItem itemLabel="Chọn" itemValue="" noSelectionOption="true"/>
+                                            <f:selectItems value="#{claSubMB.listClass}"/>
+                                        </h:selectOneMenu>
+                                        Môn học*:
+                                        <h:selectOneMenu value="#{claSubMB.classSubject.subject.name}" required="true"
+                                                         requiredMessage="Mời bạn chọn môn học">
+                                            <f:selectItem itemLabel="Chọn" itemValue="" noSelectionOption="true"/>
+                                            <f:selectItems value="#{claSubMB.listSubject}"/>
+                                        </h:selectOneMenu>
+                                        Khoảng thời gian*:
+                                        <p:datePicker selectionMode="range" value="#{claSubMB.range}"
+                                                      readonlyInput="true"
+                                                      numberOfMonths="3" required="true"
+                                                      requiredMessage="Mời bạn chọn 'Khoảng thời gian'"/>
+                                        Ngày*:
+                                        <h:selectOneRadio id="day-clasub-edit" value="#{claSubMB.day}" rendered="true"
+                                                          requiredMessage="Mời bạn chọn ngày học">
                                             <f:selectItem itemValue="2" itemLabel="Thứ 2"/>
                                             <f:selectItem itemValue="3" itemLabel="Thứ 3"/>
                                             <f:selectItem itemValue="4" itemLabel="Thứ 4"/>
@@ -766,6 +871,7 @@
                             </div>
                         </h:form>
                     </p:dialog>
+
 
                     <p:dialog widgetVar="dlg-clasub-classes" resizable="false" prependID="false" modal="true"
                               showEffect="true" responsive="true" width="500px">
@@ -835,4 +941,107 @@
             </p:tab>
         </p:tabView>
     </div>
+    <h:outputScript id="timeRangeScript" target="body">
+        /* <![CDATA[ */
+        // Use case 2
+
+        function onHourShowCallback(hour) {
+            if ((hour > 20) || (hour < 6)) {
+                return false; // not valid
+            }
+
+            return true; // valid
+        }
+
+        function onMinuteShowCallback(hour, minute) {
+            if ((hour == 20) && (minute >= 30)) {
+                return false; // not valid
+            }
+
+            if ((hour == 6) && (minute < 30)) {
+                return false; // not valid
+            }
+
+            return true;  // valid
+        }
+
+        // Use case 3
+
+        function tpStartOnHourShowCallback(hour) {
+            if (!PrimeFaces.widgets['endTimeWidget']) {
+                return false;
+            }
+
+            var tpEndHour = parseInt(PF('endTimeWidget').getHours());
+
+            // Check if proposed hour is prior or equal to selected end time hour
+            if (parseInt(hour) <= tpEndHour) {
+                return true;
+            }
+
+            // if hour did not match, it can not be selected
+            return false;
+        }
+
+        function tpStartOnMinuteShowCallback(hour, minute) {
+            if (!PrimeFaces.widgets['endTimeWidget']) {
+                return false;
+            }
+
+            var tpEndHour = parseInt(PF('endTimeWidget').getHours());
+            var tpEndMinute = parseInt(PF('endTimeWidget').getMinutes());
+
+            // Check if proposed hour is prior to selected end time hour
+            if (parseInt(hour) < tpEndHour) {
+                return true;
+            }
+
+            // Check if proposed hour is equal to selected end time hour and minutes is prior
+            if ((parseInt(hour) == tpEndHour) && (parseInt(minute) < tpEndMinute)) {
+                return true;
+            }
+
+            // if minute did not match, it can not be selected
+            return false;
+        }
+
+        function tpEndOnHourShowCallback(hour) {
+            if (!PrimeFaces.widgets['startTimeWidget']) {
+                return false;
+            }
+
+            var tpStartHour = parseInt(PF('startTimeWidget').getHours());
+
+            // Check if proposed hour is after or equal to selected start time hour
+            if (parseInt(hour) >= tpStartHour) {
+                return true;
+            }
+
+            // if hour did not match, it can not be selected
+            return false;
+        }
+
+        function tpEndOnMinuteShowCallback(hour, minute) {
+            if (!PrimeFaces.widgets['startTimeWidget']) {
+                return false;
+            }
+
+            var tpStartHour = parseInt(PF('startTimeWidget').getHours());
+            var tpStartMinute = parseInt(PF('startTimeWidget').getMinutes());
+
+            // Check if proposed hour is after selected start time hour
+            if (parseInt(hour) > tpStartHour) {
+                return true;
+            }
+
+            // Check if proposed hour is equal to selected start time hour and minutes is after
+            if ((parseInt(hour) == tpStartHour) && (parseInt(minute) > tpStartMinute)) {
+                return true;
+            }
+
+            // if minute did not match, it can not be selected
+            return false;
+        }
+        /* ]]> */
+    </h:outputScript>
 </ui:composition>

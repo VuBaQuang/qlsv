@@ -172,4 +172,20 @@ public class ClassSubject implements java.io.Serializable {
 		this.registersubs = registersubs;
 	}
 
+	@Override
+	public String toString() {
+		return "ClassSubject{" +
+				"id=" + id +
+				", classCredit=" + classCredit +
+				", subject=" + subject +
+				", startTime=" + startTime +
+				", endTime=" + endTime +
+				", day='" + day + '\'' +
+				", todStart=" + todStart +
+				", todEnd=" + todEnd +
+				", note='" + note + '\'' +
+				", size=" + size +
+				", registered=" + registered +
+				'}';
+	}
 }

@@ -111,7 +111,7 @@ public class StudentsMB implements Serializable {
     }
 
 
-    public String avgScore(Student student) {
+    public double avgScore(Student student) {
         double sum = 0;
         int t = 0;
         for (Registersub registersub : registersubDAO.findByStudent(student)) {
@@ -121,9 +121,9 @@ public class StudentsMB implements Serializable {
             }
         }
         if (t == 0) {
-            return "Chưa có điểm";
+            return -1;
         } else {
-            return String.valueOf(Math.ceil((sum / t) * 100) / 100);
+            return (Math.ceil((sum / t) * 100) / 100);
         }
     }
 
