@@ -9,16 +9,27 @@ import javax.faces.application.FacesMessage;
 import javax.faces.bean.*;
 import javax.faces.context.FacesContext;
 import java.io.IOException;
+import java.util.List;
 
 @ManagedBean
 @SessionScoped
 public class UserMB {
     private String user;
     private String password;
+    private List<User> userList;
     private Student student = new Student();
     private UserDAO userDAO = new UserDAO();
     @ManagedProperty("#{claSubMB}")
     private ClaSubMB claSubMB = new ClaSubMB();
+
+    public List<User> getUserList() {
+        userList=userDAO.findAll();
+        return userList;
+    }
+
+    public void setUserList(List<User> studentList) {
+        this.userList = studentList;
+    }
 
     public ClaSubMB getClaSubMB() {
         return claSubMB;

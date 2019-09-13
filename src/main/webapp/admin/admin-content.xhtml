@@ -546,7 +546,7 @@
 
                                 <p:commandButton update="form-clasub-4" value="Sửa thông tin lớp học"
                                                  oncomplete="PF('dlg-clasub-edit').show()">
-                                  <p:ajax listener="#{claSubMB.updateInfoToEdit()}" update="form-clasub-4"/>
+                                    <p:ajax listener="#{claSubMB.updateInfoToEdit()}" update="form-clasub-4"/>
 
                                 </p:commandButton>
 
@@ -758,7 +758,7 @@
                                         Ngày*:
                                         <h:selectOneRadio id="day-clasub" value="#{claSubMB.day}" rendered="true"
                                                           requiredMessage="Mời bạn chọn ngày học">
-                                            <p:ajax listener="#{claSubMB.setTime()}" update="timehour" />
+                                            <p:ajax listener="#{claSubMB.setTime()}" update="timehour"/>
                                             <f:selectItem itemValue="2" itemLabel="Thứ 2"/>
                                             <f:selectItem itemValue="3" itemLabel="Thứ 3"/>
                                             <f:selectItem itemValue="4" itemLabel="Thứ 4"/>
@@ -768,14 +768,18 @@
                                         Thời gian*:
                                         <h:panelGrid id="timehour" columns="5">
                                             <h:outputText value="Start time"/>
-                                            <pe:timePicker  value="#{claSubMB.classSubject.todStart}" mode="popup" onHourShow="tpStartOnHourShowCallback"
-                                                           onMinuteShow="tpStartOnMinuteShowCallback" widgetVar="startTimeWidget"/>
+                                            <pe:timePicker value="#{claSubMB.classSubject.todStart}" mode="popup"
+                                                           onHourShow="tpStartOnHourShowCallback"
+                                                           onMinuteShow="tpStartOnMinuteShowCallback"
+                                                           widgetVar="startTimeWidget"/>
 
                                             <h:panelGroup layout="block" style="width:20px;"/>
 
                                             <h:outputText value="End time"/>
-                                            <pe:timePicker value="#{claSubMB.classSubject.todEnd}" mode="popup" onHourShow="tpEndOnHourShowCallback"
-                                                           onMinuteShow="tpEndOnMinuteShowCallback" widgetVar="endTimeWidget"/>
+                                            <pe:timePicker value="#{claSubMB.classSubject.todEnd}" mode="popup"
+                                                           onHourShow="tpEndOnHourShowCallback"
+                                                           onMinuteShow="tpEndOnMinuteShowCallback"
+                                                           widgetVar="endTimeWidget"/>
                                         </h:panelGrid>
 
 
@@ -826,12 +830,13 @@
                                             <f:selectItems value="#{claSubMB.listSubject}"/>
                                         </h:selectOneMenu>
                                         Khoảng thời gian*:
-                                        <p:datePicker  selectionMode="range" value="#{claSubMB.range}"
+                                        <p:datePicker selectionMode="range" value="#{claSubMB.range}"
                                                       readonlyInput="true"
                                                       numberOfMonths="3" required="true"
                                                       requiredMessage="Mời bạn chọn 'Khoảng thời gian'"/>
                                         Ngày*:
-                                        <h:selectOneRadio id="day-clasub-edit" value="#{claSubMB.classSubject.day}" rendered="true"
+                                        <h:selectOneRadio id="day-clasub-edit" value="#{claSubMB.classSubject.day}"
+                                                          rendered="true"
                                                           requiredMessage="Mời bạn chọn ngày học">
                                             <f:selectItem itemValue="2" itemLabel="Thứ 2"/>
                                             <f:selectItem itemValue="3" itemLabel="Thứ 3"/>
@@ -937,10 +942,174 @@
                     </p:dialog>
                 </div>
             </p:tab>
+
+            <p:tab title="Tài khoản sinh viên">
+
+                <div align="center">
+                    <br/>
+                    <p:growl id="growl-user" showDetail="true" life="2000"/>
+                    <h2>Danh sách sinh viên</h2>
+                    <hr/>
+                    <hr/>
+                    <h:form id="form-user" acceptcharset="UTF-8">
+                        <p:dataTable id="form-user-table" value="#{userMB.userList}" var="user"
+                                     widgetVar="table-user-user"
+                                     resizableColumns="true">
+                            <p:column headerText="ID"
+                                      style="text-align: center;width:30px;">
+                                <h:outputText value="#{user.id}"/>
+                            </p:column>
+
+                            <p:column sortBy="#{user.code}" filterBy="#{user.code}" filterMatchMode="contains"
+                                      headerText="Mã sinh viên" style="text-align: center">
+                                <h:outputText value="#{user.code}"/>
+                            </p:column>
+                            <p:column sortBy="#{user.name}" filterBy="#{user.name}" filterMatchMode="contains"
+                                      headerText="Họ tên" style="text-align: center">
+                                <h:outputText value=" #{user.name}"/>
+                            </p:column>
+
+                            <p:column sortBy="#{user.classPayroll.name}" filterBy="#{user.classPayroll.name}"
+                                      headerText="Lớp"
+                                      filterMatchMode="exact" style="text-align: center">
+                                <f:facet name="filter">
+                                    <p:selectOneMenu onchange="PF('table-user-user').filter()"
+                                                     styleClass="custom-filter"
+                                                     style="width: 70%">
+                                        <f:selectItem itemLabel="Chọn" itemValue="#{null}" noSelectionOption="true"/>
+                                        <f:selectItems value="#{studentsMB.classes}"/>
+                                    </p:selectOneMenu>
+                                </f:facet>
+                                <h:outputText value="#{user.classPayroll.name}"/>
+                            </p:column>
+
+
+                            <p:column sortBy="#{user.age}" headerText="Tuổi" style="width: 20px;text-align: center">
+                                <h:outputText value="#{user.age}"/>
+                            </p:column>
+                            <p:column sortBy="#{user.address}" headerText="Địa chỉ" style="text-align: center">
+                                <h:outputText value="#{user.address}"/>
+                            </p:column>
+                            <p:column sortBy="#{user.email}" headerText="Email" style="text-align: center">
+                                <h:outputText value=" #{user.email}"/>
+                            </p:column>
+
+                            <p:column sortBy="#{studentsMB.avgScore(user)}"
+                                      filterBy="#{studentsMB.avgScore(user)}"
+                                      headerText="Điểm TB" filterMatchMode="gte" style="width: 70px;text-align: center">
+                                <f:facet name="filter">
+                                    <p:spinner onchange="PF('table-user-user').filter()"
+                                               styleClass="year-spinner custom-filter">
+                                        <f:converter converterId="javax.faces.Double"/>
+                                    </p:spinner>
+                                </f:facet>
+                                <h:outputText value="#{studentsMB.avgScore(user)}"/>
+                            </p:column>
+
+
+                            <p:column sortBy="#{user.note}" headerText="Ghi chú"
+                                      style="width: 100px;text-align: center">
+                                <h:outputText value="#{user.note}"/>
+                            </p:column>
+                            <p:column headerText="Thao tác" style="width: 140px;text-align: center">
+
+                                <p:commandButton update="form-user-2:dialog" value="Sửa"
+                                                 oncomplete="PF('dlg-edit').show()"
+                                                 action="#{studentsMB.setaddress()}">
+                                    <f:setPropertyActionListener value="#{user}" target="#{studentsMB.user}"/>
+                                </p:commandButton>
+
+                                <p:commandButton style="background: red; border-color: red" value="Xóa"
+                                                 action="#{studentsMB.delete(user)}" update="form-user"/>
+                            </p:column>
+                            <f:facet name="footer">
+                                <h:outputText value="Total of user: #{studentsMB.getListStudent().size()}"/>
+                            </f:facet>
+                        </p:dataTable>
+                        <br/>
+
+                        <p:commandButton value="Thêm sinh viên" oncomplete="PF('dlg-addstu').show()">
+                            <p:ajax listener="#{studentsMB.rsStu()}" update="form-addstu"/>
+                        </p:commandButton>
+
+                    </h:form>
+
+
+                    <p:dialog widgetVar="dlg-user" resizable="false" responsive="true" showEffect="true"
+                              prependID="false"
+                              modal="true">
+                        <h:form id="form-user-add">
+                            <div align="center">
+                                <p:panel header="Tạo sinh viên" style="width: 76%">
+                                    <p:messages/>
+                                    <h:panelGrid columns="2" columnClasses="label, value" style="margin: 10px auto">
+                                        <!--Tên-->
+                                        <h:outputText value="Họ tên: *"/>
+                                        <h:inputText value="#{studentsMB.user.name}" required="true"
+                                                     label="name"
+                                                     requiredMessage="Họ tên không được để trống" style="width: 250px"/>
+                                        <!--Mã sv-->
+                                        <h:outputText value="Mã sinh viên: *"/>
+                                        <h:inputText value="#{studentsMB.user.code}"
+                                                     required="true"
+                                                     requiredMessage="Mã sinh viên không được để trống"
+                                                     validatorMessage="Mã sinh viên không đúng định dạng: ATxxxxxx (x là số)"
+                                                     label="code"
+                                                     style="width: 250px">
+                                            <f:validateRegex
+                                                    pattern="^[A][T]+[0-9]{6}$"/>
+                                        </h:inputText>
+                                        <!--Tuổi-->
+                                        <h:outputText value="Tuổi:"/>
+                                        <p:spinner value="#{studentsMB.user.age}" min="0" required="true"
+                                                   label="age"
+                                                   style="width: 250px"/>
+                                        <!--Email-->
+                                        <h:outputText value="Email: "/>
+                                        <h:inputText value="#{studentsMB.user.email}"
+                                                     required="true"
+                                                     requiredMessage="Email không được để trống"
+                                                     validatorMessage="Email không đúng định dạng" label="email"
+                                                     style="width: 250px">
+                                            <f:validateRegex
+                                                    pattern="^(\w+)(\.\w+)?@\w+(\.\w+)?(\.(\w+))(\.\w{2})?$"/>
+                                        </h:inputText>
+
+                                        <h:outputText value="Số điện thoại: "/>
+                                        <h:inputText value="#{studentsMB.user.phone}" label="phone"
+                                                     style="width: 250px"/>
+
+
+                                        <h:outputText value="Lớp: "/>
+                                        <h:selectOneRadio value="#{studentsMB.studentClass}" label="classs"
+                                                          style="width: 250px">
+                                            <f:selectItems value="#{studentsMB.classes}"/>
+                                        </h:selectOneRadio>
+
+                                        <h:outputText value="Ghi chú: "/>
+                                        <h:inputText value="#{studentsMB.user.note}" label="note"
+                                                     style="width: 250px"/>
+                                    </h:panelGrid>
+                                </p:panel>
+                            </div>
+                            <br/>
+                            <div align="center">
+                                <p:commandButton value="Save" action="#{studentsMB.merge()}"
+                                                 update="growl-user,form-user"
+                                                 oncomplete=" if (args &amp;&amp; !args.validationFailed) PF('dlg-addstu').hide()"/>
+                            </div>
+                        </h:form>
+                    </p:dialog>
+
+                </div>
+
+            </p:tab>
+
         </p:tabView>
     </div>
     <h:outputScript id="timeRangeScript" target="body">
         /* <![CDATA[ */
+
         // Use case 2
 
         function onHourShowCallback(hour) {
@@ -1040,6 +1209,7 @@
             // if minute did not match, it can not be selected
             return false;
         }
+
         /* ]]> */
     </h:outputScript>
 </ui:composition>
