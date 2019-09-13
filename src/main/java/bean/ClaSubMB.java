@@ -47,6 +47,12 @@ public class ClaSubMB implements Serializable, Converter {
     private List<ClassSubject> classSubjects;
 
 
+    public void updateInfoToEdit() {
+        range = new LinkedList<>();
+        range.add(classSubject.getStartTime());
+        range.add(classSubject.getEndTime());
+
+    }
 
     public void resetSub() {
         subject = new Subject();
@@ -277,7 +283,7 @@ public class ClaSubMB implements Serializable, Converter {
                     builder.append(subject.getClassCredit().getName());
                     builder.append(";");
                 }
-                message = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Failed", "Trùng thời gian/khoảng thời gian/thứ với lớp : " + builder.toString().substring(0,builder.toString().length()-1)+" mà bạn đã đăng ký !");
+                message = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Failed", "Trùng thời gian/khoảng thời gian/thứ với lớp : " + builder.toString().substring(0, builder.toString().length() - 1) + " mà bạn đã đăng ký !");
             } else {
                 reg = true;
             }
@@ -315,8 +321,17 @@ public class ClaSubMB implements Serializable, Converter {
 
     }
 
+    public void edit(){
+        classSubject.setStartTime(range != null && range.size() > 0 ? range.get(0) : null);
+        classSubject.setEndTime(range != null && range.size() > 1 ? range.get(1) : null);
+        classSubject.setClassCredit(classCreditDAO.getIdByName(classe));
+        classSubject.setSubject(subjectDAO.getByName(sub));
+        classSubject.setDay(day);
+        claSubDAO.update(classSubject);
+        FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "Success", "Cập nhật" + sub + " - " + classe + " thành công !");
+        FacesContext.getCurrentInstance().addMessage(null, message);
+    }
     public void create() {
-
         if (claSubDAO.getBySubFtClass(subjectDAO.getByName(sub), classCreditDAO.getIdByName(classe)) != null) {
             FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Fail", "Đã tồn tại " + sub + " - " + classe);
             FacesContext.getCurrentInstance().addMessage(null, message);
@@ -413,7 +428,7 @@ public class ClaSubMB implements Serializable, Converter {
     }
 
     public ClassSubject getClassSubject() {
-        if(classSubject.getTodStart()==null){
+        if (classSubject.getTodStart() == null) {
             Calendar calendar = Calendar.getInstance();
             calendar.set(Calendar.AM_PM, Calendar.AM);
             calendar.set(Calendar.HOUR, 0);

@@ -544,10 +544,10 @@
                                 <h5>Số sinh viên hiện tại:  #{claSubMB.classSubject.registered}</h5>
                                 <h5>Ghi chú: #{claSubMB.classSubject.note}</h5>
 
-                                <p:commandButton update="form-2-clasub:table-stu" value="Sửa thông tin lớp học"
+                                <p:commandButton update="form-clasub-4" value="Sửa thông tin lớp học"
                                                  oncomplete="PF('dlg-clasub-edit').show()">
-                                    <f:setPropertyActionListener value="#{claSubMB.classSubject}"
-                                                                 target="#{claSubMB.classSubject}"/>
+                                  <p:ajax listener="#{claSubMB.updateInfoToEdit()}" update="form-clasub-4"/>
+
                                 </p:commandButton>
 
                             </h:panelGrid>
@@ -807,7 +807,7 @@
 
                         <h:form id="form-clasub-4">
                             <div id="edit-clasub" align="center">
-                                <p:panel header="Tạo lớp học" id="dialog-edit">
+                                <p:panel header="Edit" id="dialog-edit">
                                     <p:messages/>
                                     <h:panelGrid columns="2">
                                         Lớp*:
@@ -826,12 +826,12 @@
                                             <f:selectItems value="#{claSubMB.listSubject}"/>
                                         </h:selectOneMenu>
                                         Khoảng thời gian*:
-                                        <p:datePicker selectionMode="range" value="#{claSubMB.range}"
+                                        <p:datePicker  selectionMode="range" value="#{claSubMB.range}"
                                                       readonlyInput="true"
                                                       numberOfMonths="3" required="true"
                                                       requiredMessage="Mời bạn chọn 'Khoảng thời gian'"/>
                                         Ngày*:
-                                        <h:selectOneRadio id="day-clasub-edit" value="#{claSubMB.day}" rendered="true"
+                                        <h:selectOneRadio id="day-clasub-edit" value="#{claSubMB.classSubject.day}" rendered="true"
                                                           requiredMessage="Mời bạn chọn ngày học">
                                             <f:selectItem itemValue="2" itemLabel="Thứ 2"/>
                                             <f:selectItem itemValue="3" itemLabel="Thứ 3"/>
@@ -863,11 +863,9 @@
                             </div>
                             <br/>
                             <div align="center">
-                                <p:commandButton value="Save" action="#{claSubMB.create()}"
+                                <p:commandButton value="Save" action="#{claSubMB.edit()}"
                                                  update="growl-clasub,form-clasub"
-                                                 oncomplete=" if (args &amp;&amp; !args.validationFailed) PF('dlg-clasub-add').hide()"/>
-
-
+                                                 oncomplete=" if (args &amp;&amp; !args.validationFailed) PF('dlg-clasub-edit').hide()"/>
                             </div>
                         </h:form>
                     </p:dialog>
