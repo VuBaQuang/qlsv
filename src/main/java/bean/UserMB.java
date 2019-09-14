@@ -1,5 +1,6 @@
 package bean;
 
+import dao.StudentDAO;
 import dao.UserDAO;
 import model.Student;
 import model.User;
@@ -7,24 +8,99 @@ import org.primefaces.PrimeFaces;
 
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.*;
+import javax.faces.component.UIComponent;
+import javax.faces.component.UIInput;
 import javax.faces.context.FacesContext;
+import javax.faces.convert.Converter;
+import javax.faces.convert.ConverterException;
+import javax.faces.convert.FacesConverter;
+import javax.faces.validator.ValidatorException;
 import java.io.IOException;
+import java.io.Serializable;
+import java.util.LinkedList;
 import java.util.List;
 
 @ManagedBean
 @SessionScoped
-public class UserMB {
+public class UserMB implements Serializable {
     private String user;
     private String password;
+    private String confirm_password;
+
+
     private List<User> userList;
+
+
+    private List<Student> studentList;
+    private User oUser = new User();
+
+
     private Student student = new Student();
+    private StudentDAO studentDAO = new StudentDAO();
     private UserDAO userDAO = new UserDAO();
     @ManagedProperty("#{claSubMB}")
     private ClaSubMB claSubMB = new ClaSubMB();
 
+    public String getConfirm_password() {
+        return confirm_password;
+    }
+
+    public void setConfirm_password(String confirm_password) {
+        this.confirm_password = confirm_password;
+    }
+
+    public void validatePasswordError(FacesContext context, UIComponent component,
+                                      Object value) {
+        String confirmPassword = (String) value;
+
+        // Retrieve the temporary value from the password field
+        UIInput passwordInput = (UIInput) component.findComponent("password");
+        String password = (String) passwordInput.getLocalValue();
+
+        if (password == null || confirmPassword == null || !password.equals(confirmPassword)) {
+            FacesMessage msg = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", "Xác nhận mật khẩu sai !");
+            throw new ValidatorException(msg);
+        }
+    }
+
+    public void create() {
+        System.out.println("1");
+    }
+
+    public void delete(User user) {
+        userDAO.delete(user);
+    }
+
+    public User getoUser() {
+        return oUser;
+    }
+
+    public void setoUser(User oUser) {
+        this.oUser = oUser;
+    }
+
     public List<User> getUserList() {
-        userList=userDAO.findAll();
+        userList = userDAO.findAll();
         return userList;
+    }
+
+    public List<Student> getStudentList() {
+        studentList = studentDAO.noneAccount();
+        return studentList;
+    }
+
+    public List<String> listStudent() {
+        List<String> list = new LinkedList<>();
+        studentList = studentDAO.noneAccount();
+        for (Student student : studentList) {
+            list.add(student.getId() + " - " + student.getCode() + " - " + student.getName());
+        }
+        return list;
+    }
+
+
+    public void setStudentList(List<Student> studentList) {
+        this.studentList = studentList;
     }
 
     public void setUserList(List<User> studentList) {
@@ -111,4 +187,6 @@ public class UserMB {
             e.printStackTrace();
         }
     }
+
+
 }

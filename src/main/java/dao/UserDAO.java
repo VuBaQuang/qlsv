@@ -54,7 +54,7 @@ public class UserDAO {
         return result;
     }
 
-    public User findById(int id) {
+    public static User findById(int id) {
         Session s = HibernateUtils.getSessionFactory().openSession();
         User user = new User();
         try {

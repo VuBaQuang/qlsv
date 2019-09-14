@@ -1,5 +1,6 @@
 package dao;
 
+import com.google.gson.internal.bind.util.ISO8601Utils;
 import model.ClassSubject;
 import model.Student;
 import model.Subject;
@@ -36,8 +37,25 @@ public class StudentDAO {
         return list;
     }
 
+    public   List<Student> noneAccount() {
+        Session s = HibernateUtils.getSessionFactory().openSession();
+        List<Student> list = null;
+        try {
+            s.beginTransaction();
+            String hql = "FROM Student as st WHERE st NOT in (SELECT DISTINCT u.student FROM User as u, Student  as st WHERE  st=u.student)";
+            org.hibernate.query.Query query = s.createQuery(hql);
+            list = query.list();
+            s.getTransaction().commit();
+        } catch (Exception e) {
+            e.printStackTrace();
+            s.getTransaction().rollback();
+        } finally {
+            s.close();
+        }
+        return list;
+    }
 
-    public Student findById(int id) {
+    public static Student findById(int id) {
         Session s = HibernateUtils.getSessionFactory().openSession();
         Student student = new Student();
         try {
@@ -74,7 +92,7 @@ public class StudentDAO {
         return list;
     }
 
-    public  List listStudent(Subject subject) {
+    public List listStudent(Subject subject) {
         Session s = HibernateUtils.getSessionFactory().openSession();
         List list = null;
         try {
