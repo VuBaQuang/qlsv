@@ -36,7 +36,6 @@ public class UserMB implements Serializable {
     private String stringStudent;
 
 
-
     private List<User> userList;
 
 
@@ -50,17 +49,23 @@ public class UserMB implements Serializable {
     @ManagedProperty("#{claSubMB}")
     private ClaSubMB claSubMB = new ClaSubMB();
 
-public void changePw(){
+    public boolean checkDf() {
+        User user = userDAO.findByName(this.user);
+        return BCrypt.checkpw(this.user, user.getPassword());
+    }
 
-    User  user = userDAO.findByName(this.user);
-    String hash = BCrypt.hashpw(passwordNew, BCrypt.gensalt(12));
-    user.setPassword(hash);
+    public void changePw() {
 
-    userDAO.update(user);
-    FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "Success", "Đổi mật khẩu " + user.getUser() + " thành công");
-    FacesContext.getCurrentInstance().addMessage(null, message);
+        User user = userDAO.findByName(this.user);
+        String hash = BCrypt.hashpw(passwordNew, BCrypt.gensalt(12));
+        user.setPassword(hash);
 
-}
+        userDAO.update(user);
+        FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "Success", "Đổi mật khẩu " + user.getUser() + " thành công");
+        FacesContext.getCurrentInstance().addMessage(null, message);
+
+    }
+
     public void resetPw(User user) {
         String hash = BCrypt.hashpw(user.getUser(), BCrypt.gensalt(12));
         user.setPassword(hash);
@@ -85,6 +90,7 @@ public void changePw(){
     public void setStringStudent(String stringStudent) {
         this.stringStudent = stringStudent;
     }
+
     public String getPasswordOld() {
         return passwordOld;
     }
@@ -108,6 +114,7 @@ public void changePw(){
     public void setConfirm_passwordNew(String confirm_passwordNew) {
         this.confirm_passwordNew = confirm_passwordNew;
     }
+
     public String getConfirm_password() {
         return confirm_password;
     }
@@ -128,8 +135,9 @@ public void changePw(){
             throw new ValidatorException(msg);
         }
     }
+
     public void validatePasswordChange(FacesContext context, UIComponent component,
-                                      Object value) {
+                                       Object value) {
 
         String confirmPassword = (String) value;
         UIInput passwordInput = (UIInput) component.findComponent("newPassword");
@@ -142,15 +150,15 @@ public void changePw(){
     }
 
     public void validatePassword(FacesContext context, UIComponent component,
-                                       Object value) {
+                                 Object value) {
 
         String password = (String) value;
-       User user = userDAO.findByName(this.user);
+        User user = userDAO.findByName(this.user);
 
-       if(!BCrypt.checkpw(password,user.getPassword())){
-           FacesMessage msg = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", "Mật khẩu sai !!");
-           throw new ValidatorException(msg);
-       }
+        if (!BCrypt.checkpw(password, user.getPassword())) {
+            FacesMessage msg = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", "Mật khẩu sai !!");
+            throw new ValidatorException(msg);
+        }
 
     }
 

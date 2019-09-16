@@ -17,13 +17,17 @@
                         </div>
                         <div class="col-sm-8 col-md-6 col-lg-5">
                             <h4>#{studentsMB.student.name}</h4>
-                            <small style="margin-bottom: 10px"><cite><i class="far fa-map-marker-alt"/> #{studentsMB.student.address}</cite></small>
+                            <small style="margin-bottom: 10px"><cite><i
+                                    class="far fa-map-marker-alt"/> #{studentsMB.student.address}</cite></small>
                             <p>
-                                <i style="margin-bottom: 10px; margin-right: 10px" class="far fa-mail-bulk"/>#{studentsMB.student.email}
+                                <i style="margin-bottom: 10px; margin-right: 10px"
+                                   class="far fa-mail-bulk"/>#{studentsMB.student.email}
                                 <br/>
-                                <i style="margin-bottom: 10px; margin-right: 10px" class="fal fa-phone"/>#{studentsMB.student.phone}
+                                <i style="margin-bottom: 10px; margin-right: 10px"
+                                   class="fal fa-phone"/>#{studentsMB.student.phone}
                                 <br/>
-                                <i style="margin-bottom: 10px; margin-right: 10px" class="far fa-users-class"/>#{studentsMB.student.classPayroll.name}
+                                <i style="margin-bottom: 10px; margin-right: 10px"
+                                   class="far fa-users-class"/>#{studentsMB.student.classPayroll.name}
                             </p>
                             <div class="btn-group">
                                 <i class="fal fa-marker"/> #{studentsMB.avgScore(studentsMB.student)}
@@ -39,6 +43,7 @@
         .wrap {
             padding-top: 30px;
         }
+
         small {
             display: block;
             color: #888;
@@ -53,7 +58,7 @@
         <br/>
         <p:growl id="growl-user" showDetail="true" life="2000"/>
         <h:form acceptcharset="UTF-8">
-            <p:commandButton  value="Đổi mật khẩu"
+            <p:commandButton value="Đổi mật khẩu"
                              oncomplete="PF('dlg-changePw').show()">
             </p:commandButton>
             <br/>
@@ -105,26 +110,19 @@
         </h:form>
 
 
-        <p:dialog widgetVar="dlg-changePw" resizable="false" prependID="false" modal="true"
+        <p:dialog showHeader="#{!userMB.checkDf()}" widgetVar="dlg-changePw" resizable="false" prependID="false" visible="#{userMB.checkDf()}" modal="true"
                   width="600px"
-                  height="280px"
+                  height="225px"
                   showEffect="true" responsive="true">
             <h:form id="form-user-3">
                 <div id="create-user" align="center">
                     <p:panel header="Đổi mật khẩu" id="dialog-add-user">
-
                         <h:panelGrid columns="2">
-
-
                             Password*:
                             <p:password id="password" style="margin: 5px; padding: 5px" required="true"
                                         requiredMessage="Mật khẩu không được để trống"
                                         value="#{userMB.passwordOld}"
-
                                         validator="#{userMB.validatePassword}"/>
-
-
-
                             New password*:
                             <p:password id="newPassword" style="margin: 5px; padding: 5px" required="true"
                                         requiredMessage="Mật khẩu mới không được để trống"
@@ -139,8 +137,6 @@
                                         required="true"
                                         requiredMessage="Bạn chưa xác nhận mật khẩu"
                                         validator="#{userMB.validatePasswordChange}"/>
-
-
                         </h:panelGrid>
                     </p:panel>
                 </div>
@@ -152,7 +148,5 @@
                 </div>
             </h:form>
         </p:dialog>
-
-
     </div>
 </ui:composition>
