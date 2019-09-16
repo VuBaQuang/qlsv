@@ -120,11 +120,19 @@
                             <p:password id="password" style="margin: 5px; padding: 5px" required="true"
                                         requiredMessage="Mật khẩu không được để trống"
                                         value="#{userMB.passwordOld}"
+
                                         validator="#{userMB.validatePassword}"/>
+
+
+
                             New password*:
                             <p:password id="newPassword" style="margin: 5px; padding: 5px" required="true"
                                         requiredMessage="Mật khẩu mới không được để trống"
-                                        value="#{userMB.passwordNew}"/>
+                                        validatorMessage="Mật khẩu ít nhất 8 ký tự gồm chữ hoa, chữ thường, số, ký tự đặc biệt"
+                                        value="#{userMB.passwordNew}">
+                                <f:validateRegex
+                                        pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?|`&amp;])[A-Za-z\d@$!%*?|`&amp;]{8,}$"/>
+                            </p:password>
                             Confirm new password*:
                             <p:password id="comfirmNewPassword" style="margin: 5px; padding: 5px"
                                         value="#{userMB.confirm_passwordNew}"
