@@ -51,8 +51,11 @@
 
     <div align="center">
         <br/>
-
+        <p:growl id="growl-user" showDetail="true" life="2000"/>
         <h:form acceptcharset="UTF-8">
+            <p:commandButton  value="Đổi mật khẩu"
+                             oncomplete="PF('dlg-changePw').show()">
+            </p:commandButton>
             <br/>
             <br/>
             <h:outputText value="Subject list" styleClass="contentsTitle"/>
@@ -100,5 +103,48 @@
             </h:dataTable>
             <h:commandButton value="Đăng ký học" action="register-class"/>
         </h:form>
+
+
+        <p:dialog widgetVar="dlg-changePw" resizable="false" prependID="false" modal="true"
+                  width="600px"
+                  height="280px"
+                  showEffect="true" responsive="true">
+            <h:form id="form-user-3">
+                <div id="create-user" align="center">
+                    <p:panel header="Đổi mật khẩu" id="dialog-add-user">
+
+                        <h:panelGrid columns="2">
+
+
+                            Password*:
+                            <p:password id="password" style="margin: 5px; padding: 5px" required="true"
+                                        requiredMessage="Mật khẩu không được để trống"
+                                        value="#{userMB.passwordOld}"
+                                        validator="#{userMB.validatePassword}"/>
+                            New password*:
+                            <p:password id="newPassword" style="margin: 5px; padding: 5px" required="true"
+                                        requiredMessage="Mật khẩu mới không được để trống"
+                                        value="#{userMB.passwordNew}"/>
+                            Confirm new password*:
+                            <p:password id="comfirmNewPassword" style="margin: 5px; padding: 5px"
+                                        value="#{userMB.confirm_passwordNew}"
+                                        required="true"
+                                        requiredMessage="Bạn chưa xác nhận mật khẩu"
+                                        validator="#{userMB.validatePasswordChange}"/>
+
+
+                        </h:panelGrid>
+                    </p:panel>
+                </div>
+                <br/>
+                <div align="center">
+                    <p:commandButton value="Đổi" action="#{userMB.changePw()}"
+                                     update="growl-user"
+                                     oncomplete=" if (args &amp;&amp; !args.validationFailed) PF('dlg-changePw').hide()"/>
+                </div>
+            </h:form>
+        </p:dialog>
+
+
     </div>
 </ui:composition>

@@ -952,25 +952,26 @@
                             <p:column headerText="ID" style="text-align: center;width:30px;">
                                 <h:outputText value="#{user.id}"/>
                             </p:column>
-                            <p:column headerText="Tên đăng nhập" style="text-align: center">
+                            <p:column headerText="Tên đăng nhập" style="text-align: center;width:120px">
                                 <h:outputText value="#{user.user}"/>
                             </p:column>
-                            <p:column headerText="Mã sinh viên" style="text-align: center">
+                            <p:column headerText="Mã sinh viên" style="text-align: center;width:120px">
                                 <h:outputText value="#{user.student.code}"/>
                             </p:column>
-                            <p:column headerText="Họ tên" style="text-align: center">
+                            <p:column headerText="Họ tên" style="text-align: center;width:200px">
                                 <h:outputText value="#{user.student.name}"/>
                             </p:column>
-                            <p:column headerText="Lớp" style="text-align: center">
+                            <p:column headerText="Lớp" style="text-align: center;width:80px">
                                 <h:outputText value="#{user.student.classPayroll.name}"/>
                             </p:column>
 
                             <p:column headerText="Thao tác" style="width: 140px;text-align: center">
-                                <p:commandButton value="Reset password"
-                                                 action="#{studentsMB.setaddress()}">
+                                <p:commandButton disabled="#{user.rule==1}" value="Reset password"
+                                                 action="#{userMB.resetPw(user)}" update="growl-user">
                                 </p:commandButton>
 
-                                <p:commandButton style="background: red; border-color: red" value="Xóa"
+                                <p:commandButton disabled="#{user.rule==1}" style="background: red; border-color: red"
+                                                 value="Xóa"
                                                  action="#{userMB.delete(user)}" update="form-user"/>
                             </p:column>
                             <f:facet name="footer">
@@ -980,7 +981,7 @@
                         <br/>
 
                         <p:commandButton value="Thêm tài khoản" oncomplete="PF('dlg-add-user').show()">
-                            <p:ajax listener="#{studentsMB.rsStu()}" update="form-addstu"/>
+                            <p:ajax listener="#{userMB.rsUser()}" update="form-user-3"/>
                         </p:commandButton>
                     </h:form>
 
@@ -990,14 +991,22 @@
                               showEffect="true" responsive="true">
                         <h:form id="form-user-3">
                             <div id="create-user" align="center">
-                                <p:panel header="Tạo lớp học" id="dialog-add-user">
+                                <p:panel header="Tạo tài khoản sinh viên" id="dialog-add-user">
 
                                     <h:panelGrid columns="2">
 
                                         Tên đăng nhập*:
-                                        <h:inputText id="name-user" value="#{userMB.oUser.user}"
-                                                     required="true"
-                                                     requiredMessage="Tên đăng nhập không được để trống"/>
+                                        <p:panel style="border: none; margin-left: -11px">
+                                            <p:inputText id="name-user" value="#{userMB.oUser.user}"
+                                                         required="true"
+                                                         requiredMessage="Tên đăng nhập không được để trống" style="padding-left: 4px ">
+                                                <p:ajax event="blur" update="form-user-3"/>
+                                            </p:inputText>
+                                            <h:outputText style="float: right;margin-left: 10px"
+                                                          rendered="#{userMB.checkUser()}" id="in"
+                                                          value="User #{userMB.oUser.user} đã tồn tại"/>
+                                        </p:panel>
+
                                         Password*:
                                         <p:password id="password" style="margin: 5px; padding: 5px" required="true"
                                                     requiredMessage="Mật khẩu không được để trống"
@@ -1009,14 +1018,12 @@
                                                     requiredMessage="Xác nhận mật khẩu"
                                                     validator="#{userMB.validatePasswordError}"/>
                                         Sinh viên*:
-                                        <h:selectOneMenu id="user-class" value="#{userMB.student}"
+                                        <h:selectOneMenu id="user-class" value="#{userMB.stringStudent}"
                                                          style="width: 250px">
                                             <f:selectItem itemLabel="Chọn" itemValue="" noSelectionOption="true"/>
                                             <f:selectItems value="#{userMB.listStudent()}" var="student"/>
                                         </h:selectOneMenu>
 
-                                        Ghi chú:
-                                        <h:inputText id="note-user" value="#{userMB.oUser.user}"/>
                                     </h:panelGrid>
                                 </p:panel>
                             </div>

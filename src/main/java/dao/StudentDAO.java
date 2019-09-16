@@ -55,6 +55,26 @@ public class StudentDAO {
         return list;
     }
 
+    public  Student findByCode(String code) {
+        Session s = HibernateUtils.getSessionFactory().openSession();
+        Student student = null;
+        try {
+            s.beginTransaction();
+            String hql = "FROM Student as st WHERE st.code=:code";
+            org.hibernate.query.Query query = s.createQuery(hql);
+            query.setParameter("code", code);
+            student = (Student)query.getSingleResult();
+            s.getTransaction().commit();
+        } catch (Exception e) {
+            e.printStackTrace();
+            s.getTransaction().rollback();
+        } finally {
+            s.close();
+        }
+        return student;
+    }
+
+
     public static Student findById(int id) {
         Session s = HibernateUtils.getSessionFactory().openSession();
         Student student = new Student();

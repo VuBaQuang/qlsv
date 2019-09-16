@@ -4,6 +4,7 @@ import dao.StudentDAO;
 import dao.UserDAO;
 import model.Student;
 import model.User;
+import org.mindrot.jbcrypt.BCrypt;
 import org.primefaces.PrimeFaces;
 
 import javax.faces.application.FacesMessage;
@@ -28,6 +29,14 @@ public class UserMB implements Serializable {
     private String confirm_password;
 
 
+    private String passwordOld;
+    private String passwordNew;
+    private String confirm_passwordNew;
+
+    private String stringStudent;
+
+
+
     private List<User> userList;
 
 
@@ -41,6 +50,64 @@ public class UserMB implements Serializable {
     @ManagedProperty("#{claSubMB}")
     private ClaSubMB claSubMB = new ClaSubMB();
 
+public void changePw(){
+
+    User  user = userDAO.findByName(this.user);
+    String hash = BCrypt.hashpw(passwordNew, BCrypt.gensalt(12));
+    user.setPassword(hash);
+
+    userDAO.update(user);
+    FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "Success", "Đổi mật khẩu " + user.getUser() + " thành công");
+    FacesContext.getCurrentInstance().addMessage(null, message);
+
+}
+    public void resetPw(User user) {
+        String hash = BCrypt.hashpw(user.getUser(), BCrypt.gensalt(12));
+        user.setPassword(hash);
+        userDAO.update(user);
+        FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "Success", "Reset mật khẩu " + user.getUser() + " thành công");
+        FacesContext.getCurrentInstance().addMessage(null, message);
+    }
+
+
+    public void rsUser() {
+        oUser = new User();
+    }
+
+    public boolean checkUser() {
+        return userDAO.findByName(oUser.getUser()) != null;
+    }
+
+    public String getStringStudent() {
+        return stringStudent;
+    }
+
+    public void setStringStudent(String stringStudent) {
+        this.stringStudent = stringStudent;
+    }
+    public String getPasswordOld() {
+        return passwordOld;
+    }
+
+    public void setPasswordOld(String passwordOld) {
+        this.passwordOld = passwordOld;
+    }
+
+    public String getPasswordNew() {
+        return passwordNew;
+    }
+
+    public void setPasswordNew(String passwordNew) {
+        this.passwordNew = passwordNew;
+    }
+
+    public String getConfirm_passwordNew() {
+        return confirm_passwordNew;
+    }
+
+    public void setConfirm_passwordNew(String confirm_passwordNew) {
+        this.confirm_passwordNew = confirm_passwordNew;
+    }
     public String getConfirm_password() {
         return confirm_password;
     }
@@ -51,9 +118,8 @@ public class UserMB implements Serializable {
 
     public void validatePasswordError(FacesContext context, UIComponent component,
                                       Object value) {
-        String confirmPassword = (String) value;
 
-        // Retrieve the temporary value from the password field
+        String confirmPassword = (String) value;
         UIInput passwordInput = (UIInput) component.findComponent("password");
         String password = (String) passwordInput.getLocalValue();
 
@@ -62,9 +128,51 @@ public class UserMB implements Serializable {
             throw new ValidatorException(msg);
         }
     }
+    public void validatePasswordChange(FacesContext context, UIComponent component,
+                                      Object value) {
+
+        String confirmPassword = (String) value;
+        UIInput passwordInput = (UIInput) component.findComponent("newPassword");
+        String password = (String) passwordInput.getLocalValue();
+
+        if (password == null || confirmPassword == null || !password.equals(confirmPassword)) {
+            FacesMessage msg = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", "Xác nhận mật khẩu sai !");
+            throw new ValidatorException(msg);
+        }
+    }
+
+    public void validatePassword(FacesContext context, UIComponent component,
+                                       Object value) {
+
+        String password = (String) value;
+       User user = userDAO.findByName(this.user);
+
+       if(!BCrypt.checkpw(password,user.getPassword())){
+           FacesMessage msg = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", "Mật khẩu sai !!");
+           throw new ValidatorException(msg);
+       }
+
+    }
+
 
     public void create() {
-        System.out.println("1");
+        String code = stringStudent.split(" - ")[1];
+        oUser.setStudent(studentDAO.findByCode(code));
+        String hash = BCrypt.hashpw(password, BCrypt.gensalt(12));
+        oUser.setPassword(hash);
+        oUser.setRule("2");
+        int rs = userDAO.create(oUser);
+        if (rs == 0) {
+            FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "Success", "Tạo thành công tài khoản " + oUser.getUser() + " cho sinh viên " + stringStudent);
+            FacesContext.getCurrentInstance().addMessage(null, message);
+        } else if (rs == 1) {
+            FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "Fail", "User bị trùng");
+            FacesContext.getCurrentInstance().addMessage(null, message);
+        } else {
+            FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "Fail", "Lỗi hệ thống");
+            FacesContext.getCurrentInstance().addMessage(null, message);
+        }
+
     }
 
     public void delete(User user) {
@@ -148,19 +256,25 @@ public class UserMB implements Serializable {
         FacesMessage message = null;
         boolean loggedIn = false;
         if (user1 != null) {
-            if (user1.getPassword().equals(password)) {
-                loggedIn = true;
-                context.getExternalContext().getSessionMap().put("user", user);
-                context.getExternalContext().getSessionMap().put("rule", user1.getRule());
-                if (user1.getRule().equals("1")) {
-                    return "admin";
+//            if (password.equals(user1.getPassword())) {
+            try {
+                if (BCrypt.checkpw(password, user1.getPassword())) {
+                    loggedIn = true;
+                    context.getExternalContext().getSessionMap().put("user", user);
+                    context.getExternalContext().getSessionMap().put("rule", user1.getRule());
+                    if (user1.getRule().equals("1")) {
+                        return "admin";
+                    }
+                    if (user1.getRule().equals("2")) {
+                        return "user";
+                    }
+                } else {
+                    message = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Loggin Error", "Invalid password");
                 }
-                if (user1.getRule().equals("2")) {
-                    return "user";
-                }
-            } else {
+            } catch (IllegalArgumentException e) {
                 message = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Loggin Error", "Invalid password");
             }
+
         } else {
             message = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Loggin Error", "Invalid user");
         }
