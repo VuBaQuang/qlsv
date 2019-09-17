@@ -5,6 +5,7 @@ import model.ClassSubject;
 import model.Student;
 import model.Subject;
 import org.hibernate.Session;
+import org.hibernate.exception.ConstraintViolationException;
 import utils.HibernateUtils;
 
 import javax.persistence.Query;
@@ -37,7 +38,7 @@ public class StudentDAO {
         return list;
     }
 
-    public   List<Student> noneAccount() {
+    public List<Student> noneAccount() {
         Session s = HibernateUtils.getSessionFactory().openSession();
         List<Student> list = null;
         try {
@@ -55,7 +56,7 @@ public class StudentDAO {
         return list;
     }
 
-    public  Student findByCode(String code) {
+    public Student findByCode(String code) {
         Session s = HibernateUtils.getSessionFactory().openSession();
         Student student = null;
         try {
@@ -63,7 +64,7 @@ public class StudentDAO {
             String hql = "FROM Student as st WHERE st.code=:code";
             org.hibernate.query.Query query = s.createQuery(hql);
             query.setParameter("code", code);
-            student = (Student)query.getSingleResult();
+            student = (Student) query.getSingleResult();
             s.getTransaction().commit();
         } catch (Exception e) {
             e.printStackTrace();
@@ -197,16 +198,19 @@ public class StudentDAO {
         }
     }
 
-    public void delete(Student student) {
+    public int delete(Student student) {
         Session s = HibernateUtils.getSessionFactory().openSession();
         try {
             s.beginTransaction();
             s.remove(student);
             s.getTransaction().commit();
-
+            return 0;
+        } catch (ConstraintViolationException e) {
+            return 1;
         } catch (Exception e) {
             e.printStackTrace();
             s.getTransaction().rollback();
+            return -1;
         } finally {
             s.close();
         }

@@ -74,7 +74,15 @@ public class ClassesMB implements Serializable, Converter {
     }
 
     public void delete(ClassPayroll classes) {
-        classesDAO.delete(classes);
+
+        try {
+            classesDAO.delete(classes);
+        }catch (Exception e){
+            System.out.println("1111111111111111");
+            FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Failed", "System Error !");
+            FacesContext.getCurrentInstance().addMessage(null, message);
+        }
+
     }
 
 

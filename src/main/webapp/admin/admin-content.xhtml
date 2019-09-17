@@ -98,8 +98,18 @@
                                     <f:setPropertyActionListener value="#{student}" target="#{studentsMB.student}"/>
                                 </p:commandButton>
 
-                                <p:commandButton style="background: red; border-color: red" value="Xóa"
-                                                 action="#{studentsMB.delete(student)}" update="form-student"/>
+<!--                                <p:commandButton style="background: red; border-color: red" value="Xóa"-->
+<!--                                                 action="#{studentsMB.delete(student)}" update="form-student"-->
+<!--                                                 oncomplete="PF('dlg-').show()"/>-->
+
+                                <p:commandButton style="background: red; border-color: red" value="Xóa" action="#{studentsMB.delete(student)}"
+                                                 update="form-student,growl-student">
+
+                                    <p:confirm header="Xác nhận"
+                                               message="Bạn muốn xóa sinh viên #{student.name}"
+                                               icon="pi pi-exclamation-triangle"/>
+
+                                </p:commandButton>
 
 
                             </p:column>

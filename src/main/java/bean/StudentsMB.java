@@ -4,8 +4,10 @@ import dao.*;
 import model.*;
 
 import javax.annotation.PostConstruct;
+import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
+import javax.faces.context.FacesContext;
 import java.io.Serializable;
 import java.util.*;
 
@@ -165,6 +167,7 @@ public class StudentsMB implements Serializable {
 //    }
 
     public void edit() {
+
         StringBuilder builder = new StringBuilder();
         builder.append(ward);
         builder.append(", ");
@@ -208,9 +211,21 @@ public class StudentsMB implements Serializable {
     }
 
     public void delete(Student student) {
-        StudentDAO dao = new StudentDAO();
-        dao.delete(student);
-        listStudent = studentsDAO.findAll();
+        try{
+            StudentDAO dao = new StudentDAO();
+            int i= dao.delete(student);
+            if(i==1){
+                FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Fail", "Khoong xóa được sinh viên");
+                FacesContext.getCurrentInstance().addMessage(null, message);
+            }else if(i==-1){
+
+                FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Fail", "Lỗi hệ thống !");
+                FacesContext.getCurrentInstance().addMessage(null, message);
+            }
+            listStudent = studentsDAO.findAll();
+        }catch (Exception e){
+            System.out.println("Lỗi!");
+        }
     }
 
 
