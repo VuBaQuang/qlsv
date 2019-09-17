@@ -9,19 +9,12 @@ import java.util.List;
 
 @ManagedBean
 public class SubjectsMB {
-    Subject subject = new Subject();
-    List<Subject> subjects = new ArrayList<>();
-    SubjectDAO subjectDAO = new SubjectDAO();
+    private  Subject subject = new Subject();
+    private  List<Subject> subjects = new ArrayList<>();
+    private SubjectDAO subjectDAO = new SubjectDAO();
 
 
-    public String create(){
-        subjectDAO.create(subject);
-        return "subject.xhtml?faces-redirect=true";
-    }
-    public void delete(Subject subject){
-        subjectDAO.delete(subject);
 
-    }
     public List<Subject> getSubjects() {
         return subjectDAO.findAll();
     }

@@ -17,13 +17,17 @@
                         </div>
                         <div class="col-sm-8 col-md-6 col-lg-5">
                             <h4>#{studentsMB.student.name}</h4>
-                            <small style="margin-bottom: 10px"><cite><i class="far fa-map-marker-alt"/> #{studentsMB.student.address}</cite></small>
+                            <small style="margin-bottom: 10px"><cite><i
+                                    class="far fa-map-marker-alt"/> #{studentsMB.student.address}</cite></small>
                             <p>
-                                <i style="margin-bottom: 10px; margin-right: 10px" class="far fa-mail-bulk"/>#{studentsMB.student.email}
+                                <i style="margin-bottom: 10px; margin-right: 10px"
+                                   class="far fa-mail-bulk"/>#{studentsMB.student.email}
                                 <br/>
-                                <i style="margin-bottom: 10px; margin-right: 10px" class="fal fa-phone"/>#{studentsMB.student.phone}
+                                <i style="margin-bottom: 10px; margin-right: 10px"
+                                   class="fal fa-phone"/>#{studentsMB.student.phone}
                                 <br/>
-                                <i style="margin-bottom: 10px; margin-right: 10px" class="far fa-users-class"/>#{studentsMB.student.classPayroll.name}
+                                <i style="margin-bottom: 10px; margin-right: 10px"
+                                   class="far fa-users-class"/>#{studentsMB.student.classPayroll.name}
                             </p>
                             <div class="btn-group">
                                 <i class="fal fa-marker"/> #{studentsMB.avgScore(studentsMB.student)}
@@ -40,11 +44,6 @@
             padding-top: 30px;
         }
 
-        .glyphicon {
-            margin-bottom: 10px;
-            margin-right: 10px;
-        }
-
         small {
             display: block;
             color: #888;
@@ -57,8 +56,11 @@
 
     <div align="center">
         <br/>
-
+        <p:growl id="growl-user" showDetail="true" life="2000"/>
         <h:form acceptcharset="UTF-8">
+            <p:commandButton value="Đổi mật khẩu"
+                             oncomplete="PF('dlg-changePw').show()">
+            </p:commandButton>
             <br/>
             <br/>
             <h:outputText value="Subject list" styleClass="contentsTitle"/>
@@ -106,5 +108,45 @@
             </h:dataTable>
             <h:commandButton value="Đăng ký học" action="register-class"/>
         </h:form>
+
+
+        <p:dialog showHeader="#{!userMB.checkDf()}" widgetVar="dlg-changePw" resizable="false" prependID="false" visible="#{userMB.checkDf()}" modal="true"
+                  width="600px"
+                  height="225px"
+                  showEffect="true" responsive="true">
+            <h:form id="form-user-3">
+                <div id="create-user" align="center">
+                    <p:panel header="Đổi mật khẩu" id="dialog-add-user">
+                        <h:panelGrid columns="2">
+                            Password*:
+                            <p:password id="password" style="margin: 5px; padding: 5px" required="true"
+                                        requiredMessage="Mật khẩu không được để trống"
+                                        value="#{userMB.passwordOld}"
+                                        validator="#{userMB.validatePassword}"/>
+                            New password*:
+                            <p:password id="newPassword" style="margin: 5px; padding: 5px" required="true"
+                                        requiredMessage="Mật khẩu mới không được để trống"
+                                        validatorMessage="Mật khẩu ít nhất 8 ký tự gồm chữ hoa, chữ thường, số, ký tự đặc biệt"
+                                        value="#{userMB.passwordNew}">
+                                <f:validateRegex
+                                        pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?|`&amp;])[A-Za-z\d@$!%*?|`&amp;]{8,}$"/>
+                            </p:password>
+                            Confirm new password*:
+                            <p:password id="comfirmNewPassword" style="margin: 5px; padding: 5px"
+                                        value="#{userMB.confirm_passwordNew}"
+                                        required="true"
+                                        requiredMessage="Bạn chưa xác nhận mật khẩu"
+                                        validator="#{userMB.validatePasswordChange}"/>
+                        </h:panelGrid>
+                    </p:panel>
+                </div>
+                <br/>
+                <div align="center">
+                    <p:commandButton value="Đổi" action="#{userMB.changePw()}"
+                                     update="growl-user"
+                                     oncomplete=" if (args &amp;&amp; !args.validationFailed) PF('dlg-changePw').hide()"/>
+                </div>
+            </h:form>
+        </p:dialog>
     </div>
 </ui:composition>

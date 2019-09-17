@@ -3,22 +3,1156 @@
                 xmlns:f="http://java.sun.com/jsf/core"
                 xmlns:h="http://xmlns.jcp.org/jsf/html"
                 xmlns:p="http://primefaces.org/ui"
-                xmlns:fn="http://java.sun.com/jsp/jstl/functions"
+                xmlns:pe="http://primefaces.org/ui/extensions"
                 xmlns:ui="http://java.sun.com/jsf/facelets">
-
-
+    <h:form id="form-head">
+        <div align="right">
+            <p:commandButton value="Home" action="#{userMB.home}" process="@this,form-head"/>
+            <p:commandButton value="Logout" action="#{userMB.logout}" process="@this,form-head"/>
+        </div>
+    </h:form>
+    <h1 align="center">Quản lý sinh viên</h1>
+    <hr/>
     <div align="center">
-        <h:form>
-            <h:commandButton value="Sinh Viên" styleClass="btn btn-primary"
-                             action="student/student.xhtml?faces-redirect=true"> </h:commandButton>
-            <h:commandButton value="Lớp biên chế" styleClass="btn btn-danger"
-                             action="class/class.xhtml?faces-redirect=true"> </h:commandButton>
-            <h:commandButton value="Lớp tín chỉ" styleClass="btn btn-info"
-                             action="classsubject/view.xhtml?faces-redirect=true"> </h:commandButton>
-            <h:commandButton value="Môn học" styleClass="btn btn-success"
-                             action="subject/subject.xhtml?faces-redirect=true"> </h:commandButton>
-        </h:form>
+        <p:tabView orientation="left" prependId="false">
+            <p:ajax event="tabChange" listener="#{studentsMB.updateListStudent()}" update="form-student"/>
+            <!--            <p:ajax event="tabChange" listener="#{classesMB.updateStudentList()}" update="form-classes"/>-->
+            <!--            <p:ajax event="tabChange" listener="#{claSubMB.updateListStudent()}" update="form-clasub"/>-->
+            <p:tab title="Sinh viên">
+
+                <div align="center">
+                    <br/>
+                    <p:growl id="growl-student" showDetail="true" life="2000"/>
+                    <h2>Danh sách sinh viên</h2>
+                    <hr/>
+                    <hr/>
+                    <h:form id="form-student" acceptcharset="UTF-8">
+
+                        <p:dataTable id="form-student-table" value="#{studentsMB.getListStudent()}" var="student"
+                                     widgetVar="table-student-student"
+                                     sortMode="multiple" resizableColumns="true"
+                                     filteredValue="#{studentsMB.filteredStudents}">
+                            <p:ajax event="sort" skipChildren="false"/>
+                            <p:column sortBy="#{student.id}" headerText="ID" filterBy="#{student.id}"
+                                      filterMatchMode="contains"
+                                      style="text-align: center;width:30px;">
+                                <h:outputText value="#{student.id}"/>
+                            </p:column>
+
+                            <p:column sortBy="#{student.code}" filterBy="#{student.code}" filterMatchMode="contains"
+                                      headerText="Mã sinh viên" style="text-align: center">
+                                <h:outputText value="#{student.code}"/>
+                            </p:column>
+                            <p:column sortBy="#{student.name}" filterBy="#{student.name}" filterMatchMode="contains"
+                                      headerText="Họ tên" style="text-align: center">
+                                <h:outputText value=" #{student.name}"/>
+                            </p:column>
+
+                            <p:column sortBy="#{student.classPayroll.name}" filterBy="#{student.classPayroll.name}"
+                                      headerText="Lớp"
+                                      filterMatchMode="exact" style="text-align: center">
+                                <f:facet name="filter">
+                                    <p:selectOneMenu onchange="PF('table-student-student').filter()"
+                                                     styleClass="custom-filter"
+                                                     style="width: 70%">
+                                        <f:selectItem itemLabel="Chọn" itemValue="#{null}" noSelectionOption="true"/>
+                                        <f:selectItems value="#{studentsMB.classes}"/>
+                                    </p:selectOneMenu>
+                                </f:facet>
+                                <h:outputText value="#{student.classPayroll.name}"/>
+                            </p:column>
+
+
+                            <p:column sortBy="#{student.age}" headerText="Tuổi" style="width: 20px;text-align: center">
+                                <h:outputText value="#{student.age}"/>
+                            </p:column>
+                            <p:column sortBy="#{student.address}" headerText="Địa chỉ" style="text-align: center">
+                                <h:outputText value="#{student.address}"/>
+                            </p:column>
+                            <p:column sortBy="#{student.email}" headerText="Email" style="text-align: center">
+                                <h:outputText value=" #{student.email}"/>
+                            </p:column>
+
+                            <p:column sortBy="#{studentsMB.avgScore(student)}"
+                                      filterBy="#{studentsMB.avgScore(student)}"
+                                      headerText="Điểm TB" filterMatchMode="gte" style="width: 70px;text-align: center">
+                                <f:facet name="filter">
+                                    <p:spinner onchange="PF('table-student-student').filter()"
+                                               styleClass="year-spinner custom-filter">
+                                        <f:converter converterId="javax.faces.Double"/>
+                                    </p:spinner>
+                                </f:facet>
+                                <h:outputText value="#{studentsMB.avgScore(student)}"/>
+                            </p:column>
+
+
+                            <p:column sortBy="#{student.note}" headerText="Ghi chú"
+                                      style="width: 100px;text-align: center">
+                                <h:outputText value="#{student.note}"/>
+                            </p:column>
+                            <p:column headerText="Thao tác" style="width: 140px;text-align: center">
+
+                                <p:commandButton update="form-student-2:dialog" value="Sửa"
+                                                 oncomplete="PF('dlg-edit').show()"
+                                                 action="#{studentsMB.setaddress()}">
+                                    <f:setPropertyActionListener value="#{student}" target="#{studentsMB.student}"/>
+                                </p:commandButton>
+
+<!--                                <p:commandButton style="background: red; border-color: red" value="Xóa"-->
+<!--                                                 action="#{studentsMB.delete(student)}" update="form-student"-->
+<!--                                                 oncomplete="PF('dlg-').show()"/>-->
+
+                                <p:commandButton style="background: red; border-color: red" value="Xóa" action="#{studentsMB.delete(student)}"
+                                                 update="form-student,growl-student">
+
+                                    <p:confirm header="Xác nhận"
+                                               message="Bạn muốn xóa sinh viên #{student.name}"
+                                               icon="pi pi-exclamation-triangle"/>
+
+                                </p:commandButton>
+
+
+                            </p:column>
+                            <f:facet name="footer">
+                                <h:outputText value="Total of student: #{studentsMB.getListStudent().size()}"/>
+                            </f:facet>
+                        </p:dataTable>
+                        <br/>
+
+                        <p:commandButton value="Thêm sinh viên" oncomplete="PF('dlg-addstu').show()">
+                            <p:ajax listener="#{studentsMB.rsStu()}" update="form-addstu"/>
+                        </p:commandButton>
+
+                    </h:form>
+
+
+                    <p:dialog widgetVar="dlg-addstu" resizable="false" responsive="true" showEffect="true"
+                              prependID="false"
+                              modal="true">
+                        <h:form id="form-addstu">
+                            <div align="center">
+                                <p:panel header="Tạo sinh viên" style="width: 76%">
+                                    <p:messages/>
+                                    <h:panelGrid columns="2" columnClasses="label, value" style="margin: 10px auto">
+                                        <!--Tên-->
+                                        <h:outputText value="Họ tên: *"/>
+                                        <h:inputText value="#{studentsMB.student.name}" required="true"
+                                                     label="name"
+                                                     requiredMessage="Họ tên không được để trống" style="width: 250px"/>
+                                        <!--Mã sv-->
+                                        <h:outputText value="Mã sinh viên: *"/>
+                                        <h:inputText value="#{studentsMB.student.code}"
+                                                     required="true"
+                                                     requiredMessage="Mã sinh viên không được để trống"
+                                                     validatorMessage="Mã sinh viên không đúng định dạng: ATxxxxxx (x là số)"
+                                                     label="code"
+                                                     style="width: 250px">
+                                            <f:validateRegex
+                                                    pattern="^[A][T]+[0-9]{6}$"/>
+                                        </h:inputText>
+                                        <!--Tuổi-->
+                                        <h:outputText value="Tuổi:"/>
+                                        <p:spinner value="#{studentsMB.student.age}" min="0" required="true"
+                                                   label="age"
+                                                   style="width: 250px"/>
+
+                                        <!--Email-->
+                                        <h:outputText value="Email: "/>
+                                        <h:inputText value="#{studentsMB.student.email}"
+                                                     required="true"
+                                                     requiredMessage="Email không được để trống"
+                                                     validatorMessage="Email không đúng định dạng" label="email"
+                                                     style="width: 250px">
+                                            <f:validateRegex
+                                                    pattern="^(\w+)(\.\w+)?@\w+(\.\w+)?(\.(\w+))(\.\w{2})?$"/>
+                                        </h:inputText>
+
+                                        <h:outputText value="Số điện thoại: "/>
+                                        <h:inputText value="#{studentsMB.student.phone}" label="phone"
+                                                     style="width: 250px"/>
+
+
+                                        <h:outputText value="Tỉnh: "/>
+                                        <h:selectOneMenu id="province-login" value="#{studentsMB.province}"
+                                                         label="province-login"
+                                                         style="width: 250px">
+                                            <p:ajax listener="#{studentsMB.setDistricts}"
+                                                    update="district-login,ward-login"/>
+                                            <f:selectItem itemLabel="Chọn" itemValue="" noSelectionOption="true"/>
+                                            <f:selectItems value="#{studentsMB.provinces}"/>
+                                        </h:selectOneMenu>
+
+                                        <h:outputText value="Quận/Huyện: "/>
+                                        <h:selectOneMenu id="district-login" value="#{studentsMB.district}"
+                                                         label="district-login"
+                                                         style="width: 250px">
+                                            <p:ajax listener="#{studentsMB.setWards}" update="ward-login"/>
+                                            <f:selectItem itemLabel="Chọn" itemValue="" noSelectionOption="true"/>
+                                            <f:selectItems value="#{studentsMB.districts}"/>
+                                        </h:selectOneMenu>
+
+                                        <h:outputText value="Xã/Phường: "/>
+                                        <h:selectOneMenu id="ward-login" value="#{studentsMB.ward}" label="ward-login"
+                                                         style="width: 250px">
+                                            <f:selectItem itemLabel="Chọn" itemValue="" noSelectionOption="true"/>
+                                            <f:selectItems value="#{studentsMB.wards}"/>
+                                        </h:selectOneMenu>
+
+                                        <h:outputText value="Lớp: "/>
+                                        <h:selectOneRadio value="#{studentsMB.studentClass}" label="classs"
+                                                          style="width: 250px">
+                                            <f:selectItems value="#{studentsMB.classes}"/>
+                                        </h:selectOneRadio>
+
+                                        <h:outputText value="Ghi chú: "/>
+                                        <h:inputText value="#{studentsMB.student.note}" label="note"
+                                                     style="width: 250px"/>
+                                    </h:panelGrid>
+                                </p:panel>
+                            </div>
+                            <br/>
+                            <div align="center">
+                                <p:commandButton value="Save" action="#{studentsMB.merge()}"
+                                                 update="growl-student,form-student"
+                                                 oncomplete=" if (args &amp;&amp; !args.validationFailed) PF('dlg-addstu').hide()"/>
+                            </div>
+                        </h:form>
+                    </p:dialog>
+
+                    <p:dialog widgetVar="dlg-edit" resizable="false" modal="true" responsive="true" showEffect="true"
+                              prependID="false">
+                        <h:form id="form-student-2">
+                            <div align="center">
+                                <p:panel id="dialog" header="Update" style="width: 76%">
+                                    <p:messages/>
+                                    <h:panelGrid columns="2" columnClasses="label, value" style="margin: 10px auto">
+                                        <!--Tên-->
+                                        <h:outputText value="Họ tên: *"/>
+                                        <h:inputText id="name" value="#{studentsMB.student.name}" required="true"
+                                                     label="name"
+                                                     requiredMessage="Họ tên không được để trống" style="width: 250px"/>
+                                        <!--Mã sv-->
+                                        <h:outputText value="Mã sinh viên: *"/>
+                                        <h:inputText id="code" value="#{studentsMB.student.code}"
+                                                     required="true"
+                                                     requiredMessage="Mã sinh viên không được để trống"
+                                                     validatorMessage="Mã sinh viên không đúng định dạng: ATxxxxxx (x là số)"
+                                                     label="code"
+                                                     style="width: 250px">
+                                            <f:validateRegex
+                                                    pattern="^[A][T]+[0-9]{6}$"/>
+                                        </h:inputText>
+                                        <!--Tuổi-->
+                                        <h:outputText value="Tuổi:"/>
+                                        <p:spinner id="age" value="#{studentsMB.student.age}" min="0"
+                                                   label="age"
+                                                   style="width: 250px"/>
+
+                                        <!--Email-->
+                                        <h:outputText value="Email: "/>
+                                        <h:inputText id="email" value="#{studentsMB.student.email}"
+                                                     required="true"
+                                                     requiredMessage="Email không được để trống"
+                                                     validatorMessage="Email không đúng định dạng" label="email"
+                                                     style="width: 250px">
+                                            <f:validateRegex
+                                                    pattern="^(\w+)(\.\w+)?@\w+(\.\w+)?(\.(\w+))(\.\w{2})?$"/>
+                                        </h:inputText>
+
+                                        <h:outputText value="Số điện thoại: "/>
+                                        <h:inputText id="phone" value="#{studentsMB.student.phone}" label="phone"
+                                                     style="width: 250px"/>
+
+                                        <h:outputText value="Tỉnh: "/>
+                                        <h:selectOneMenu id="province" value="#{studentsMB.province}" label="province"
+                                                         style="width: 250px">
+                                            <p:ajax listener="#{studentsMB.setDistricts}" update="district,ward"/>
+                                            <f:selectItem itemLabel="Chọn" itemValue="" noSelectionOption="true"/>
+                                            <f:selectItems value="#{studentsMB.provinces}"/>
+                                        </h:selectOneMenu>
+
+                                        <h:outputText value="Quận/Huyện: "/>
+                                        <h:selectOneMenu id="district" value="#{studentsMB.district}" label="district"
+                                                         style="width: 250px">
+                                            <p:ajax listener="#{studentsMB.setWards}" update="ward"/>
+                                            <f:selectItem itemLabel="Chọn" itemValue="" noSelectionOption="true"/>
+                                            <f:selectItems value="#{studentsMB.districts}"/>
+                                        </h:selectOneMenu>
+
+                                        <h:outputText value="Xã/Phường: "/>
+                                        <h:selectOneMenu id="ward" value="#{studentsMB.ward}" label="ward"
+                                                         style="width: 250px">
+                                            <f:selectItem itemLabel="Chọn" itemValue="" noSelectionOption="true"/>
+                                            <f:selectItems value="#{studentsMB.wards}"/>
+                                        </h:selectOneMenu>
+
+                                        <h:outputText value="Lớp: "/>
+                                        <h:selectOneRadio id="classs" value="#{studentsMB.studentClass}" label="classs"
+                                                          style="width: 250px">
+                                            <f:selectItems value="#{studentsMB.classes}"/>
+                                        </h:selectOneRadio>
+
+                                        <h:outputText value="Ghi chú: "/>
+                                        <h:inputText id="note" value="#{studentsMB.student.note}" label="note"
+                                                     style="width: 250px"/>
+                                    </h:panelGrid>
+                                </p:panel>
+                            </div>
+                            <br/>
+                            <div align="center">
+                                <p:commandButton value="Save" action="#{studentsMB.merge()}"
+                                                 update="growl-student,form-student"
+                                                 oncomplete="if (args &amp;&amp; !args.validationFailed) PF('dlg-edit').hide()"/>
+                            </div>
+                        </h:form>
+                    </p:dialog>
+
+                </div>
+
+            </p:tab>
+            <p:tab title="Lớp biên chế">
+                <div align="center">
+                    <h2>Chi tiết lớp học biên chế</h2>
+                    <hr/>
+
+                    <p:growl id="growl-classes" showDetail="true" life="2000"/>
+                    <br/><br/>
+                    <h:form id="form-classes">
+                        <f:event listener="#{claSubMB.listSub()}" type="preRenderView"/>
+                        Lớp:
+                        <p:selectOneMenu id="classes-classes" required="true" requiredMessage="Bạn chưa chọn môn học"
+                                         value="#{classesMB.classPayroll}" converter="SelectItemClassConverter"
+                                         immediate="true">
+                            <f:selectItem itemLabel="Chọn" itemValue="#{null}"/>
+                            <f:selectItems value="#{classesMB.listClasses}" var="classes" itemLabel="#{classes.name}"
+                                           itemValue="#{classes}"/>
+                        </p:selectOneMenu>
+                        <p:spacer width="20px"/>
+                        <br/> <br/>
+                        <p:commandButton value="Hiển thị" action="#{classesMB.updateStudentList}"
+                                         update="pnlContainer-classes,growl-classes">
+                        </p:commandButton>
+                        <p:spacer width="20px"/>
+                        <p:commandButton value="Tạo lớp học" oncomplete="PF('dlg-classes-add').show()">
+                        </p:commandButton>
+                        <br/><br/>
+                        <h:panelGroup id="pnlContainer-classes" layout="block">
+                            <h:panelGrid columns="2" rendered="#{classesMB.checkNull()}">
+                                <hr/>
+                                <hr/>
+                                <h3>Danh sách sinh viên lớp #{classesMB.classPayroll.name}</h3>
+                            </h:panelGrid>
+                            <h:panelGrid id="students-classes" columns="2" rendered="#{classesMB.checkNull()}">
+                                <hr/>
+                                <br/><br/>
+                                <p:dataTable var="student" value="#{classesMB.studentList}">
+                                    <p:ajax event="sort" skipChildren="false"/>
+                                    <p:column headerText="Mã sinh viên" style="width:100px; align-content: center">
+                                        <h:outputText value="#{student.code}"/>
+                                    </p:column>
+                                    <p:column headerText="Họ tên">
+                                        <h:outputText value="#{student.name}"/>
+                                    </p:column>
+                                    <p:column headerText="Lớp" style="width:80px">
+                                        <h:outputText value="#{student.classPayroll.name}"/>
+                                    </p:column>
+                                    <p:column headerText="Tuổi" style="width:60px">
+                                        <h:outputText value="#{student.age}"/>
+                                    </p:column>
+                                    <p:column headerText="Địa chỉ">
+                                        <h:outputText value="#{student.address}"/>
+                                    </p:column>
+                                    <p:column headerText="Email">
+                                        <h:outputText value="#{student.email}"/>
+                                    </p:column>
+                                    <p:column headerText="Điểm trung bình" style="width:120px">
+                                        <h:outputText value="#{studentsMB.avgScore(student)}"/>
+                                    </p:column>
+                                    <p:column headerText="Ghi chú">
+                                        <h:outputText value="#{student.note}"/>
+                                    </p:column>
+                                    <p:column style="width:60px" headerText="Thao tác">
+                                        <p:commandButton value="Xóa" action="#{classesMB.delStuClass(student)}"
+                                                         update="form-2-classes,form-classes:pnlContainer-classes"/>
+                                    </p:column>
+                                </p:dataTable>
+                            </h:panelGrid>
+                            <br/>
+                            <h:panelGrid rendered="#{classesMB.checkNull()}" columns="2">
+                                <p:commandButton update="form-2-classes:table-stu-classes" value="Thêm sinh viên"
+                                                 oncomplete="PF('dlg-classes').show()">
+                                </p:commandButton>
+
+                                <p:commandButton value="Xóa lớp" action="#{classesMB.delete(classesMB.classPayroll)}"
+                                                 update="growl-classes,form-classes,form-student">
+                                    <p:confirm header="Xác nhận"
+                                               message="Bạn muốn xóa lớp #{classesMB.classPayroll.name}"
+                                               icon="pi pi-exclamation-triangle"/>
+                                </p:commandButton>
+
+                                <p:confirmDialog global="true" showEffect="fade" hideEffect="fade" responsive="true">
+                                    <p:commandButton value="Yes" type="button" styleClass="ui-confirmdialog-yes"
+                                                     icon="fas fa-check-circle"/>
+                                    <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no"
+                                                     icon="fas fa-do-not-enter"/>
+                                </p:confirmDialog>
+                            </h:panelGrid>
+                        </h:panelGroup>
+                    </h:form>
+
+                    <p:dialog widgetVar="dlg-classes" modal="true" resizable="false" responsive="true"
+                              showEffect="true">
+                        <h:form id="form-2-classes">
+                            <div align="center">
+                                <h:dataTable id="table-stu-classes" value="#{studentsMB.getListStudentNone()}"
+                                             var="student"
+                                             styleClass="table"
+                                             headerClass="table-header"
+                                             footerClass="table-footer"
+                                             rowClasses="table-odd-row,table-even-row">
+
+                                    <h:column>
+                                        <f:facet name="header">Id</f:facet>
+                                        #{student.id}
+                                    </h:column>
+                                    <h:column>
+                                        <f:facet name="header">Mã sinh viên</f:facet>
+                                        #{student.code}
+                                    </h:column>
+                                    <h:column>
+                                        <f:facet name="header">Họ tên</f:facet>
+                                        #{student.name}
+                                    </h:column>
+                                    <h:column>
+                                        <f:facet name="header">Tuổi</f:facet>
+                                        #{student.age}
+                                    </h:column>
+                                    <h:column>
+                                        <f:facet name="header">Địa chỉ</f:facet>
+                                        #{student.address}
+                                    </h:column>
+                                    <h:column>
+                                        <f:facet name="header">Email</f:facet>
+                                        #{student.email}
+                                    </h:column>
+                                    <h:column>
+                                        <f:facet name="header">Ghi chú</f:facet>
+                                        #{student.note}
+                                    </h:column>
+                                    <h:column>
+                                        <f:facet name="header" colspan="2">Thao tác</f:facet>
+                                        <p:commandButton
+                                                update="form-2-classes,form-classes:pnlContainer-classes,form-student"
+                                                value="Thêm"
+                                                action="#{classesMB.add2Class(student,classesMB.classPayroll)}"/>
+                                    </h:column>
+                                    <f:facet name="footer">
+                                        <h:outputText
+                                                value="Total of student: #{studentsMB.getListStudentNone().size()}"/>
+                                    </f:facet>
+                                </h:dataTable>
+                            </div>
+                        </h:form>
+                    </p:dialog>
+                    <p:dialog widgetVar="dlg-classes-add" resizable="false" prependID="false" modal="true" width="600px"
+                              height="200px"
+                              showEffect="true" responsive="true">
+
+                        <h:form id="form-classes-3">
+                            <div id="create-classes" align="center">
+                                <p:panel header="Tạo lớp học" id="dialog-add-classes">
+                                    <p:messages/>
+                                    <h:panelGrid columns="2">
+                                        Tên lớp:
+                                        <h:inputText id="name-classes" value="#{classesMB.classPayroll.name}"
+                                                     required="true"
+                                                     requiredMessage="Tên lớp không được để trống"/>
+                                        Mã lớp:
+                                        <h:inputText id="code-classes" value="#{classesMB.classPayroll.code}"
+                                                     required="true"
+                                                     requiredMessage="Mã lớp không được để trống"
+                                                     validatorMessage="Mã lớp không đúng định dạng">
+                                            <f:validateRegex
+                                                    pattern="^[A][T]+[0-9a-zA-Z]{2,3}$"/>
+                                        </h:inputText>
+                                    </h:panelGrid>
+                                </p:panel>
+                            </div>
+                            <br/>
+                            <div align="center">
+                                <p:commandButton value="Save" action="#{classesMB.create()}"
+                                                 update="growl-classes,form-classes "
+                                                 oncomplete=" if (args &amp;&amp; !args.validationFailed) PF('dlg-classes-add').hide()"/>
+                            </div>
+                        </h:form>
+                    </p:dialog>
+                </div>
+            </p:tab>
+            <p:tab title="Lớp học">
+                <div id="classes" align="center">
+                    <f:event listener="#{claSubMB.listSub()}" type="preRenderView"/>
+                    <p:growl id="growl-clasub" showDetail="true" life="2000"/>
+                    <h2 style="display: block">Chi tiết lớp - môn học</h2>
+                    <hr/>
+                    <h:form id="form-clasub">
+                        <div style="float: right">
+                            <p:commandButton value="Tạo lớp" oncomplete="PF('dlg-clasub-classes').show()">
+                                <p:ajax listener="#{claSubMB.rsClaSub()}" update="form-clasub"/>
+                            </p:commandButton>
+                            <p:commandButton value="Tạo môn học" oncomplete="PF('dlg-clasub-subject').show()"/>
+                        </div>
+                        <br/>
+                        <br/><br/>
+                        Môn học:
+                        <p:selectOneMenu id="classes-clasub" required="true" requiredMessage="Bạn chưa chọn môn học"
+                                         value="#{claSubMB.sub}">
+                            <f:selectItem itemLabel="Chọn" itemValue=""/>
+                            <f:selectItems value="#{claSubMB.listSubject}"/>
+                            <p:ajax event="valueChange" listener="#{claSubMB.updateClassSubject()}"/>
+                        </p:selectOneMenu>
+                        <p:spacer width="20px"/>
+                        Lớp học:
+                        <p:selectOneMenu id="subjects-clasub" required="true"
+                                         requiredMessage="Bạn chưa chọn lớp học"
+                                         value="#{claSubMB.classe}">
+                            <p:ajax listener="#{claSubMB.updateClassSubject()}"/>
+                            <f:selectItem itemLabel="Chọn" itemValue=""/>
+                            <f:selectItems event="valueChange" value="#{claSubMB.listClass}"/>
+                        </p:selectOneMenu>
+                        <br/> <br/>
+                        <p:commandButton value="Hiển thị" actionListener="#{claSubMB.updateListStudent()}"
+                                         update="pnlContainer-clasub,growl-clasub">
+                        </p:commandButton>
+                        <p:spacer width="20px"/>
+
+                        <p:commandButton value="Tạo lớp - môn học" actionListener="#{claSubMB.reset()}"
+                                         action="form-clasub"
+                                         oncomplete="PF('dlg-clasub-add').show()"/>
+                        <br/><br/>
+
+                        <h:panelGroup id="pnlContainer-clasub" layout="block">
+
+                            <h:panelGrid columns="2" rendered="#{!claSubMB.checkClSu() and claSubMB.check()}">
+                                <h3>Không tồn tại lớp học #{claSubMB.sub} - #{claSubMB.classe} </h3>
+                            </h:panelGrid>
+
+
+                            <h:panelGrid columns="2" rendered="#{claSubMB.checkClSu()}">
+                                <br/>
+                                <h3>Thông tin lớp #{claSubMB.classe} - #{claSubMB.sub}</h3>
+
+                            </h:panelGrid>
+
+                            <h:panelGrid rendered="#{claSubMB.checkClSu()}">
+                                <h5>Khoảng thời gian học:  #{claSubMB.classSubject.startTime.toString().replaceAll("-","/")} -  #{claSubMB.classSubject.endTime.toString().replaceAll("-","/")} </h5>
+                                <h5>Thứ:  #{claSubMB.classSubject.day}</h5>
+                                <h5>Thời gian học: #{claSubMB.classSubject.todStart} -  #{claSubMB.classSubject.todEnd}</h5>
+                                <h5>Sĩ số:  #{claSubMB.classSubject.size}</h5>
+                                <h5>Số sinh viên hiện tại:  #{claSubMB.classSubject.registered}</h5>
+                                <h5>Ghi chú: #{claSubMB.classSubject.note}</h5>
+
+                                <p:commandButton update="form-clasub-4" value="Sửa thông tin lớp học"
+                                                 oncomplete="PF('dlg-clasub-edit').show()">
+                                    <p:ajax listener="#{claSubMB.updateInfoToEdit()}" update="form-clasub-4"/>
+
+                                </p:commandButton>
+
+                            </h:panelGrid>
+                            <h:panelGrid columns="2" rendered="#{claSubMB.checkClSu()}">
+
+                                <h4>Danh sách sinh viên</h4>
+                            </h:panelGrid>
+
+
+                            <h:panelGrid id="students-clasub" columns="2" rendered="#{claSubMB.checkClSu()}">
+
+                                <hr/>
+                                <br/><br/>
+                                <p:dataTable tableStyle="width:auto" id="cars2-clasub" var="student"
+                                             value="#{claSubMB.listStudent}"
+                                             editable="true"
+                                             editMode="cell"
+                                             widgetVar="table-student-clasub"
+                                             sortMode="multiple" resizableColumns="true"
+                                             filteredValue="#{studentsMB.filteredStudents}">
+                                    <p:ajax event="sort" skipChildren="false"/>
+                                    <p:ajax event="cellEdit" listener="#{claSubMB.updateScore}"
+                                            update="growl-student"/>
+
+                                    <p:column headerText="Mã sinh viên" style="width:70px; align-content: center"
+                                              sortBy="#{student.code}" filterBy="#{student.code}"
+                                              filterMatchMode="contains">
+                                        <p:cellEditor disabled="true">
+                                            <f:facet name="output"><h:outputText value="#{student.code}"/></f:facet>
+                                            <f:facet name="input"><p:inputText value="#{student.code}"/></f:facet>
+                                        </p:cellEditor>
+                                    </p:column>
+                                    <p:column headerText="Họ tên" style="text-align: center"
+                                              sortBy="#{student.name}"
+                                              filterBy="#{student.name}" filterMatchMode="contains">
+                                        <p:cellEditor disabled="true">
+                                            <f:facet name="output"><h:outputText value="#{student.name}"/></f:facet>
+                                            <f:facet name="input"><p:inputText value="#{student.name}"/></f:facet>
+                                        </p:cellEditor>
+                                    </p:column>
+                                    <p:column sortBy="#{student.classPayroll.name}"
+                                              filterBy="#{student.classPayroll.name}"
+                                              headerText="Lớp"
+                                              filterMatchMode="exact" style="width:50px">
+
+                                        <f:facet name="filter">
+                                            <p:selectOneMenu onchange="PF('table-student-clasub').filter()"
+                                                             styleClass="custom-filter"
+                                                             style="width: 70%">
+                                                <f:selectItem itemLabel="Chọn" itemValue="#{null}"
+                                                              noSelectionOption="true"/>
+                                                <f:selectItems value="#{studentsMB.classes}"/>
+                                            </p:selectOneMenu>
+                                        </f:facet>
+                                        <h:outputText value="#{student.classPayroll.name}"/>
+
+                                    </p:column>
+                                    <p:column headerText="Tuổi" style="width:35px; text-align: center">
+                                        <p:cellEditor disabled="true">
+                                            <f:facet name="output"><h:outputText value="#{student.age}"/></f:facet>
+                                            <f:facet name="input"><p:inputText value="#{student.age}"
+                                                                               style="width: 50px"/></f:facet>
+                                        </p:cellEditor>
+                                    </p:column>
+                                    <p:column headerText="Địa chỉ" style="width:250px; text-align: center">
+                                        <p:cellEditor disabled="true">
+                                            <f:facet name="output"><h:outputText
+                                                    value="#{student.address}"/></f:facet>
+                                            <f:facet name="input"><p:inputText
+                                                    value="#{student.address}"/></f:facet>
+                                        </p:cellEditor>
+                                    </p:column>
+                                    <p:column headerText="Email"
+                                              style="text-overflow: ellipsis; text-align: center">
+                                        <p:cellEditor disabled="true">
+                                            <f:facet name="output"><h:outputText
+                                                    value="#{student.email}"/></f:facet>
+                                            <f:facet name="input"><p:inputText id="email-clasub"
+                                                                               value="#{student.email}"/></f:facet>
+                                        </p:cellEditor>
+                                    </p:column>
+                                    <p:column headerText="Điểm" style="width:120px; text-align: center"
+                                              sortBy="#{claSubMB.getScores(student)}">
+                                        <p:cellEditor>
+                                            <f:facet name="output"><h:outputText
+                                                    value="#{claSubMB.getScores(student)}"/></f:facet>
+                                            <f:facet name="input"><p:inputText id="score-clasub"
+                                                                               value="#{claSubMB.score}"/></f:facet>
+                                        </p:cellEditor>
+                                    </p:column>
+                                    <p:column headerText="Ghi chú" style="text-align: center">
+                                        <p:cellEditor disabled="true">
+                                            <f:facet name="output"><h:outputText value="#{student.note}"/></f:facet>
+                                            <f:facet name="input"><p:inputText value="#{student.note}"/></f:facet>
+                                        </p:cellEditor>
+                                    </p:column>
+                                    <p:column style="width:60px" headerText="Thao tác">
+                                        <p:commandButton value="Xóa" action="#{claSubMB.deleteStuClaSub(student)}"
+                                                         update="cars2-clasub,form-student"/>
+                                    </p:column>
+                                </p:dataTable>
+
+
+                            </h:panelGrid>
+                            <br/>
+                            <h:panelGrid rendered="#{claSubMB.checkClSu()}" columns="2">
+
+                                <p:commandButton update="form-2-clasub:table-stu" value="Thêm sinh viên"
+                                                 oncomplete="PF('dlg-clasub').show()">
+                                </p:commandButton>
+
+
+                                <p:commandButton value="Xóa lớp" action="#{claSubMB.delete}"
+                                                 update="growl-clasub,form-student,form-clasub,form-2-clasub:table-stu">
+                                    <p:confirm header="Xác nhận"
+                                               message="Bạn muốn xóa lớp #{claSubMB.sub} - #{claSubMB.classe}"
+                                               icon="pi pi-exclamation-triangle"/>
+                                </p:commandButton>
+                                <p:confirmDialog global="true" showEffect="fade" hideEffect="fade"
+                                                 responsive="true">
+                                    <p:commandButton value="Yes" type="button" styleClass="ui-confirmdialog-yes"
+                                                     icon="fas fa-check-circle"/>
+                                    <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no"
+                                                     icon="fas fa-do-not-enter"/>
+                                </p:confirmDialog>
+
+
+                            </h:panelGrid>
+                        </h:panelGroup>
+                    </h:form>
+
+                    <p:dialog widgetVar="dlg-clasub" modal="true" resizable="false" responsive="true"
+                              showEffect="true">
+                        <h:form id="form-2-clasub">
+                            <div align="center">
+                                <h:dataTable id="table-stu" value="#{claSubMB.students}" var="student">
+                                    <h:column>
+                                        <f:facet name="header">Id</f:facet>
+                                        #{student.id}
+                                    </h:column>
+                                    <h:column>
+                                        <f:facet name="header">Mã sinh viên</f:facet>
+                                        #{student.code}
+                                    </h:column>
+                                    <h:column>
+                                        <f:facet name="header">Họ tên</f:facet>
+                                        #{student.name}
+                                    </h:column>
+                                    <h:column>
+                                        <f:facet name="header">Tuổi</f:facet>
+                                        #{student.age}
+                                    </h:column>
+                                    <h:column>
+                                        <f:facet name="header">Địa chỉ</f:facet>
+                                        #{student.address}
+                                    </h:column>
+                                    <h:column>
+                                        <f:facet name="header">Email</f:facet>
+                                        #{student.email}
+                                    </h:column>
+                                    <h:column>
+                                        <f:facet name="header">Ghi chú</f:facet>
+                                        #{student.note}
+                                    </h:column>
+                                    <h:column>
+                                        <f:facet name="header" colspan="2">Thao tác</f:facet>
+                                        <p:commandButton update="form-2-clasub,growl-clasub,form-clasub,form-student"
+                                                         value="Thêm"
+                                                         action="#{claSubMB.add2Class(student,claSubMB.classe,claSubMB.sub)}"/>
+                                    </h:column>
+                                    <f:facet name="footer">
+                                        <h:outputText value="Total of student: #{claSubMB.students.size()}"/>
+                                    </f:facet>
+                                </h:dataTable>
+                            </div>
+                        </h:form>
+                    </p:dialog>
+
+                    <p:dialog widgetVar="dlg-clasub-add" resizable="false" prependID="false" modal="true"
+                              width="950px"
+                              height="550px"
+                              showEffect="true" responsive="true">
+
+                        <h:form id="form-clasub-3">
+                            <div id="create-clas" align="center">
+                                <p:panel header="Tạo lớp học" id="dialog-add">
+                                    <p:messages/>
+                                    <h:panelGrid columns="2">
+                                        Lớp*:
+                                        <h:selectOneMenu id="clase-clasub" value="#{claSubMB.classe}"
+                                                         required="true"
+                                                         requiredMessage="Mời bạn chọn lớp"
+                                                         label="clase">
+                                            <f:selectItem itemLabel="Chọn" itemValue="" noSelectionOption="true"/>
+                                            <f:selectItems value="#{claSubMB.listClass}"/>
+                                        </h:selectOneMenu>
+                                        Môn học*:
+                                        <h:selectOneMenu value="#{claSubMB.sub}" required="true"
+                                                         requiredMessage="Mời bạn chọn môn học">
+                                            <f:selectItem itemLabel="Chọn" itemValue="" noSelectionOption="true"/>
+                                            <f:selectItems value="#{claSubMB.listSubject}"/>
+                                        </h:selectOneMenu>
+                                        Khoảng thời gian*:
+                                        <p:datePicker selectionMode="range" value="#{claSubMB.range}"
+                                                      readonlyInput="true"
+                                                      numberOfMonths="3" required="true"
+                                                      requiredMessage="Mời bạn chọn 'Khoảng thời gian'"/>
+                                        Ngày*:
+                                        <h:selectOneRadio id="day-clasub" value="#{claSubMB.day}" rendered="true"
+                                                          requiredMessage="Mời bạn chọn ngày học">
+                                            <f:selectItem itemValue="2" itemLabel="Thứ 2"/>
+                                            <f:selectItem itemValue="3" itemLabel="Thứ 3"/>
+                                            <f:selectItem itemValue="4" itemLabel="Thứ 4"/>
+                                            <f:selectItem itemValue="5" itemLabel="Thứ 5"/>
+                                            <f:selectItem itemValue="6" itemLabel="Thứ 6"/>
+                                        </h:selectOneRadio>
+                                        Thời gian*:
+                                        <h:panelGrid id="timehour" columns="5">
+                                            <h:outputText value="Start time"/>
+                                            <pe:timePicker value="#{claSubMB.classSubject.todStart}" mode="popup"
+                                                           onHourShow="tpStartOnHourShowCallback"
+                                                           onMinuteShow="tpStartOnMinuteShowCallback"
+                                                           widgetVar="startTimeWidget"/>
+
+                                            <h:panelGroup layout="block" style="width:20px;"/>
+
+                                            <h:outputText value="End time"/>
+                                            <pe:timePicker value="#{claSubMB.classSubject.todEnd}" mode="popup"
+                                                           onHourShow="tpEndOnHourShowCallback"
+                                                           onMinuteShow="tpEndOnMinuteShowCallback"
+                                                           widgetVar="endTimeWidget"/>
+                                        </h:panelGrid>
+
+
+                                        Sĩ số*:
+                                        <p:spinner value="#{claSubMB.classSubject.size}" style="width: 186px; "
+                                                   min="0"
+                                                   required="true" requiredMessage="Mời bạn nhập sĩ số"/>
+                                        Ghi chú:
+                                        <h:inputText value="#{claSubMB.classSubject.note}"
+                                                     style="width: 183px;border-radius: 3px;height: 22px;font-family: -webkit-body, serif;font-size: 15px;"/>
+                                    </h:panelGrid>
+                                </p:panel>
+                            </div>
+                            <br/>
+                            <div align="center">
+                                <p:commandButton value="Save" action="#{claSubMB.create()}"
+                                                 update="growl-clasub,form-clasub"
+                                                 oncomplete=" if (args &amp;&amp; !args.validationFailed) PF('dlg-clasub-add').hide()"/>
+
+
+                            </div>
+                        </h:form>
+                    </p:dialog>
+
+                    <p:dialog widgetVar="dlg-clasub-edit" resizable="false" prependID="false" modal="true"
+                              width="950px"
+                              height="550px"
+                              showEffect="true" responsive="true">
+
+                        <h:form id="form-clasub-4">
+                            <div id="edit-clasub" align="center">
+                                <p:panel header="Edit" id="dialog-edit">
+                                    <p:messages/>
+                                    <h:panelGrid columns="2">
+                                        Lớp*:
+                                        <h:selectOneMenu id="clase-clasub-edit"
+                                                         value="#{claSubMB.classSubject.classCredit.name}"
+                                                         required="true"
+                                                         requiredMessage="Mời bạn chọn lớp"
+                                                         label="clase">
+                                            <f:selectItem itemLabel="Chọn" itemValue="" noSelectionOption="true"/>
+                                            <f:selectItems value="#{claSubMB.listClass}"/>
+                                        </h:selectOneMenu>
+                                        Môn học*:
+                                        <h:selectOneMenu value="#{claSubMB.classSubject.subject.name}" required="true"
+                                                         requiredMessage="Mời bạn chọn môn học">
+                                            <f:selectItem itemLabel="Chọn" itemValue="" noSelectionOption="true"/>
+                                            <f:selectItems value="#{claSubMB.listSubject}"/>
+                                        </h:selectOneMenu>
+                                        Khoảng thời gian*:
+                                        <p:datePicker selectionMode="range" value="#{claSubMB.range}"
+                                                      readonlyInput="true"
+                                                      numberOfMonths="3" required="true"
+                                                      requiredMessage="Mời bạn chọn 'Khoảng thời gian'"/>
+                                        Ngày*:
+                                        <h:selectOneRadio id="day-clasub-edit" value="#{claSubMB.classSubject.day}"
+                                                          rendered="true"
+                                                          requiredMessage="Mời bạn chọn ngày học">
+                                            <f:selectItem itemValue="2" itemLabel="Thứ 2"/>
+                                            <f:selectItem itemValue="3" itemLabel="Thứ 3"/>
+                                            <f:selectItem itemValue="4" itemLabel="Thứ 4"/>
+                                            <f:selectItem itemValue="5" itemLabel="Thứ 5"/>
+                                            <f:selectItem itemValue="6" itemLabel="Thứ 6"/>
+                                        </h:selectOneRadio>
+                                        Thời gian*:
+                                        <h:panelGrid>
+                                            <h:outputText value="Start"/>
+                                            <pe:timePicker value="#{claSubMB.classSubject.todStart}"
+                                                           widgetVar="time1"
+                                                           label="Start" required="true"
+                                                           requiredMessage="Mời bạn chọn thời gian vào học"/>
+                                            <h:outputText value="End"/>
+                                            <pe:timePicker value="#{claSubMB.classSubject.todEnd}" widgetVar="time2"
+                                                           label="End" required="true"
+                                                           requiredMessage="Mời bạn chọn thời gian ra về"/>
+                                        </h:panelGrid>
+                                        Sĩ số*:
+                                        <p:spinner value="#{claSubMB.classSubject.size}" style="width: 186px; "
+                                                   min="0"
+                                                   required="true" requiredMessage="Mời bạn nhập sĩ số"/>
+                                        Ghi chú:
+                                        <h:inputText value="#{claSubMB.classSubject.note}"
+                                                     style="width: 183px;border-radius: 3px;height: 22px;font-family: -webkit-body, serif;font-size: 15px;"/>
+                                    </h:panelGrid>
+                                </p:panel>
+                            </div>
+                            <br/>
+                            <div align="center">
+                                <p:commandButton value="Save" action="#{claSubMB.edit()}"
+                                                 update="growl-clasub,form-clasub"
+                                                 oncomplete=" if (args &amp;&amp; !args.validationFailed) PF('dlg-clasub-edit').hide()"/>
+                            </div>
+                        </h:form>
+                    </p:dialog>
+
+
+                    <p:dialog widgetVar="dlg-clasub-classes" resizable="false" prependID="false" modal="true"
+                              showEffect="true" responsive="true" width="500px">
+                        <h:form id="form-clasub-classes">
+                            <div align="center">
+                                <p:panel header="Tạo lớp" style="width: 76%">
+                                    <p:messages/>
+                                    <h:panelGrid columns="2">
+                                        Tên lớp học:
+                                        <h:inputText id="name-clasub" value="#{claSubMB.classCredit.name}"
+                                                     required="true"
+                                                     requiredMessage="Tên lớp không được để trống"/>
+                                        Ghi chú:
+                                        <h:inputText id="note-clasub" value="#{claSubMB.classCredit.note}"/>
+                                    </h:panelGrid>
+                                </p:panel>
+                            </div>
+                            <br/>
+                            <div align="center">
+                                <p:commandButton value="Save" action="#{claSubMB.createClaCre()}"
+                                                 update="growl-clasub,form-clasub"
+                                                 oncomplete=" if (args &amp;&amp; !args.validationFailed) PF('dlg-clasub-classes').hide()"/>
+                            </div>
+                        </h:form>
+                    </p:dialog>
+
+                    <p:dialog widgetVar="dlg-clasub-subject" resizable="false" width="500px" prependID="false"
+                              modal="true"
+                              showEffect="true" responsive="true">
+                        <p:ajax listener="#{claSubMB.resetSub}" update="form-clasub-subject"/>
+                        <h:form id="form-clasub-subject">
+                            <div align="center">
+                                <p:panel header="Tạo môn học" style="width: 76%">
+                                    <p:messages/>
+                                    <h:panelGrid columns="2">
+                                        Tên môn học:
+                                        <h:inputText value="#{claSubMB.subject.name}"
+                                                     required="true"
+                                                     requiredMessage="Tên môn học không được để trống"/>
+                                        Mã môn học:
+                                        <h:inputText id="code-clasub" value="#{claSubMB.subject.code}"
+                                                     required="true"
+                                                     validatorMessage="Mã môn học không hợp lệ"
+                                                     requiredMessage="Mã môn học không được để trống">
+                                            <f:validateRegex
+                                                    pattern="^[A-Z0-9]{1,}$"/>
+                                        </h:inputText>
+
+                                        Số tín chỉ:
+                                        <p:spinner id="basic-clasub" value="#{claSubMB.subject.coefficient}"
+                                                   style="width:160px;  "
+                                                   min="0"/>
+                                        Ghi chú:
+                                        <h:inputText value="#{claSubMB.subject.note}"/>
+                                    </h:panelGrid>
+                                </p:panel>
+                            </div>
+                            <br/>
+                            <div align="center">
+                                <p:commandButton value="Save" action="#{claSubMB.createSubject()}"
+                                                 update="growl-clasub,form-clasub"
+                                                 oncomplete="  if (args &amp;&amp; !args.validationFailed) PF('dlg-clasub-subject').hide()"/>
+                            </div>
+                        </h:form>
+                    </p:dialog>
+                </div>
+            </p:tab>
+            <p:tab title="Tài khoản sinh viên">
+                <div align="center">
+                    <br/>
+                    <p:growl id="growl-user" showDetail="true" life="2000"/>
+                    <h2>Danh sách sinh viên</h2>
+                    <hr/>
+                    <hr/>
+                    <h:form id="form-user" acceptcharset="UTF-8">
+                        <p:dataTable id="form-user-table" value="#{userMB.userList}" var="user"
+                                     widgetVar="table-user-user"
+                                     resizableColumns="true">
+                            <p:column headerText="ID" style="text-align: center;width:30px;">
+                                <h:outputText value="#{user.id}"/>
+                            </p:column>
+                            <p:column headerText="Tên đăng nhập" style="text-align: center;width:120px">
+                                <h:outputText value="#{user.user}"/>
+                            </p:column>
+                            <p:column headerText="Mã sinh viên" style="text-align: center;width:120px">
+                                <h:outputText value="#{user.student.code}"/>
+                            </p:column>
+                            <p:column headerText="Họ tên" style="text-align: center;width:200px">
+                                <h:outputText value="#{user.student.name}"/>
+                            </p:column>
+                            <p:column headerText="Lớp" style="text-align: center;width:80px">
+                                <h:outputText value="#{user.student.classPayroll.name}"/>
+                            </p:column>
+
+                            <p:column headerText="Thao tác" style="width: 140px;text-align: center">
+                                <p:commandButton disabled="#{user.rule==1}" value="Reset password"
+                                                 action="#{userMB.resetPw(user)}" update="growl-user">
+                                </p:commandButton>
+
+                                <p:commandButton disabled="#{user.rule==1}" style="background: red; border-color: red"
+                                                 value="Xóa"
+                                                 action="#{userMB.delete(user)}" update="form-user"/>
+                            </p:column>
+                            <f:facet name="footer">
+                                <h:outputText value="Total of user: #{userMB.userList.size()}"/>
+                            </f:facet>
+                        </p:dataTable>
+                        <br/>
+
+                        <p:commandButton value="Thêm tài khoản" oncomplete="PF('dlg-add-user').show()">
+                            <p:ajax listener="#{userMB.rsUser()}" update="form-user-3"/>
+                        </p:commandButton>
+                    </h:form>
+
+                    <p:dialog widgetVar="dlg-add-user" resizable="false" prependID="false" modal="true"
+                              width="600px"
+                              height="280px"
+                              showEffect="true" responsive="true">
+                        <h:form id="form-user-3">
+                            <div id="create-user" align="center">
+                                <p:panel header="Tạo tài khoản sinh viên" id="dialog-add-user">
+
+                                    <h:panelGrid columns="2">
+
+                                        Tên đăng nhập*:
+                                        <p:panel style="border: none; margin-left: -11px">
+                                            <p:inputText id="name-user" value="#{userMB.oUser.user}"
+                                                         required="true"
+                                                         requiredMessage="Tên đăng nhập không được để trống" style="padding-left: 4px ">
+                                                <p:ajax event="blur" update="form-user-3"/>
+                                            </p:inputText>
+                                            <h:outputText style="float: right;margin-left: 10px"
+                                                          rendered="#{userMB.checkUser()}" id="in"
+                                                          value="Tên #{userMB.oUser.user} đã tồn tại"/>
+                                        </p:panel>
+
+                                        Password*:
+                                        <p:password id="password" style="margin: 5px; padding: 5px" required="true"
+                                                    requiredMessage="Mật khẩu không được để trống"
+                                                    value="#{userMB.password}"/>
+                                        Confirm password*:
+                                        <p:password id="comfirmPassword" style="margin: 5px; padding: 5px"
+                                                    value="#{userMB.confirm_password}"
+                                                    required="true"
+                                                    requiredMessage="Xác nhận mật khẩu"
+                                                    validator="#{userMB.validatePasswordError}"/>
+                                        Sinh viên*:
+                                        <h:selectOneMenu id="user-class" value="#{userMB.stringStudent}"
+                                                         style="width: 250px">
+                                            <f:selectItem itemLabel="Chọn" itemValue="" noSelectionOption="true"/>
+                                            <f:selectItems value="#{userMB.listStudent()}" var="student"/>
+                                        </h:selectOneMenu>
+
+                                    </h:panelGrid>
+                                </p:panel>
+                            </div>
+                            <br/>
+                            <div align="center">
+                                <p:commandButton value="Tạo" action="#{userMB.create()}"
+                                                 update="growl-user,form-user"
+                                                 oncomplete=" if (args &amp;&amp; !args.validationFailed) PF('dlg-add-user').hide()"/>
+                            </div>
+                        </h:form>
+                    </p:dialog>
+
+                </div>
+            </p:tab>
+        </p:tabView>
     </div>
+    <h:outputScript id="timeRangeScript" target="body">
+        /* <![CDATA[ */
 
+        // Use case 2
 
+        function onHourShowCallback(hour) {
+            if ((hour > 20) || (hour < 6)) {
+                return false; // not valid
+            }
+
+            return true; // valid
+        }
+
+        function onMinuteShowCallback(hour, minute) {
+            if ((hour == 20) && (minute >= 30)) {
+                return false; // not valid
+            }
+
+            if ((hour == 6) && (minute < 30)) {
+                return false; // not valid
+            }
+
+            return true;  // valid
+        }
+
+        // Use case 3
+
+        function tpStartOnHourShowCallback(hour) {
+            if (!PrimeFaces.widgets['endTimeWidget']) {
+                return false;
+            }
+
+            var tpEndHour = parseInt(PF('endTimeWidget').getHours());
+
+            // Check if proposed hour is prior or equal to selected end time hour
+            if (parseInt(hour) <= tpEndHour) {
+                return true;
+            }
+
+            // if hour did not match, it can not be selected
+            return false;
+        }
+
+        function tpStartOnMinuteShowCallback(hour, minute) {
+            if (!PrimeFaces.widgets['endTimeWidget']) {
+                return false;
+            }
+
+            var tpEndHour = parseInt(PF('endTimeWidget').getHours());
+            var tpEndMinute = parseInt(PF('endTimeWidget').getMinutes());
+
+            // Check if proposed hour is prior to selected end time hour
+            if (parseInt(hour) < tpEndHour) {
+                return true;
+            }
+
+            // Check if proposed hour is equal to selected end time hour and minutes is prior
+            if ((parseInt(hour) == tpEndHour) && (parseInt(minute) < tpEndMinute)) {
+                return true;
+            }
+
+            // if minute did not match, it can not be selected
+            return false;
+        }
+
+        function tpEndOnHourShowCallback(hour) {
+            if (!PrimeFaces.widgets['startTimeWidget']) {
+                return false;
+            }
+
+            var tpStartHour = parseInt(PF('startTimeWidget').getHours());
+
+            // Check if proposed hour is after or equal to selected start time hour
+            if (parseInt(hour) >= tpStartHour) {
+                return true;
+            }
+
+            // if hour did not match, it can not be selected
+            return false;
+        }
+
+        function tpEndOnMinuteShowCallback(hour, minute) {
+            if (!PrimeFaces.widgets['startTimeWidget']) {
+                return false;
+            }
+
+            var tpStartHour = parseInt(PF('startTimeWidget').getHours());
+            var tpStartMinute = parseInt(PF('startTimeWidget').getMinutes());
+
+            // Check if proposed hour is after selected start time hour
+            if (parseInt(hour) > tpStartHour) {
+                return true;
+            }
+
+            // Check if proposed hour is equal to selected start time hour and minutes is after
+            if ((parseInt(hour) == tpStartHour) && (parseInt(minute) > tpStartMinute)) {
+                return true;
+            }
+
+            // if minute did not match, it can not be selected
+            return false;
+        }
+
+        /* ]]> */
+    </h:outputScript>
 </ui:composition>

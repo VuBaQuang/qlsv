@@ -8,6 +8,9 @@
       xmlns:fn="http://java.sun.com/jsp/jstl/functions"
       xmlns:ui="http://java.sun.com/jsf/facelets">
 <h:head>
+    <f:facet name="first">
+    <link rel="shortcut icon" type="image/png" href="/QLSV/faces/javax.faces.resource/home.png"/>
+    </f:facet>
     <title>
         <ui:insert name="windowTitle">
             JSF QLSV
@@ -15,11 +18,11 @@
         <h:outputStylesheet name="primefaces-omega/theme.css"/>
         <h:outputStylesheet name="font-awesome-5-pro/css/all.min.css"/>
         <h:outputStylesheet name="bootstrap/css/bootstrap.min.css" target="head"/>
+
     </title>
 </h:head>
 
 <h:body>
-
     <!--	Start body	-->
     <ui:insert name="contents">
         <ui:include src="login-content.xhtml"/>

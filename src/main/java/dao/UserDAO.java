@@ -2,6 +2,7 @@ package dao;
 
 import model.User;
 import org.hibernate.Session;
+import org.hibernate.exception.ConstraintViolationException;
 import utils.HibernateUtils;
 
 import javax.persistence.NoResultException;
@@ -54,7 +55,7 @@ public class UserDAO {
         return result;
     }
 
-    public User findById(int id) {
+    public static User findById(int id) {
         Session s = HibernateUtils.getSessionFactory().openSession();
         User user = new User();
         try {
@@ -70,17 +71,22 @@ public class UserDAO {
         return user;
     }
 
-    public User create(User user) {
+    public int create(User user) {
         Session s = HibernateUtils.getSessionFactory().openSession();
         try {
             s.beginTransaction();
             s.save(user);
             s.getTransaction().commit();
-            return user;
-        } catch (Exception e) {
+            return 0;
+        } catch (ConstraintViolationException e){
             e.printStackTrace();
             s.getTransaction().rollback();
-            return null;
+            return 1;
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+            s.getTransaction().rollback();
+            return -1;
         }
     }
 

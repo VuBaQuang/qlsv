@@ -2,24 +2,25 @@ package dao;
 
 import model.ClassCredit;
 import model.ClassSubject;
+import model.Student;
 import model.Subject;
 import org.hibernate.Session;
 import utils.HibernateUtils;
 
 import org.hibernate.query.Query;
 
-import javax.persistence.TemporalType;
-import javax.persistence.criteria.*;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
+import javax.persistence.NoResultException;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Root;
 import java.util.ArrayList;
-import java.util.Date;
+import java.util.LinkedList;
 import java.util.List;
 
 public class ClaSubDAO {
 
 
-    public List<ClassSubject> findAll() {
+    public static List<ClassSubject> findAll() {
         Session s = HibernateUtils.getSessionFactory().openSession();
         List<ClassSubject> list = new ArrayList<>();
         try {
@@ -44,10 +45,9 @@ public class ClaSubDAO {
             CriteriaBuilder builder = s.getCriteriaBuilder();
             CriteriaQuery<ClassSubject> query = builder.createQuery(ClassSubject.class);
             Root<ClassSubject> root = query.from(ClassSubject.class);
-            if(subject!=null){
+            if (subject != null) {
                 query.select(root).where(builder.equal(root.get("subject"), subject));
-            }
-          else {
+            } else {
                 query.select(root).where();
             }
             //query.select(root).where(builder.isNull(root.get("classPayroll")));
@@ -127,9 +127,11 @@ public class ClaSubDAO {
         return list;
     }
 
-    public List<ClassSubject> getBySubFtClass(Subject subject, ClassCredit classCredit) {
+    public ClassSubject getBySubFtClass(Subject subject, ClassCredit classCredit) {
+
+
         Session s = HibernateUtils.getSessionFactory().openSession();
-        List<ClassSubject> list = null;
+        ClassSubject result = null;
         try {
             s.beginTransaction();
             CriteriaBuilder builder = s.getCriteriaBuilder();
@@ -141,51 +143,19 @@ public class ClaSubDAO {
                             builder.equal(root.get("classCredit"), classCredit)
                     )
             );
-            //query.select(root).where(builder.isNull(root.get("classPayroll")));
             Query<ClassSubject> q = s.createQuery(query);
-            list = q.getResultList();
+            result = q.getSingleResult();
             s.getTransaction().commit();
+        } catch (NoResultException e) {
+            return result;
         } catch (Exception e) {
             e.printStackTrace();
             s.getTransaction().rollback();
+            return result;
         } finally {
             s.close();
         }
-        return list;
-    }
-
-    public static List<ClassSubject> rangeTime(){
-        Session s = HibernateUtils.getSessionFactory().openSession();
-        List<ClassSubject> list = null;
-        try {
-            s.beginTransaction();
-            CriteriaBuilder builder = s.getCriteriaBuilder();
-            CriteriaQuery<ClassSubject> query = builder.createQuery(ClassSubject.class);
-            Root<ClassSubject> root = query.from(ClassSubject.class);
-            SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
-            java.util.Date startDate = dateFormat.parse("01-09-2019");
-            java.util.Date endDate = dateFormat.parse("01-10-2019");
-            query.select(root).where(
-                    builder.between(root.<Date>get("startTime"),startDate,endDate)
-            );
-            //query.select(root).where(builder.isNull(root.get("classPayroll")));
-            Query<ClassSubject> q = s.createQuery(query);
-            list = q.getResultList();
-            s.getTransaction().commit();
-        } catch (Exception e) {
-            e.printStackTrace();
-            s.getTransaction().rollback();
-        } finally {
-            s.close();
-        }
-        return list;
-    }
-
-    public static void main(String[] args) {
-        for (ClassSubject classSubject:rangeTime()) {
-            System.out.println(classSubject.getId());
-        }
-        System.out.println();
+        return result;
     }
 
     public ClassSubject create(ClassSubject classSubject) {
@@ -204,7 +174,7 @@ public class ClaSubDAO {
         }
     }
 
-    public  List<ClassSubject> findBySubCla(Subject subject, ClassCredit classCredit) {
+    public List<ClassSubject> findBySubCla(Subject subject, ClassCredit classCredit) {
         Session s = HibernateUtils.getSessionFactory().openSession();
         List<ClassSubject> result = null;
         try {
@@ -223,7 +193,7 @@ public class ClaSubDAO {
                 query.select(root).where(builder.equal(root.get("classCredit"), classCredit));
             } else if (subject != null) {
                 query.select(root).where(builder.equal(root.get("subject"), subject));
-            }else {
+            } else {
                 query.select(root).where();
             }
             //query.select(root).where(builder.isNull(root.get("classPayroll")));
@@ -240,6 +210,63 @@ public class ClaSubDAO {
     }
 
 
+    public List<ClassSubject> findRangeDay(ClassSubject classSubject, Student student) {
+        Session s = HibernateUtils.getSessionFactory().openSession();
+        List<ClassSubject> claSub = null;
+        try {
+            s.beginTransaction();
+            String hql = "SELECT DISTINCT cs " +
+                    "FROM ClassSubject as cs," +
+                    "     Subject as su " +
+                    "WHERE (su = cs.subject)" +
+                    "     and (:start_time >= cs.endTime or :end_time <= cs.startTime)" +
+                    "      and (cs.day = :day)  ";
+            org.hibernate.query.Query query = s.createQuery(hql);
+            query.setParameter("start_time", classSubject.getStartTime());
+            query.setParameter("end_time", classSubject.getEndTime());
+            query.setParameter("day", classSubject.getDay());
+            claSub = query.getResultList();
+            s.getTransaction().commit();
+        } catch (Exception e) {
+            e.printStackTrace();
+            s.getTransaction().rollback();
+        } finally {
+            s.close();
+        }
+        return claSub;
+    }
+
+    public  List<ClassSubject> findRangeTime(ClassSubject classSubject, Student student) {
+        Session s = HibernateUtils.getSessionFactory().openSession();
+        List<ClassSubject> claSub = null;
+        try {
+            s.beginTransaction();
+            String hql = "SELECT DISTINCT cs " +
+                    "FROM ClassSubject as cs," +
+                    "     Subject as su," +
+                    "     Student as st," +
+                    "     Registersub as re " +
+                    "WHERE (su = cs.subject)" +
+                    "  and (st = re.student)" +
+                    "  and re.classSubject = cs" +
+                    "  and (:start_time >= cs.todStart or :end_time <= cs.todEnd)" +
+                    "  and cs.day = :day" +
+                    "  and st = :student";
+            org.hibernate.query.Query query = s.createQuery(hql);
+            query.setParameter("start_time", classSubject.getTodStart());
+            query.setParameter("end_time", classSubject.getTodEnd());
+            query.setParameter("day", classSubject.getDay());
+            query.setParameter("student",student);
+            claSub = query.getResultList();
+            s.getTransaction().commit();
+        } catch (Exception e) {
+            e.printStackTrace();
+            s.getTransaction().rollback();
+        } finally {
+            s.close();
+        }
+        return claSub;
+    }
 
     public void update(ClassSubject classSubject) {
         Session s = HibernateUtils.getSessionFactory().openSession();

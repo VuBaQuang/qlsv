@@ -1,20 +1,27 @@
 package dao;
 
+import com.google.gson.internal.bind.util.ISO8601Utils;
+import model.ClassSubject;
 import model.Student;
+import model.Subject;
 import org.hibernate.Session;
+import org.hibernate.exception.ConstraintViolationException;
 import utils.HibernateUtils;
 
 import javax.persistence.Query;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 public class StudentDAO {
 
 
-    public  List<Student> findAll() {
+    public List<Student> findAll() {
         Session s = HibernateUtils.getSessionFactory().openSession();
         List<Student> list = new ArrayList<>();
         try {
@@ -31,8 +38,45 @@ public class StudentDAO {
         return list;
     }
 
+    public List<Student> noneAccount() {
+        Session s = HibernateUtils.getSessionFactory().openSession();
+        List<Student> list = null;
+        try {
+            s.beginTransaction();
+            String hql = "FROM Student as st WHERE st NOT in (SELECT DISTINCT u.student FROM User as u, Student  as st WHERE  st=u.student)";
+            org.hibernate.query.Query query = s.createQuery(hql);
+            list = query.list();
+            s.getTransaction().commit();
+        } catch (Exception e) {
+            e.printStackTrace();
+            s.getTransaction().rollback();
+        } finally {
+            s.close();
+        }
+        return list;
+    }
 
-    public Student findById(int id) {
+    public Student findByCode(String code) {
+        Session s = HibernateUtils.getSessionFactory().openSession();
+        Student student = null;
+        try {
+            s.beginTransaction();
+            String hql = "FROM Student as st WHERE st.code=:code";
+            org.hibernate.query.Query query = s.createQuery(hql);
+            query.setParameter("code", code);
+            student = (Student) query.getSingleResult();
+            s.getTransaction().commit();
+        } catch (Exception e) {
+            e.printStackTrace();
+            s.getTransaction().rollback();
+        } finally {
+            s.close();
+        }
+        return student;
+    }
+
+
+    public static Student findById(int id) {
         Session s = HibernateUtils.getSessionFactory().openSession();
         Student student = new Student();
         try {
@@ -69,6 +113,60 @@ public class StudentDAO {
         return list;
     }
 
+    public List listStudent(Subject subject) {
+        Session s = HibernateUtils.getSessionFactory().openSession();
+        List list = null;
+        try {
+            s.beginTransaction();
+            String hql = "FROM Student as st WHERE id NOT in (SELECT DISTINCT re.student FROM Registersub as re join re.classSubject as cla WHERE  cla.subject=:subject)";
+            org.hibernate.query.Query query = s.createQuery(hql);
+            query.setParameter("subject", subject);
+            list = query.list();
+            s.getTransaction().commit();
+        } catch (Exception e) {
+            e.printStackTrace();
+            s.getTransaction().rollback();
+        } finally {
+            s.close();
+        }
+        return list;
+    }
+
+    public static List listStudent(Date date1, Date date2) {
+        Session s = HibernateUtils.getSessionFactory().openSession();
+        List list = null;
+        try {
+            s.beginTransaction();
+            String hql = "from  ClassSubject as cs where cs.startTime = :date1 ";
+            org.hibernate.query.Query query = s.createQuery(hql);
+            query.setParameter("date1", date1);
+
+            list = query.list();
+            s.getTransaction().commit();
+        } catch (Exception e) {
+            e.printStackTrace();
+            s.getTransaction().rollback();
+        } finally {
+            s.close();
+        }
+        return list;
+    }
+
+//    public static void main(String[] args) {
+//        SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
+//        try {
+//            Date startDate = dateFormat.parse("01-09-2019");
+//            Date endDate = dateFormat.parse("01-10-2019");
+//            for (Object o : listStudent(startDate, endDate)) {
+//                ClassSubject student = (ClassSubject) o;
+//                System.out.println(student.getStartTime().toString());
+//            }
+//        } catch (ParseException e) {
+//            e.printStackTrace();
+//        }
+//
+//
+//    }
 
     public Student create(Student student) {
         Session s = HibernateUtils.getSessionFactory().openSession();
@@ -100,16 +198,19 @@ public class StudentDAO {
         }
     }
 
-    public void delete(Student student) {
+    public int delete(Student student) {
         Session s = HibernateUtils.getSessionFactory().openSession();
         try {
             s.beginTransaction();
             s.remove(student);
             s.getTransaction().commit();
-
+            return 0;
+        } catch (ConstraintViolationException e) {
+            return 1;
         } catch (Exception e) {
             e.printStackTrace();
             s.getTransaction().rollback();
+            return -1;
         } finally {
             s.close();
         }

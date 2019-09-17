@@ -2,6 +2,7 @@ package dao;
 
 import model.Subject;
 import org.hibernate.Session;
+import org.hibernate.exception.ConstraintViolationException;
 import utils.HibernateUtils;
 
 import org.hibernate.query.Query;
@@ -71,15 +72,21 @@ public class SubjectDAO {
         return result;
     }
 
-    public void create(Subject subject) {
+    public int create(Subject subject) {
         Session s = HibernateUtils.getSessionFactory().openSession();
         try {
             s.beginTransaction();
             s.save(subject);
             s.getTransaction().commit();
-        } catch (Exception e) {
+            return 0;
+        }
+        catch (ConstraintViolationException e){
+            return 1;
+        }
+        catch (Exception e) {
             e.printStackTrace();
             s.getTransaction().rollback();
+            return 2;
         } finally {
             s.close();
         }
